@@ -1,0 +1,84 @@
+.accountLevels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-left: 30px;
+    width: 93%;
+  }
+  
+  .levelInfo, .requirements {
+    background: #FFF;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 48%; 
+    border: 1px solid #e0e0e0; 
+    height: 150px;
+  }
+  
+  
+  .progressBar {
+    background: #e6e6e6;
+    border-radius: 4px;
+    height: 10px;
+    position: relative;
+    width: 100%;
+    margin: 10px 0;
+  }
+  
+  .progress {
+    background: #4caf50; 
+    border-radius: 4px;
+    height: 100%;
+    width: 50%; 
+    position: absolute;
+  }
+  
+  .levelInfo h2, .requirements h2 {
+    margin-top: 0;
+  }
+  
+  .requirements ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .requirements li::before {
+    content: "❌"; 
+    padding-right: 10px;
+  }
+
+  .navigation {
+    margin-top: 50px;
+    margin-left: 50px;
+    display: inline-block;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .backLink {
+    font-weight: 800;
+    color: #000;
+    text-decoration: none;
+    margin-right: 15px;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .title {
+    font-size: 24px;
+    margin: 0;
+  }
+  
+ 
+  @media (max-width: 850px) {
+    .accountLevels {
+      flex-direction: column;
+    }
+  
+    .levelInfo, .requirements {
+      width: 100%; 
+      margin-bottom: 20px;
+    }
+  }

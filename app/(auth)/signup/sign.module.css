@@ -1,0 +1,156 @@
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.signupform {
+    font-size: 13px;
+    max-width: 400px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 15px;
+}
+
+.titleblock {
+    font-size: 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+
+
+.swap {
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+@keyframes fillBorder {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+.swap {
+    position: relative;
+    overflow: hidden;
+}
+
+.swap::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background-color: #3e8e41;
+    animation: fillBorder 2s forwards;
+}
+
+.sign {
+    color: #666666;
+    cursor: pointer;
+}
+
+.signupform .logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.signupform h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.signupform .form-group {
+    margin-bottom: 15px;
+}
+
+.signupform .form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.signupform .formgroup input[type="email"],
+.signupform .formgroup input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+.signupform .formgroupformcheck {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.signupform .formgroupformcheck input[type="checkbox"] {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+    
+}
+
+.signupform .formgroupformcheck label {
+    margin: 0;
+}
+
+.signupform .btnprimary {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: green;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.signupform .btnsecondary {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #6c757d;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btnprimary {
+    background-color: #4CAF50; 
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btnprimary:hover {
+    background-color: #45a049;
+    transform: scale(1.02);
+  }
+  
+
+.btnprimary:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px) scale(1.02);
+}

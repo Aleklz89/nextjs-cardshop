@@ -1,0 +1,142 @@
+
+.dashboard {
+    margin-left: 50px;
+    margin-top: 40px;
+    width: 90%;
+    
+   }
+ 
+   @media (max-width: 767px) {
+     .dashboard {
+       margin-left: 25px;
+       margin-top: 40px;
+       width: 90%;
+       
+      }
+   }
+ 
+   
+  .buttons {
+     margin-top: 15px;
+  }
+ 
+ .button {
+     border: 2px solid #e0e0e0; 
+     border-radius: 10px; 
+     padding: 10px 20px; 
+     margin: 5px; 
+     font-size: 16px;
+     cursor: pointer; 
+     background-color: #fff;
+     display: inline-flex; 
+     align-items: center;
+     justify-content: center; 
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+     transition: all 0.3s; 
+     padding: 5px 10px;
+     border: 1px solid #ddd;
+     border-radius: 4px;
+     border: 1px solid #e0e0e0; 
+     border-radius: 10px; 
+     padding: 10px 20px; 
+     margin: 5px; 
+     font-size: 16px; 
+     cursor: pointer; 
+     background-color: #fff;
+     display: inline-flex; 
+     align-items: center; 
+     justify-content: center;
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+     transition: all 0.3s; 
+   }
+ 
+   .button:hover, .button:focus {
+     transform: translateY(-2px);
+     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+   }
+   
+   .button:active {
+     transform: translateY(1px);
+     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+   }
+   
+
+   .button:focus {
+     outline: none;
+   }
+ 
+ 
+   
+   .buy {
+     border: 1px solid #e0e0e0; 
+     border-radius: 10px; 
+     padding: 10px 20px; 
+     margin: 5px; 
+     font-size: 16px; 
+     cursor: pointer; 
+     background-color: #fff;
+     display: inline-flex; 
+     align-items: center; 
+     justify-content: center;
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+     transition: all 0.3s; 
+     background-color: #399D6B;
+     color: white;
+   }
+ 
+   .buy:hover, .buy:focus {
+     transform: translateY(-2px);
+     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+   }
+   
+   .buy:active {
+     transform: translateY(1px);
+     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+   }
+   
+  
+   .buy:focus {
+     outline: none;
+   }
+ 
+   .headerContainer {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+   }
+   
+   .totalWorth {
+     margin: 10px;
+     margin-top: 25px;
+   }
+ 
+   .contactmanager {
+    background-color: #f2f4f8;
+    border-left: 4px solid #009688;
+    padding: 16px;
+    margin-top: 20px; 
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .contactmessage {
+    color: #333;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .telegramcontact {
+    color: #0077b5;
+    font-weight: bold;
+    font-size: 18px;
+  }
+  
+  .telegramcontact a {
+    text-decoration: none; 
+    color: #0077b5;
+  }
+  
+  .telegramcontact a:hover {
+    text-decoration: underline;
+  }

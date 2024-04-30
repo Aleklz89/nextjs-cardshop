@@ -1,12 +1,12 @@
 "use client"
 
 import React from 'react'
-import styles from './Sidebar.module.css';
+import styles from './phonesidebar.module.css';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
-function Sidebar() {
+const Phonesidebar = ({ onClose, isVisible }) => {
 
   const pathname = usePathname();
 
@@ -15,10 +15,14 @@ function Sidebar() {
     return isActivePath;
   };
 
+
   return (
-    <aside className={styles.sidebar}>
+    <div
+      className={`${styles.sidebar} ${isVisible ? styles.sidebarOpen : styles.sidebarClosed}`}
+      onClick={onClose}
+    >
       <ul className={styles.navList}>
-      <li className={isActive('/cards') ? styles.active : styles.navItem}>
+        <li className={isActive('/cards') ? styles.active : styles.navItem}>
           <Link href="/cards" passHref>
             <span className={styles.icon}></span>
             <span className={styles.icon}>
@@ -83,8 +87,8 @@ function Sidebar() {
           </Link>
         </li>
       </ul>
-    </aside>
+    </div>
   )
 }
 
-export default Sidebar;
+export default Phonesidebar;

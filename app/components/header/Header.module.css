@@ -1,125 +1,278 @@
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    height: 65px;
-
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  height: 65px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .logoContainer {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+
 }
 
+
+
 .nav {
-    display: flex;
+  display: flex;
 }
 
 .navLink {
-    background-color: #ffffff;
-    color: #333333;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    border-radius: 1px;
-    text-decoration: none;
-    margin-right: 840px;
-    margin-top: 5px;
-    font-size: 17px;
+  background-color: #ffffff;
+  color: #333333;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-radius: 1px;
+  text-decoration: none;
+  margin-right: 840px;
+  margin-top: 5px;
+  font-size: 17px;
+  user-select: none;
 }
 
 .navLink:hover,
 .navLink:active {
-    background-color: #399D6B;
-    color: #ffffff;
+  background-color: #399D6B;
+  color: #ffffff;
 }
 
 .navLinkUnderline {
-    display: none;
+  display: none;
 }
 
 .navLink .navLinkUnderline,
 .navLink:active .navLinkUnderline {
-    display: block;
-    height: 2px;
-    background-color: #399D6B;
-    transition: width 0.3s;
+  display: block;
+  height: 2px;
+  background-color: #399D6B;
+  transition: width 0.3s;
 }
 
 .controls {
-    display: flex;
+  display: flex;
 }
 
 .logoText {
-    margin-left: 11px;
+  margin-left: 11px;
+  text-decoration: none;
+  color: black;
+  height: 100%;
+  vertical-align: 12px;
 }
 
 .logoTextCard {
-    font-weight: 200;
-    font-size: 20px; 
-  }
-  
-  .logoTextShop {
-    font-weight: 600; 
-    font-size: 20px; 
-  }
+  font-weight: 200;
+  font-size: 20px;
+  text-decoration: none;
 
-  .controlGroup {
-    display: flex;
-    align-items: center; 
-  }
-  
-  .controls {
-    margin-right: 10px; 
-    margin-left: 10px;
-    
-  }
-  
-  .controls:last-child {
-    margin-right: 0; 
-  }
+}
 
-  .divider {
-    height: 27px; 
-    width: 1px;
-    background-color: #CDCDCD;
-    margin: 0 10px; 
-  }
+.logoTextShop {
+  font-weight: 600;
+  font-size: 20px;
+  text-decoration: none;
+}
 
-  /* В Header.module.css */
+.controlGroup {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+
+
+.controls:last-child {
+  margin-right: 0;
+}
+
+.divider {
+  height: 28px;
+  width: 1px;
+  background-color: #bbbaba;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+
 .navLink {
-    display: inline-block; /* Используйте inline-block для соответствующего позиционирования и размеров */
-    background-color: #ffffff; /* Белый фон для обычного состояния */
-    color: #333333; /* Цвет текста */
-    padding: 8px 16px; /* Отступы вокруг текста, подберите размеры под ваш дизайн */
-    font-size: 16px; /* Размер шрифта, подберите под ваш дизайн */
-    font-weight: 400; /* Начальный вес шрифта */
-    text-transform: uppercase; /* Если требуется текст в верхнем регистре */
-    border-radius: 10px; /* Скругление углов */
-    transition: background-color 0.3s, color 0.3s; /* Плавный переход для фона и текста */
-    text-decoration: none; /* Убрать подчеркивание текста */
-    margin-right: 10px; /* Отступ справа, если есть несколько элементов в ряд */
-    cursor: pointer; /* Показывать указатель, подчеркивающий кликабельность */
+  display: inline-block;
+  background-color: #ffffff;
+  color: #333333;
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: 400;
+  text-transform: uppercase;
+  border-radius: 10px;
+  transition: background-color 0.3s, color 0.3s;
+  text-decoration: none;
+  margin-right: 1px;
+  cursor: pointer;
+}
+
+.navLink:hover {
+  background-color: #399D6B;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+
+.navLinkUnderline {
+  display: none;
+}
+
+.navLink:hover .navLinkUnderline {
+  display: block;
+}
+
+.number {
+  color: green;
+  margin-top: 7px;
+  margin-left: 5px;
+}
+
+.menuContainer {
+  position: relative;
+}
+
+.iconContainer {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 200px;
+  z-index: 1000;
+}
+
+.dropdownMenu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdownMenu li {
+  padding: 8px 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdownMenu li:last-child {
+  border-bottom: none;
+}
+
+.dropdownMenu li:hover {
+  background-color: #f9f9f9;
+}
+
+.dropbutton {
+  color: black;
+}
+
+@media (max-width: 767px) {
+  .navLink {
+    display: none;
+
   }
-  
-  .navLink:hover {
-    background-color: #399D6B; /* Оранжевый фон при наведении */
-    color: #ffffff; /* Белый цвет текста при наведении */
-    font-weight: 700; /* Делаем текст более жирным при наведении, если это необходимо */
+
+  .logoText {
+    display: none;
   }
-  
-  /* Стили для подчеркивания, если оно все еще требуется */
-  .navLinkUnderline {
-    display: none; /* Скрыть, если оно больше не нужно */
+
+  .number {
+    display: none;
   }
+
+  .header {
+    display: fixed;
+    position: fixed;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 65px;
+    width: 100%;
+    background-color: white;
+    z-index: 2000;
   
-  /* Добавление стилей при наведении, если подчеркивание по-прежнему требуется */
-  .navLink:hover .navLinkUnderline {
-    display: block;
-    /* Остальные стили для подчеркивания */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
-  
+}
+
+.hoverEffect {
+  margin-right: 3px;
+  transition: transform 0.3s ease;
+}
+.hoverEffectwo {
+  margin-top: 4px;
+  margin-right: 5px;
+  transition: transform 0.3s ease;
+}
+
+.hoverEffectwo:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.hoverEffect:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.phonemenu {
+  margin-top: -5px;
+  width: 20px;
+  height: 20px;
+}
+
+.phonemenublock {
+  display: none;
+  align-items: center;
+  margin: 0;
+  cursor: pointer;
+}
+
+.phonemenu:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+
+
+@media (max-width: 767px) {
+  .phonemenublock {
+    display: flex;
+  }
+}
+
+
+.visible {
+  background-color: red;
+}
+
+
+
+.slideOutLeft {
+  animation: slideOutLeftAnimation 0.5s forwards;
+}
+
+@keyframes slideOutLeftAnimation {
+  from {
+    transform: translateX(0%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}

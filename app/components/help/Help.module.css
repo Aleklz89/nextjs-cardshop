@@ -1,0 +1,184 @@
+.dashboard {
+    margin-left: 50px;
+    margin-top: 40px;
+    width: 75%;
+    margin-right: 500px;
+    
+   }
+
+ 
+   .secondheader {
+    margin-top: 30px;
+    margin-left: 30px;
+   }
+   
+  .buttons {
+     margin-top: 15px;
+  }
+ 
+ .button {
+     border: 2px solid #e0e0e0; 
+     border-radius: 10px; 
+     padding: 10px 20px; 
+     margin: 5px; 
+     font-size: 16px;
+     cursor: pointer; 
+     background-color: #fff;
+     display: inline-flex; 
+     align-items: center;
+     justify-content: center; 
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+     transition: all 0.3s; 
+     padding: 5px 10px;
+     border: 1px solid #ddd;
+     border-radius: 4px;
+     border: 1px solid #e0e0e0; 
+     border-radius: 10px; 
+     padding: 10px 20px; 
+     margin: 5px; 
+     font-size: 16px; 
+     cursor: pointer; 
+     background-color: #fff;
+     display: inline-flex; 
+     align-items: center; 
+     justify-content: center;
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+     transition: all 0.3s; 
+     
+   }
+
+   .supportbutton:hover, .supportbutton:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .supportbutton:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  }
+ 
+ 
+   
+   .buy {
+ 
+     border: 1px solid #e0e0e0; 
+     border-radius: 10px; 
+     padding: 10px 20px; 
+     margin: 5px; 
+     font-size: 16px; 
+     cursor: pointer; 
+     background-color: #fff;
+     display: inline-flex; 
+     align-items: center; 
+     justify-content: center;
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+     transition: all 0.3s; 
+ 
+     background-color: #399D6B;
+     color: white;
+   }
+ 
+   .headerContainer {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-left: 30px;
+   }
+   
+   .totalWorth {
+     margin: 10px;
+     margin-top: 25px;
+   }
+ 
+   .supportsection {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    margin-top: 30px;
+    max-width: 960px;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  
+  .supportcard {
+    border: 1px solid #e0e0e0; 
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 45%;
+    margin: 20px;
+  }
+  
+  .supportcard h2 {
+    color: #333;
+    margin-bottom: 16px;
+  }
+  
+  .supportcard p {
+    color: #666;
+    margin-bottom: 24px;
+  }
+  
+  .supportbuttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .supportbutton {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    color: white;
+    background-color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .ticketbutton {
+    background-color: #007bff;
+  }
+  
+  .telegrambutton {
+    background-color: #0088cc;
+  }
+  
+  .supportbutton i.icontelegram {
+    display: inline;
+  }
+  
+  .infolist {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .infolist li {
+    margin-bottom: 10px;
+    color: green;
+    text-decoration: underline;
+  }
+
+  .infolist li:active {
+    margin-bottom: 10px;
+    color: red;
+    text-decoration: underline;
+  }
+  
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+  
+  @media (max-width: 767px) {
+    .dashboard {
+      margin-left: 25px;
+      margin-right: 0;
+      
+     }
+     .supportsection {
+      flex-direction: column;
+    }
+    .supportcard {
+      width: 100%;
+    
+    }
+  }
