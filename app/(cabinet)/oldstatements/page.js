@@ -4,7 +4,7 @@ import styles from './oldstatements.module.css';
 import Filters from '../../components/filters/Filters';
 import Transhistory from '../../components/transhistory/Transhistory';
 import Fullhistory from '../../components/transhistory/fullhistory/Fullhistory';
-import Readystatements from '@/app/components/readestatements/Readystatements';
+import Readystatements from '../../components/readestatements/Readystatements';
 
 const Oldstatements = () => {
   

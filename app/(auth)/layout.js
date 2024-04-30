@@ -15,7 +15,7 @@ export const metadata = {
   icon: '/icon.png'
 };
 
-export default function RootLayout({ children, showHeader = true, showSidebar = true }) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={roboto.className}>

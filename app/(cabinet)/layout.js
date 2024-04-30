@@ -15,14 +15,14 @@ export const metadata = {
   icon: '/icon.png'
 };
 
-export default function RootLayout({ children, showHeader = true, showSidebar = true }) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={roboto.className}>
-        {showHeader && <Header />}
+        <Header />
         <div className="psevdo"></div>
         <div style={{ display: 'flex' }}>
-          {showSidebar && <Sidebar />}
+          <Sidebar />
           <div className="container">{children}</div>
         </div>
       </body>
