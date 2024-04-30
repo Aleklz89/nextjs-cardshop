@@ -24,7 +24,7 @@ const Header = () => {
 
         setTimeout(() => {
             setIsSidebarVisible(false);
-        }, 5000); 
+        }, 500); 
     };
 
     const handleShowSidebar = () => {

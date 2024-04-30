@@ -89,6 +89,7 @@
   
   .settingsoption span {
     font-size: 16px;
+    max-width: 200px;
   }
   
   .switch {
