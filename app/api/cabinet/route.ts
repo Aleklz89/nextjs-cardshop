@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../lib/prisma';
 
+export const revalidate = 1
+
 export async function GET(request: Request) {
   try {
     const id = new URL(request.url).searchParams.get('id');

@@ -143,7 +143,6 @@ function Page() {
     const response = await fetch("/api/user");
     if (response.ok) {
       const users = await response.json();
-      console.log("Test")
       setDataTwo(users.users);
 
       
@@ -480,7 +479,6 @@ function Page() {
           Недавние пополнения ({sortOrderUpdated === 'asc' ? '🟩' : '🟥'})
         </button> */}
         <div className={styles.scrollabletable}>
-          {console.log(dataTwo)}
           {dataTwo.length > 0 ? (
             <table className={styles.table}>
               <thead>
