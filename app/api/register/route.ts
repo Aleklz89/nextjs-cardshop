@@ -8,17 +8,27 @@ export async function POST(request: Request) {
         const body = await request.json();
         const { email, password } = body;
 
-       
-        if (!validateEmail(email) || !validatePassword(password)) {
+        // Separate validation for email
+        if (!validateEmail(email)) {
             return new Response(
                 JSON.stringify({
-                    error: "Invalid email or password",
+                    error: "Invalid email format",
                 }),
                 { status: 400, headers: { 'Content-Type': 'application/json' } }
             );
         }
 
-       
+        // Separate validation for password
+        if (!validatePassword(password)) {
+            return new Response(
+                JSON.stringify({
+                    error: "Invalid password format",
+                }),
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+
+        // Check if the email is already in use
         const existingUser = await prisma.user.findUnique({
             where: { email },
         });
@@ -32,10 +42,10 @@ export async function POST(request: Request) {
             );
         }
 
-      
+        // Hash the password
         const hash = bcrypt.hashSync(password, 8);
 
-     
+        // Try to create a registration request
         try {
             await prisma.request.create({
                 data: {
@@ -44,7 +54,7 @@ export async function POST(request: Request) {
                 },
             });
         } catch (error) {
-           
+            // Handle unique constraint violations
             if (error.code === "P2002" && error.meta?.target.includes("email")) {
                 return new Response(
                     JSON.stringify({
@@ -53,7 +63,6 @@ export async function POST(request: Request) {
                     { status: 400, headers: { 'Content-Type': 'application/json' } }
                 );
             } else {
-          
                 console.error("Database insertion error:", error);
                 return new Response(
                     JSON.stringify({
@@ -64,6 +73,7 @@ export async function POST(request: Request) {
             }
         }
 
+        // Return success response
         return new Response(
             JSON.stringify({
                 message: "Registration request created successfully",

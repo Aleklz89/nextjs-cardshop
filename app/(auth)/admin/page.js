@@ -103,7 +103,7 @@ function Page() {
   };
 
   const sortDatatwo = (incomingData, order) => {
-    // Получаем массив пользователей
+  
     const users = incomingData.users;
   
     return users;

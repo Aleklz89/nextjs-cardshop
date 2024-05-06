@@ -29,6 +29,7 @@ function SignupForm() {
       });
 
       const data = await response.json();
+      console.log(data.error)
 
       if (response.ok) {
         setMessage('Request was successful. Please expect a response to your email.');
@@ -38,6 +39,12 @@ function SignupForm() {
         setMessageStyle({ color: 'red' });
       } else if (data.error === "You have already submitted a registration request.") {
         setMessage("You have already submitted a registration request.");
+        setMessageStyle({ color: 'red' });
+      } else if (data.error === "Invalid password format") {
+        setMessage("The password must be at least 8 characters long and include at least one lowercase letter, number and a special character from the list (@, $, !, %, *, ?, &).");
+        setMessageStyle({ color: 'red' });
+      } else if (data.error === "Invalid email format") {
+        setMessage("Invalid email format.");
         setMessageStyle({ color: 'red' });
       } else {
         throw new Error(data.error || "An error occurred during registration");
