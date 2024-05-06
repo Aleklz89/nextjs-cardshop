@@ -1,0 +1,223 @@
+.mainblock {
+    margin-top: -200px;
+    max-height: 400px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.total {
+    margin-top: 1300px;
+}
+
+.sum {
+    color: rgb(43, 40, 223);
+}
+
+.profit {
+    margin-left: 400px;
+    height: 500px;
+    margin-top: 1300px;
+}
+
+.parent {
+    display: flex;
+}
+
+
+.btnLoading {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid white;
+    border-top: 2px solid rgb(193, 191, 191);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+
+  .balanceInput {
+    width: 80px;
+    padding: 4px;
+    margin: 0 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: right;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    animation: spin 1s linear infinite;
+  }
+  
+  
+.mainblocktwo {
+    margin-top: 200px;
+    max-height: 400px;
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 300px;
+}
+
+.scrollabletable {
+    max-height: 400px;
+    overflow-y: auto;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table {
+    width: 100%;
+    /* Ширина таблицы */
+    border-collapse: collapse;
+    /* Убираем двойные линии между ячейками */
+}
+
+.table th,
+.table td {
+    border: 1px solid #ddd;
+    /* Добавляем границу для ячеек */
+    text-align: left;
+    /* Выравнивание текста по левому краю */
+    padding: 8px;
+    /* Паддинг внутри ячеек */
+}
+
+.table th {
+    background-color: #f2f2f2;
+    /* Цвет фона заголовков */
+}
+
+/* Добавление стилей для кнопок */
+.btnreject {
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    margin: 5px;
+    transition: background-color 0.3s;
+    background-color: #f44336;
+    /* Красный цвет для кнопки отклонения */
+}
+
+.searchInput {
+    padding: 8px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 260px;
+}
+
+.btnconfirm {
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    margin: 5px;
+    transition: background-color 0.3s;
+    background-color: #4CAF50;
+    /* Зеленый цвет для кнопки подтверждения */
+}
+
+.sortButton {
+    width: 260px;
+    padding: 8px;
+    margin: 0 5px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .sortButton:hover {
+    background-color: #0056b3;
+  }
+
+.btnreject:hover {
+    opacity: 0.9;
+}
+
+.btnconfirm:hover {
+    opacity: 0.9;
+}
+
+.noData {
+    margin-left: 40%;
+    margin-top: 10px;
+}
+
+@media (max-width: 767px) {
+    .total {
+        margin-left: 15%;
+        margin-top: 1300px;
+    }
+    
+    .profit {
+        margin-left: 15%;
+        height: 500px;
+        margin-top: 50px;
+    }
+    .parent {
+        display: flex;
+        flex-direction: column;
+    }
+    .noData {
+        font-size: 12px;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+    .scrollabletable {
+        max-height: 400px;
+        overflow-y: auto;
+        border-collapse: collapse;
+        width: 275px;
+    }
+
+    .mainblock {
+        max-height: 400px;
+        width: 50%;
+        margin-left: 15%;
+        border-collapse: collapse;
+    }
+
+    .mainblocktwo {
+        margin-top: 50px;
+        max-height: 400px;
+        width: 50%;
+        margin-left: 15%;
+        border-collapse: collapse;
+    }
+
+    .sortButton {
+        padding: 8px;
+        margin: 0 5px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 8px;
+        margin-bottom: 10px;
+      }
+    
+}

@@ -2,7 +2,7 @@ import React from 'react';
 import Header from '../components/header/Header';
 import Sidebar from '../components/sidebar/Sidebar';
 import { Roboto } from "next/font/google";
-import "./globals.css";
+import styles from './auth.module.css'
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -20,10 +20,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={roboto.className}>
         <Header />
-        <div className="psevdo"></div>
+        <div className={styles.psevdo}></div>
         <div style={{ display: 'flex' }}>
           <Sidebar />
-          <div className="container">{children}</div>
+          <div className={styles.container}>{children}</div>
         </div>
       </body>
     </html>

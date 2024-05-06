@@ -30,9 +30,10 @@
   border-radius: 1px;
   text-decoration: none;
   margin-right: 840px;
-  margin-top: 5px;
+  margin-top: 15px;
   font-size: 17px;
   user-select: none;
+  height: 20px;
 }
 
 .navLink:hover,
@@ -131,7 +132,7 @@
 
 .number {
   color: green;
-  margin-top: 7px;
+  margin-top: 18px;
   margin-left: 5px;
 }
 

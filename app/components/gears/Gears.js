@@ -47,10 +47,10 @@ const Gears = () => {
                     </div>
 
                     <div className={styles.settingsoption}>
-                        <Link href="/security">
+                        <Link href="/cabinet/security">
                             <button className={styles.button}>Safety and security</button>
                         </Link>
-                        <Link href="/notifications">
+                        <Link href="/cabinet/notifications">
                             <button className={styles.button}>Notifications</button>
                         </Link>
                     </div>

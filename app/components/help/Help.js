@@ -15,7 +15,7 @@ const Help = () => {
                     <h2>Technical support</h2>
                     <p>If you have any difficulties while working with the service, contact us</p>
                     <div className={styles.supportbuttons}>
-                        <Link href="/newticket" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
+                        <Link href="/cabinet/newticket" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
                             <button className={styles.supportbutton}>Create a ticket</button>
                         </Link>
                         <button className={styles.supportbutton}><i className={styles.icontelegram}></i> Telegram</button>
@@ -24,16 +24,16 @@ const Help = () => {
                 <div className={styles.supportcard}>
                     <h2>Additional information</h2>
                     <ul className={styles.infolist}>
-                        <Link href="/faq" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
+                        <Link href="/cabinet/faq" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
                             <li>FAQ</li>
                         </Link>
-                        <Link href="/none" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
+                        <Link href="/cabinet/none" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
                             <li>API Help</li>
                         </Link>
-                        <Link href="/none" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
+                        <Link href="/cabinet/none" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
                             <li>Documents</li>
                         </Link>
-                        <Link href="/refund" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
+                        <Link href="/cabinet/refund" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
                             <li>Refunds search</li>
                         </Link>
                     </ul>

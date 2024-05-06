@@ -1,0 +1,324 @@
+.backLink {
+  font-weight: 800;
+  color: #000;
+  text-decoration: none;
+  margin-right: 15px;
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.main {
+  margin-top: 50px;
+  margin-left: 70px;
+}
+
+.parentblock {
+  width: 80%;
+  height: 650px;
+  margin-top: 20px;
+  margin-bottom: 100px;
+  display: flex;
+}
+
+.innerblock {
+  height: 650px;
+  width: 70%;
+  margin-right: 30px;
+  border: 1px solid rgb(152, 152, 152);
+  border-radius: 15px;
+  padding: 20px;
+}
+
+
+.accountselect {
+  position: relative;
+  width: 200px;
+  margin-bottom: 10px;
+}
+
+.accountselect label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.dropdown {
+  position: relative;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.dropdown__select {
+  height: 40px;
+  margin-top: 5px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 13px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  margin-bottom: 30px;
+}
+
+.dropdown::after {
+  content: '▼';
+  position: absolute;
+  right: 12px;
+  top: 52%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+
+
+.accountselect select::-ms-expand {
+  display: none;
+
+}
+
+.basetext {
+  margin-bottom: 5px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #8b8b8b;
+}
+
+.inputcontainer {
+  margin-bottom: 15px;
+}
+
+.inputcontainer label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.inputcontainer input[type="text"] {
+
+  width: 95%;
+  padding: 10px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.input {
+  height: 20px;
+  margin-bottom: 30px;
+}
+
+
+.dropdowncontainer {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.dropdowncontainer label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.dropdowncontainer .dropdown {
+  position: relative;
+}
+
+.dropdowncontainer select {
+  width: calc(100% - 80px);
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background-size: 20px;
+}
+
+.applybutton {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  width: 80px;
+  height: 100%;
+  padding: 10px;
+  margin: 0;
+  border: none;
+  border-radius: 0 4px 4px 0; 
+  background-color: black;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
+.dropdowncontainer .dropdown::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.amountcontainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.amountcontainer label {
+  display: block;
+}
+
+.amountcontainer input[type="number"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.maxbutton {
+  padding: 8px 16px;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.maxbutton:hover {
+  background-color: #e1e1e1; 
+}
+
+.infotext {
+  font-size: 14px;
+  color: #666;
+  margin-left: 10px;
+}
+
+.additionalsettings {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 15px;
+}
+
+.checkbox {
+  margin: 10px 0;
+}
+
+.checkbox input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.checkbox label {
+  cursor: pointer;
+}
+
+.buttoncontainer {
+  display: flex;
+  gap: 10px;
+}
+
+.cancelbutton,
+.issuebutton {
+  margin-top: 10px;
+  border: 1px solid #ccc; 
+  border-radius: 4px;
+  padding: 10px 20px;
+  cursor: pointer;
+  outline: none;
+  background-color: #fff; 
+  color: #000;
+  font-weight: bold; 
+}
+
+.cancelbutton:hover,
+.issuebutton:hover {
+  border-color: green;
+}
+
+.cancelbutton {
+  border-color: green;
+  color: green; 
+}
+
+.issuebutton {
+  background-color: green; 
+  color: #fff; 
+}
+
+.cardcontainer {
+  width: 300px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  font-family: Arial, sans-serif; 
+}
+
+.cardimagecontainer {
+  position: relative;
+}
+
+.cardimage {
+  width: 100%;
+  display: block;
+}
+
+.cardinfo {
+  background-color: rgba(255, 255, 255, 0.8);
+  position: absolute;
+  bottom: 0;
+  padding: 10px;
+  width: 100%;
+}
+
+.carddetails {
+  padding: 15px;
+}
+
+.infosection h4,
+.totalamount p,
+.cardrates p {
+  margin: 10px 0;
+}
+
+.infosection p,
+.totalamount p {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cardrates p {
+  text-align: right;
+}
+
+.cardrates span {
+  cursor: pointer;
+}
+
+
+
+
+@media (max-width: 767px) {
+  .cardcontainer {
+    display: flex;
+    flex-direction: column;
+  }
+  .parentblock {
+    width: 100%;
+    margin-left: 0;
+  }
+  .innerblock {
+  
+    width: 100%;
+    
+  }
+
+  .main {
+    margin-left: 20px;
+  }
+}

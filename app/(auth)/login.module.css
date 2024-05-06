@@ -84,7 +84,7 @@
 
 .signupform .formgroup input[type="email"],
 .signupform .formgroup input[type="password"] {
-    width: 100%;
+    width: 95%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -154,4 +154,12 @@
     background-color: #3e8e41;
     box-shadow: 0 5px #666;
     transform: translateY(4px) scale(1.02);
+  }
+
+  .message {
+    width: 100%;
+    text-align: center;
+    padding-top: 15px;
+    font-size: 15px;
+    color: red;
   }

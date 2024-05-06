@@ -39,6 +39,7 @@ const CreateStatement = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter recipient's email"
+                className={styles.input}
             />
 
             <button onClick={handleCreateStatement} className={styles.createButton}>Create statement</button>

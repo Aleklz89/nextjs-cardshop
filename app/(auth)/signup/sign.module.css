@@ -36,6 +36,7 @@
     from {
         width: 0%;
     }
+
     to {
         width: 100%;
     }
@@ -83,7 +84,7 @@
 
 .signupform .formgroup input[type="email"],
 .signupform .formgroup input[type="password"] {
-    width: 100%;
+    width: 95%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -102,7 +103,7 @@
     margin-right: 10px;
     width: 20px;
     height: 20px;
-    
+
 }
 
 .signupform .formgroupformcheck label {
@@ -131,7 +132,7 @@
 }
 
 .btnprimary {
-    background-color: #4CAF50; 
+    background-color: #4CAF50;
     border: none;
     color: white;
     padding: 15px 32px;
@@ -141,16 +142,24 @@
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-  }
-  
-  .btnprimary:hover {
+}
+
+.btnprimary:hover {
     background-color: #45a049;
     transform: scale(1.02);
-  }
-  
+}
+
 
 .btnprimary:active {
     background-color: #3e8e41;
     box-shadow: 0 5px #666;
     transform: translateY(4px) scale(1.02);
+}
+
+
+.message {
+    width: 100%;
+    text-align: center;
+    padding-top: 15px;
+    font-size: 15px;
 }

@@ -6,6 +6,10 @@
   border-radius: 4px;
 }
 
+.input {
+  width: 90%;
+}
+
 .tab {
   display: flex;
   justify-content: space-between;
@@ -29,9 +33,16 @@
   margin: 10px 0 5px;
 }
 
-.createStatement select,
-.createStatement input {
+.createStatement select {
   width: 100%;
+  padding: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.createStatement input {
+  width: 97%;
   padding: 8px;
   margin-bottom: 20px;
   border: 1px solid #ccc;
@@ -69,6 +80,11 @@
   .createStatement {
     margin-left: 5px;
     width: 90%;
+    
+   }
+   .createStatement input {
+    margin-left: 5px;
+    width: 92%;
     
    }
 }

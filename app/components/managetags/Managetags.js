@@ -13,7 +13,7 @@ const Managetags = () => {
 
     return (
         <div className={styles.tagManager}>
-            <Link href="/cards" style={{ textDecoration: 'none' }}>
+            <Link href="/cabinet/cards" style={{ textDecoration: 'none' }}>
                 <div className={styles.backLink} >‹ Cards</div>
             </Link>
             <h2>Manage Tags</h2>

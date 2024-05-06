@@ -22,8 +22,8 @@ const Phonesidebar = ({ onClose, isVisible }) => {
       onClick={onClose}
     >
       <ul className={styles.navList}>
-        <li className={isActive('/cards') ? styles.active : styles.navItem}>
-          <Link href="/cards" passHref>
+        <li className={isActive('/cabinet/cards') ? styles.active : styles.navItem}>
+          <Link href="/cabinet/cards" passHref>
             <span className={styles.icon}></span>
             <span className={styles.icon}>
               <Image
@@ -38,8 +38,8 @@ const Phonesidebar = ({ onClose, isVisible }) => {
             Cards
           </Link>
         </li>
-        <li className={isActive('/transactions') ? styles.active : styles.navItem}>
-          <Link href="/transactions" passHref>
+        <li className={isActive('/cabinet/transactions') ? styles.active : styles.navItem}>
+          <Link href="/cabinet/transactions" passHref>
             <span className={styles.icon}></span>
             <span className={styles.icon}>
               <Image
@@ -54,8 +54,8 @@ const Phonesidebar = ({ onClose, isVisible }) => {
             Transactions
           </Link>
         </li>
-        <li className={isActive('/support') ? styles.active : styles.navItem}>
-          <Link href="/support">
+        <li className={isActive('/cabinet/support') ? styles.active : styles.navItem}>
+          <Link href="/cabinet/support">
             <span className={styles.icon}></span>
             <span className={styles.icon}>
               <Image
@@ -70,8 +70,8 @@ const Phonesidebar = ({ onClose, isVisible }) => {
             Support
           </Link>
         </li>
-        <li className={isActive('/settings') ? styles.active : styles.navItem}>
-          <Link href="/settings">
+        <li className={isActive('/cabinet/settings') ? styles.active : styles.navItem}>
+          <Link href="/cabinet/settings">
             <span className={styles.icon}></span>
             <span className={styles.icon}>
               <Image

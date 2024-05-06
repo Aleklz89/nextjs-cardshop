@@ -1,8 +1,53 @@
-import React from 'react';
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import styles from './Dashboard.module.css';
 import Link from 'next/link';
 
 const Dashboard = () => {
+
+
+  const [balance, setBalance] = useState(0); 
+  const [userId, setUserId] = useState(null); 
+
+
+  const fetchUserId = async () => {
+    try {
+      const response = await fetch('/api/token');
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      setUserId(data.userId);
+    } catch (error) {
+      console.error('Error fetching user ID:', error);
+    }
+  };
+
+  const fetchUserBalance = async (id) => {
+    try {
+      const response = await fetch(`/api/cabinet?id=${id}`);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      setBalance(data.user.balance);
+    } catch (error) {
+      console.error('Error fetching user balance:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserId();
+  }, []);
+
+  useEffect(() => {
+    if (userId !== null) {
+      fetchUserBalance(userId);
+    }
+  }, [userId]);
+
+  
     return (
         <div className={styles.dashboard}>
             <div className={styles.header}>
@@ -11,21 +56,21 @@ const Dashboard = () => {
                     <button className={styles.button}>Share</button>
                 </div>
                 <div className={styles.buttons}>
-                    <Link href="/cards" style={{ textDecoration: 'none' }} passHref>
+                    <Link href="/cabinet/cards" style={{ textDecoration: 'none' }} passHref>
 
                         <button className={styles.buy}>My cards</button>
                     </Link>
-                    <Link href="/buycard" style={{ textDecoration: 'none' }} passHref>
+                    <Link href="/cabinet/buycard" style={{ textDecoration: 'none' }} passHref>
                         <button className={styles.button}>Order a card</button>
                     </Link>
-                    <Link href="/topup" style={{ textDecoration: 'none' }} passHref>
+                    <Link href="/cabinet/topup" style={{ textDecoration: 'none' }} passHref>
                         <button className={styles.button}>Top up</button>
                     </Link>
                 </div>
             </div>
             <div className={styles.totalWorth}>
                 <span>Balance</span>
-                <h2>$0</h2>
+                <h2>${balance}</h2>
             </div>
 
 

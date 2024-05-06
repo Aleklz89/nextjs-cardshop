@@ -18,8 +18,8 @@ function Sidebar() {
   return (
     <aside className={styles.sidebar}>
       <ul className={styles.navList}>
-      <li className={isActive('/cards') ? styles.active : styles.navItem}>
-          <Link href="/cards" passHref>
+      <li className={isActive('/cabinet/cards') ? styles.active : styles.navItem}>
+          <Link href="/cabinet/cards" passHref>
             <span className={styles.icon}></span>
             <span className={styles.icon}>
               <Image
@@ -34,8 +34,8 @@ function Sidebar() {
             Cards
           </Link>
         </li>
-        <li className={isActive('/transactions') ? styles.active : styles.navItem}>
-          <Link href="/transactions" passHref>
+        <li className={isActive('/cabinet/transactions') ? styles.active : styles.navItem}>
+          <Link href="/cabinet/transactions" passHref>
             <span className={styles.icon}></span>
             <span className={styles.icon}>
               <Image
@@ -50,8 +50,8 @@ function Sidebar() {
             Transactions
           </Link>
         </li>
-        <li className={isActive('/support') ? styles.active : styles.navItem}>
-          <Link href="/support">
+        <li className={isActive('/cabinet/support') ? styles.active : styles.navItem}>
+          <Link href="/cabinet/support">
             <span className={styles.icon}></span>
             <span className={styles.icon}>
               <Image
@@ -66,8 +66,8 @@ function Sidebar() {
             Support
           </Link>
         </li>
-        <li className={isActive('/settings') ? styles.active : styles.navItem}>
-          <Link href="/settings">
+        <li className={isActive('/cabinet/settings') ? styles.active : styles.navItem}>
+          <Link href="/cabinet/settings">
             <span className={styles.icon}></span>
             <span className={styles.icon}>
               <Image

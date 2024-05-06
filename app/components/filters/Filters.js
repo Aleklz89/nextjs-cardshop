@@ -37,19 +37,19 @@ const Filters = ({ setSearchQuery, setFilterType, setDateRange }) => {
                     <button className={styles.button}>Share</button>
                 </div>
                 <div className={styles.buttons}>
-                    <Link href="/transactions" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
-                        <button className={isActive('/transactions') ? styles.buy : styles.button} >History</button>
+                    <Link href="/cabinet/transactions" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
+                        <button className={isActive('/cabinet/transactions') ? styles.buy : styles.button} >History</button>
                     </Link>
-                    <Link href="/statement" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
-                        <button className={isActive('/statement') ? styles.buy : styles.button} >Create Statement</button>
+                    <Link href="/cabinet/statement" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
+                        <button className={isActive('/cabinet/statement') ? styles.buy : styles.button} >Create Statement</button>
                     </Link>
-                    <Link href="/oldstatements" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
-                    <button className={isActive('/oldstatements') ? styles.buy : styles.button} >Create Statement</button>
+                    <Link href="/cabinet/oldstatements" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
+                    <button className={isActive('/cabinet/oldstatements') ? styles.buy : styles.button} >Previous Statements</button>
                     </Link>
                 </div>
             </div>
 
-            <div className={isActive('/statement') || isActive('/oldstatements') ? styles.alterboxes : styles.boxes}
+            <div className={isActive('/cabinet/statement') || isActive('/cabinet/oldstatements') ? styles.alterboxes : styles.boxes}
             >
                 <input className={styles.search__input} type="text" placeholder="Search" onChange={handleSearchChange} />
 
@@ -66,10 +66,10 @@ const Filters = ({ setSearchQuery, setFilterType, setDateRange }) => {
                     <DateRangeComp setDateRange={setDateRange} />
                 </div>
             </div>
-            <div className={isActive('/statement') ? styles.create : styles.alterboxes}>
+            <div className={isActive('/cabinet/statement') ? styles.create : styles.alterboxes}>
                 <CreateStatement />
             </div>
-            <div className={isActive('/oldstatements') ? styles.create : styles.alterboxes}>
+            <div className={isActive('/cabinet/oldstatements') ? styles.create : styles.alterboxes}>
 
             </div>
         </div>
