@@ -1,10 +1,8 @@
-import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
-export const revalidate = 1
+import prisma from '../../lib/prisma';
 
 export async function GET(request: Request) {
   try {
-
     const id = new URL(request.url).searchParams.get('id');
     console.log('Received User ID:', id);
 
@@ -15,14 +13,14 @@ export async function GET(request: Request) {
       );
     }
 
+    const user = await prisma.user.findUnique({
+      where: {
+        id: parseInt(id, 10)
+      }
+    });
+    console.log('User fetch result:', user);
 
-    const result = await sql`
-      SELECT * FROM "User" WHERE id = ${id};
-    `;
-    console.log('User fetch result:', result);
-
-
-    if (result.rowCount === 0) {
+    if (!user) {
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
@@ -30,7 +28,7 @@ export async function GET(request: Request) {
     }
 
     const response = NextResponse.json(
-      { user: result.rows[0] },
+      { user },
       { status: 200 }
     );
     response.headers.set('Cache-Control', 'no-store, max-age=0');

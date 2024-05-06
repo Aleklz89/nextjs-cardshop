@@ -1,35 +1,43 @@
-import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
+import prisma from '../../lib/prisma';
 
 export async function DELETE(request: Request) {
-    try {
-      const id = new URL(request.url).searchParams.get('id');
+  try {
+    const id = new URL(request.url).searchParams.get('id');
+    console.log('Received ID for deletion:', id);
 
-      console.log('Received ID for deletion:', id);
-
-      if (!id) {
-        return new Response(JSON.stringify({ error: "ID parameter is required" }), { status: 400, headers: { 'Content-Type': 'application/json' } });
-      }
-
-
-      const result = await sql`
-        DELETE FROM "Request" WHERE id = ${id};
-      `;
-
-      console.log('Delete operation result:', result);
-
-
-      if (result.rowCount === 0) {
-        return new Response(JSON.stringify({ error: "No records found to delete" }), { status: 404, headers: { 'Content-Type': 'application/json' } });
-      }
-
-  
-      const response = new Response(JSON.stringify({ message: "Application deleted successfully" }), { status: 200, headers: { 'Content-Type': 'application/json' } });
-      response.headers.set('Cache-Control', 'no-store, max-age=0');
-
-      return response;
-    } catch (error) {
-      console.error('Database query failed:', error);
-      return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID parameter is required' },
+        { status: 400 }
+      );
     }
+
+    const deletedRequest = await prisma.request.delete({
+      where: {
+        id: parseInt(id, 10),
+      },
+    });
+    console.log('Delete operation result:', deletedRequest);
+
+    if (!deletedRequest) {
+      return NextResponse.json(
+        { error: 'No records found to delete' },
+        { status: 404 }
+      );
+    }
+
+    const response = NextResponse.json(
+      { message: 'Request deleted successfully' },
+      { status: 200 }
+    );
+    response.headers.set('Cache-Control', 'no-store, max-age=0');
+    return response;
+  } catch (error) {
+    console.error('Database query failed:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
 }
