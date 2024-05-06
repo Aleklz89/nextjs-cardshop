@@ -95,7 +95,7 @@ function Page() {
 
 
   const sortData = (incomingData, order) => {
-    return incomingData.sort((a, b) => {
+    return incomingData.applications.sort((a, b) => {
       const dateA = new Date(a.submissionTime);
       const dateB = new Date(b.submissionTime);
       return order === "asc" ? dateA - dateB : dateB - dateA;
@@ -103,11 +103,10 @@ function Page() {
   };
 
   const sortDatatwo = (incomingData, order) => {
-    return incomingData.sort((a, b) => {
-      const dateA = new Date(a.createdAt);
-      const dateB = new Date(b.createdAt);
-      return order === "asc" ? dateA - dateB : dateB - dateA;
-    });
+    // Получаем массив пользователей
+    const users = incomingData.users;
+  
+    return users;
   };
 
   const sortDatathree = (incomingData, order) => {
@@ -123,7 +122,7 @@ function Page() {
     const response = await fetch("/api/request");
     if (response.ok) {
       const applications = await response.json();
-      let sortedData = sortData(applications.rows, sortOrder);
+      let sortedData = sortData(applications, sortOrder);
 
       if (searchTerm) {
         sortedData = sortedData.filter((item) =>
@@ -144,16 +143,17 @@ function Page() {
     const response = await fetch("/api/user");
     if (response.ok) {
       const users = await response.json();
-      setDataTwo(users.rows);
+      console.log("Test")
+      setDataTwo(users.users);
 
       
       const balances = {};
-      users.rows.forEach((item) => {
+      users.users.forEach((item) => {
         balances[item.id] = item.balance;
       });
       setOriginalBalances(balances);
 
-      applyFiltersAndSortTwo(users.rows);
+      applyFiltersAndSortTwo(users);
     } else {
       console.error("Не удалось загрузить данные для второй таблицы");
     }
@@ -194,7 +194,7 @@ function Page() {
     if (sortOrderUpdated !== "asc") {
       filteredData = sortDatathree(filteredData, sortOrderUpdated);
     } else {
-      filteredData = sortDatatwo(filteredData, sortOrderTwo);
+      filteredData = sortDatatwo(filteredData, sortOrder);
     }
 
     setFilteredDataTwo(filteredData);
@@ -380,15 +380,15 @@ function Page() {
       </div>
       <div className={styles.mainblock}>
         <h2>Запросы на регистрацию</h2>
-        <input
+        {/* <input
           type="text"
           placeholder="Поиск..."
           onChange={handleSearch}
           className={styles.searchInput}
-        />
-        <button onClick={handleSort} className={styles.sortButton}>
+        /> */}
+        {/* <button onClick={handleSort} className={styles.sortButton}>
           Сортировать по времени ({sortOrder === 'asc' ? '⬆️' : '⬇️'})
-        </button>
+        </button> */}
         <div className={styles.scrollabletable}>
           {filteredData.length > 0 ? (
             <table className={styles.table}>
@@ -467,20 +467,21 @@ function Page() {
       </div>
       <div className={styles.mainblocktwo}>
         <h2>Пользователи</h2>
-        <input
+        {/* <input
           type="text"
           placeholder="Поиск..."
           onChange={handleSearchTwo}
           className={styles.searchInput}
-        />
-        <button onClick={handleSortTwo} className={styles.sortButton}>
+        /> */}
+        {/* <button onClick={handleSortTwo} className={styles.sortButton}>
           Сортировать по регистрации ({sortOrderTwo === 'asc' ? '⬆️' : '⬇️'})
-        </button>
+        </button> */}
         {/* <button onClick={handleSortThree} className={styles.sortButton}>
           Недавние пополнения ({sortOrderUpdated === 'asc' ? '🟩' : '🟥'})
         </button> */}
         <div className={styles.scrollabletable}>
-          {filteredDataTwo.length > 0 ? (
+          {console.log(dataTwo)}
+          {dataTwo.length > 0 ? (
             <table className={styles.table}>
               <thead>
                 <tr>
@@ -493,7 +494,7 @@ function Page() {
                 </tr>
               </thead>
               <tbody>
-                {filteredDataTwo.map((item) => (
+                {dataTwo.map((item) => (
                   <tr key={item.id}>
                     <td>{formatDate(item.createdAt)}</td>
                     <td>
@@ -549,7 +550,7 @@ function Page() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredDataTwo.map((item) => (
+                  {dataTwo.map((item) => (
                     <tr key={item.id}>
                       <td>{formatDate(item.createdAt)}</td>
                       <td>
