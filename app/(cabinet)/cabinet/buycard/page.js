@@ -114,7 +114,7 @@ const Dashboard = () => {
                             <span className={styles.description}>Starting next month</span>
                         </div>
                         <div className={styles.detail}>
-                            <span className={styles.price}>from 5%</span>
+                            <span className={styles.price}>from 10%</span>
                             <span className={styles.description}>Commission for replenishment</span>
                         </div>
                     </div>

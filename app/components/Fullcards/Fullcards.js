@@ -6,9 +6,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const Fullcards = () => {
-  const [userId, setUserId] = useState(null); 
-  const [userCards, setUserCards] = useState([]); 
-  const [cardsData, setCardsData] = useState([]); 
+  const [userId, setUserId] = useState(null);
+  const [userCards, setUserCards] = useState([]);
+  const [cardsData, setCardsData] = useState([]);
 
   const fetchUserId = async () => {
     try {
@@ -31,7 +31,7 @@ const Fullcards = () => {
       }
       const data = await response.json();
       console.log(data)
-      return data.user.cardsIds; 
+      return data.user.cardsIds;
     } catch (error) {
       console.error('Error fetching user cards:', error);
     }
@@ -49,7 +49,7 @@ const Fullcards = () => {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      setCardsData(data.data); 
+      setCardsData(data.data);
     } catch (error) {
       console.error('Error fetching all cards:', error);
     }
@@ -92,12 +92,13 @@ const Fullcards = () => {
       </div>
 
       <div className={styles.cardsContainer}>
+
         {filteredCards.map((card) => (
           <Link
-            href={`/cabinet/cards/${card.card_bin.id}`}
+            href={`/cabinet/cards/${card.uuid}`}
             style={{ textDecoration: 'none' }}
             passHref
-            key={card.card_bin.id}
+            key={card.uuid}
           >
             <div className={styles.card}>
               <div className={styles.cardImageContainer}>
