@@ -165,11 +165,6 @@ const Header = () => {
                       Safety and security
                     </Link>
                   </li>
-                  <li>
-                    <Link href="/cabinet/notifications" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
-                      Notification settings
-                    </Link>
-                  </li>
                 </ul>
               </div>
             )}

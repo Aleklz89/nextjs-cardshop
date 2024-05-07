@@ -8,6 +8,12 @@ import React, { useState, useEffect } from 'react';
 export default function Cards() {
     const [email, setEmail] = useState("");
     const [userId, setUserId] = useState("");
+    const [oldPassword, setOldPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [editMode, setEditMode] = useState(false);
+    const [message, setMessage] = useState("");
+    const [messageType, setMessageType] = useState(""); // "success" или "error"
     const [activities, setActivities] = useState([
         {
             id: 1,
@@ -53,8 +59,6 @@ export default function Cards() {
         },
     ]);
 
-    const [editMode, setEditMode] = useState(false);
-
     const handleRemove = (id) => {
         setActivities(activities.filter(activity => activity.id !== id));
     };
@@ -65,10 +69,50 @@ export default function Cards() {
 
     const handleCancelClick = () => {
         setEditMode(false);
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setMessage("");
     };
 
-    const handleSaveClick = () => {
-        setEditMode(false);
+    const handleSaveClick = async () => {
+        if (newPassword !== confirmPassword) {
+            setMessage("Passwords do not match");
+            setMessageType("error");
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/change', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId,
+                    oldPassword,
+                    newPassword
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                setMessage("Password successfully updated");
+                setMessageType("success");
+                setEditMode(false);
+                setOldPassword("");
+                setNewPassword("");
+                setConfirmPassword("");
+            } else {
+                setMessage(result.error || "Error updating password");
+                setMessageType("error");
+            }
+        } catch (error) {
+            setMessage("Error updating password");
+            setMessageType("error");
+            console.error('Error updating password:', error);
+        }
     };
 
     const handleRemoveAll = () => {
@@ -132,22 +176,22 @@ export default function Cards() {
                     {!editMode ? (
                         <div className={styles.authSettings}>
                             <label>Password</label>
-                            <input type="password" value="********" readOnly />
+                            <input type="password" value="**************" readOnly />
                             <button onClick={handleEditClick}>Edit</button>
                         </div>
                     ) : (
                         <>
                             <div className={styles.authSettings}>
                                 <label>Enter old password</label>
-                                <input type="password" placeholder="Enter old password" />
+                                <input type="password" placeholder="Enter old password" value={oldPassword} onChange={e => setOldPassword(e.target.value)} />
                             </div>
                             <div className={styles.authSettings}>
                                 <label>New password</label>
-                                <input type="password" placeholder="New password" />
+                                <input type="password" placeholder="New password" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
                             </div>
                             <div className={styles.authSettings}>
                                 <label>Repeat new password</label>
-                                <input type="password" placeholder="Repeat new password" />
+                                <input type="password" placeholder="Repeat new password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
                             </div>
                             <div className={styles.authSettingsActions}>
                                 <button onClick={handleCancelClick}>Cancel</button>
@@ -156,6 +200,11 @@ export default function Cards() {
                         </>
                     )}
                 </div>
+                {message && (
+                    <div className={messageType === "success" ? styles.successMessage : styles.errorMessage}>
+                        {message}
+                    </div>
+                )}
             </div>
 
             <div className={styles.lastActivity}>

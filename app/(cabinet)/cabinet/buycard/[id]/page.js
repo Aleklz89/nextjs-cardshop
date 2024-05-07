@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 function Page() {
-  const router = useRouter();
+    const router = useRouter();
   const [balance, setBalance] = useState(0);
   const [userId, setUserId] = useState(null);
   const [value, setValue] = useState(null);
@@ -17,20 +17,20 @@ function Page() {
   const [totalCost, setTotalCost] = useState("");
   const [cardName, setCardName] = useState("");
   const [description, setDescription] = useState("");
-  const uuid = "dd89adb8-3710-4f25-aefd-d7116eb66b6b";
 
+  // Fetch the current value from /api/single-value
   const fetchValue = async () => {
     try {
-      const response = await fetch("/api/constant");
+      const response = await fetch("/api/local");
       const data = await response.json();
       if (response.ok) {
         setValue(data.value);
       } else {
-        setErrortwo(data.error || "Ошибка при получении значения");
+        setErrortwo(data.error || "Error fetching value");
       }
     } catch (error) {
-      console.error("Ошибка при получении значения:", error);
-      setErrortwo("Ошибка при получении значения");
+      console.error("Error fetching value:", error);
+      setErrortwo("Error fetching value");
     }
   };
 
@@ -145,35 +145,59 @@ function Page() {
     }
   };
 
+  const updateExternalId = async (newValue) => {
+    try {
+      const response = await fetch("/api/local", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ value: newValue }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error(`Error updating value: ${response.status}`, errorData);
+        throw new Error(`Error updating value: ${response.status}`);
+      }
+
+      setValue(newValue);
+    } catch (error) {
+      console.error("Error updating value:", error);
+      setErrortwo("Error updating external value");
+    }
+  };
+
   const handleIssueCard = async () => {
     const urlSegments = window.location.pathname.split("/");
     const binId = urlSegments[urlSegments.length - 1];
-  
+
     if (!depositAmount || !cardsQty || !cardName || !description) {
       setErrortwo("Fill in all the fields");
       return;
     }
-  
+
     if (parseFloat(totalCost) > parseFloat(balance)) {
       setErrortwo("Insufficient funds");
       return;
     }
-  
+
     const bin = await fetchBinById(binId);
-  
+
     if (!bin) {
       setErrortwo("Unable to fetch BIN");
       return;
     }
-  
+
     const postData = {
       account_uuid: "dd89adb8-3710-4f25-aefd-d7116eb66b6b", // Fixed UUID as provided
       start_balance: parseFloat(depositAmount),
       description: description,
       bin: bin,
       cards_count: parseInt(cardsQty, 10),
+      external_id: value.toString(),
     };
-  
+
     try {
       // First POST request to buy the card
       const buyResponse = await fetch("https://api.epn.net/card/buy", {
@@ -186,7 +210,7 @@ function Page() {
         },
         body: JSON.stringify(postData),
       });
-  
+
       if (!buyResponse.ok) {
         const errorData = await buyResponse.json();
         console.error(
@@ -195,15 +219,15 @@ function Page() {
         );
         throw new Error(`Error buying card: ${buyResponse.status}`);
       }
-  
+
       const addResponse = await fetch("/api/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, id: parseInt(binId) }),
+        body: JSON.stringify({ userId, external_id: value.toString() }),
       });
-  
+
       if (!addResponse.ok) {
         const errorData = await addResponse.json();
         console.error(
@@ -212,7 +236,7 @@ function Page() {
         );
         throw new Error(`Error adding card ID: ${addResponse.status}`);
       }
-  
+
       // Update balance after the transaction
       const updatedBalance = parseFloat(balance) - parseFloat(totalCost);
       const updateBalanceResponse = await fetch("/api/min", {
@@ -222,7 +246,7 @@ function Page() {
         },
         body: JSON.stringify({ userId, balance: updatedBalance.toFixed(2) }),
       });
-  
+
       if (!updateBalanceResponse.ok) {
         const errorData = await updateBalanceResponse.json();
         console.error(
@@ -231,7 +255,10 @@ function Page() {
         );
         throw new Error(`Error updating balance: ${updateBalanceResponse.status}`);
       }
-  
+
+      // Increment the value by 1
+      await updateExternalId(value + 1);
+
       // Navigate back to the cards page
       router.push("/cabinet/cards");
     } catch (error) {
@@ -239,7 +266,6 @@ function Page() {
       setErrortwo("Error buying card");
     }
   };
-  
   
 
   return (

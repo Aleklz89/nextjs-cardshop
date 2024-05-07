@@ -6,7 +6,6 @@ export default function Cards() {
   return (
     <main>
       <Help/>
-      <Tickets/>
 
     </main>
   )

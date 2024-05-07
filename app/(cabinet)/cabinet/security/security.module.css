@@ -5,6 +5,17 @@
     width: 50%;
   }
 
+
+.successMessage {
+  color: green;
+  margin-top: 10px;
+}
+
+.errorMessage {
+  color: red;
+  margin-top: 10px;
+}
+
   .title {
     margin-bottom: 20px;
   }

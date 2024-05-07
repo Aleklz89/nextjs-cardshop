@@ -26,6 +26,9 @@ const Filters = ({ setSearchQuery, setFilterType, setDateRange }) => {
         return isActivePath;
     };
 
+    const rootUrl = process.env.NEXT_PUBLIC_ROOT_URL;
+    const shareUrl = `https://telegram.me/share/url?url=${encodeURIComponent(rootUrl)}/&text=CVV888`;
+
 
 
 
@@ -34,18 +37,9 @@ const Filters = ({ setSearchQuery, setFilterType, setDateRange }) => {
             <div className={styles.header}>
                 <div className={styles.headerContainer}>
                     <h1>Transactions</h1>
-                    <button className={styles.button}>Share</button>
-                </div>
-                <div className={styles.buttons}>
-                    <Link href="/cabinet/transactions" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
-                        <button className={isActive('/cabinet/transactions') ? styles.buy : styles.button} >History</button>
-                    </Link>
-                    <Link href="/cabinet/statement" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
-                        <button className={isActive('/cabinet/statement') ? styles.buy : styles.button} >Create Statement</button>
-                    </Link>
-                    <Link href="/cabinet/oldstatements" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
-                    <button className={isActive('/cabinet/oldstatements') ? styles.buy : styles.button} >Previous Statements</button>
-                    </Link>
+                    <a href={shareUrl} target="_blank" rel="noopener noreferrer">
+                        <button className={styles.button}>Share</button>
+                    </a>
                 </div>
             </div>
 

@@ -16,6 +16,10 @@ const CardPage = ({ params }) => {
         return <p>Card not found</p>;
     }
 
+    const rootUrl = process.env.NEXT_PUBLIC_ROOT_URL;
+    const shareUrl = `https://telegram.me/share/url?url=${encodeURIComponent(rootUrl)}/&text=CVV888`;
+
+
     return (
         <div>
             <div className={styles.dashboard}>
@@ -25,7 +29,9 @@ const CardPage = ({ params }) => {
                 <div className={styles.header}>
                     <div className={styles.headerContainer}>
                         <h2 className={styles.title}>{card.type} {card.date}</h2>
-                        <button className={styles.button}>Share</button>
+                        <a href={shareUrl} target="_blank" rel="noopener noreferrer">
+                            <button className={styles.button}>Share</button>
+                        </a>
                     </div>
                     <div className={styles.greyline}></div>
                     <div className={styles.buttons}>

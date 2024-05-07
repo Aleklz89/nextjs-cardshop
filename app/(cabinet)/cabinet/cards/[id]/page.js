@@ -1,23 +1,27 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import styles from './id.module.css';
 
 export default function CardPage() {
   const pathname = usePathname();
+  const router = useRouter();
   const [uuid, setUuid] = useState(null);
   const [cardsData, setCardsData] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [cardDetails, setCardDetails] = useState({ number: '', cvx2: '', exp_month: '', exp_year: '' });
+  const [userId, setUserId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
 
   const fetchAllCards = async () => {
     try {
       const response = await fetch('https://api.epn.net/card', {
         headers: {
-          'accept': 'application/json',
-          'Authorization': 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+          accept: 'application/json',
+          Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
         },
       });
       if (!response.ok) {
@@ -34,8 +38,8 @@ export default function CardPage() {
     try {
       const response = await fetch(`https://api.epn.net/card/${uuid}/showpan`, {
         headers: {
-          'accept': 'application/json',
-          'Authorization': 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+          accept: 'application/json',
+          Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
           'X-CSRF-TOKEN': '',
         },
       });
@@ -54,6 +58,67 @@ export default function CardPage() {
     }
   };
 
+  const deleteCard = async (uuid) => {
+    setIsDeleting(true);
+
+    try {
+      // Комментируем запрос на удаление в epn
+      /*
+      const response = await fetch('https://api.epn.net/card', {
+        method: 'DELETE',
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '',
+        },
+        body: JSON.stringify({
+          card_uuids: [uuid],
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      */
+
+      // Удаление карты из массива пользователя
+      const removeResponse = await fetch('/api/del', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId, cardId: selectedCard.external_id }),
+      });
+
+      if (!removeResponse.ok) {
+        throw new Error(`Error removing card ID: ${removeResponse.status}`);
+      }
+
+      // Пауза 10 секунд перед перенаправлением
+      setTimeout(() => {
+        setIsDeleting(false);
+        router.push('/cabinet/cards');
+      }, 10000);
+    } catch (error) {
+      console.error('Error deleting card:', error);
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteConfirmation = () => {
+    setIsPopupVisible(false);
+    deleteCard(selectedCard.uuid);
+  };
+
+  const handleDeleteClick = () => {
+    setIsPopupVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsPopupVisible(false);
+  };
+
   useEffect(() => {
     // Извлекаем UUID из текущего маршрута
     const match = pathname.match(/\/([a-f0-9-]+)$/i);
@@ -67,8 +132,26 @@ export default function CardPage() {
   }, []);
 
   useEffect(() => {
+    // Получаем идентификатор пользователя
+    const fetchUserId = async () => {
+      try {
+        const response = await fetch('/api/token');
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+        const data = await response.json();
+        setUserId(data.userId);
+      } catch (error) {
+        console.error('Error fetching user ID:', error);
+      }
+    };
+
+    fetchUserId();
+  }, []);
+
+  useEffect(() => {
     if (uuid !== null && cardsData.length > 0) {
-      const card = cardsData.find(card => card.uuid === uuid);
+      const card = cardsData.find((card) => card.uuid === uuid);
       setSelectedCard(card || null);
 
       if (card && card.uuid) {
@@ -78,8 +161,11 @@ export default function CardPage() {
   }, [uuid, cardsData]);
 
   if (!selectedCard) {
-    return <p>Card not found</p>;
+    return <p></p>;
   }
+
+  const rootUrl = process.env.NEXT_PUBLIC_ROOT_URL;
+  const shareUrl = `https://telegram.me/share/url?url=${encodeURIComponent(rootUrl)}/&text=CVV888`;
 
   return (
     <div>
@@ -90,7 +176,9 @@ export default function CardPage() {
         <div className={styles.header}>
           <div className={styles.headerContainer}>
             <h2 className={styles.title}>{selectedCard.tariff.name} {selectedCard.ordered_at}</h2>
-            <button className={styles.button}>Share</button>
+            <a href={shareUrl} target="_blank" rel="noopener noreferrer">
+              <button className={styles.button}>Share</button>
+            </a>
           </div>
           <div className={styles.greyline}></div>
           <div className={styles.buttons}>
@@ -143,6 +231,20 @@ export default function CardPage() {
           </div>
         </div>
       </div>
+      <button className={styles.buttonDelete} onClick={handleDeleteClick}>
+        {isDeleting ? <div className={styles.loader}></div> : 'Block and delete the card'}
+      </button>
+      {isPopupVisible && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popup}>
+            <h3>Are you sure you want to delete the card?</h3>
+            <div className={styles.popupButtons}>
+              <button className={styles.popupButton} onClick={handleDeleteConfirmation}>Yes</button>
+              <button className={styles.popupButton} onClick={handleCancel}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

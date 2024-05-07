@@ -3,12 +3,12 @@ import prisma from "../../lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId, id: binId } = await request.json();
+    const { userId, cardUuid } = await request.json();
 
     // Ensure the necessary data is present
-    if (!userId || !binId) {
+    if (!userId || !cardUuid) {
       return NextResponse.json(
-        { error: "Missing userId or binId" },
+        { error: "Missing userId or cardUuid" },
         { status: 400 }
       );
     }
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
       where: { id: userId },
       data: {
         cardsIds: {
-          push: binId,
+          push: cardUuid,
         },
       },
     });

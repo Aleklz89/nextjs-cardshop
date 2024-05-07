@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './Table.module.css';
@@ -24,8 +24,8 @@ function Page() {
   const [inputValue, setInputValue] = useState('');
   const [originalValue, setOriginalValue] = useState('');
   const [errortwo, setErrortwo] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
 
- 
   const fetchValue = async () => {
     try {
       const response = await fetch('/api/constant');
@@ -42,7 +42,6 @@ function Page() {
       setErrortwo('Ошибка при получении значения');
     }
   };
-
 
   const updateValue = async () => {
     try {
@@ -63,7 +62,6 @@ function Page() {
       setErrortwo('Ошибка при обновлении значения');
     }
   };
-
 
   const rejectChange = () => {
     setInputValue(originalValue);
@@ -92,8 +90,6 @@ function Page() {
     }
   };
 
-
-
   const sortData = (incomingData, order) => {
     return incomingData.applications.sort((a, b) => {
       const dateA = new Date(a.submissionTime);
@@ -103,9 +99,7 @@ function Page() {
   };
 
   const sortDatatwo = (incomingData, order) => {
-  
     const users = incomingData.users;
-  
     return users;
   };
 
@@ -145,7 +139,6 @@ function Page() {
       const users = await response.json();
       setDataTwo(users.users);
 
-      
       const balances = {};
       users.users.forEach((item) => {
         balances[item.id] = item.balance;
@@ -160,8 +153,8 @@ function Page() {
 
   useEffect(() => {
     fetchAccountData();
-    fetchData(); 
-    fetchDataTwo(); 
+    fetchData();
+    fetchDataTwo();
     fetchInterval.current = setInterval(() => {
       fetchAccountData();
       fetchData();
@@ -189,7 +182,6 @@ function Page() {
       );
     }
 
-  
     if (sortOrderUpdated !== "asc") {
       filteredData = sortDatathree(filteredData, sortOrderUpdated);
     } else {
@@ -198,8 +190,6 @@ function Page() {
 
     setFilteredDataTwo(filteredData);
   };
-
-
 
   const handleSort = () => {
     const newOrder = sortOrder === "asc" ? "desc" : "asc";
@@ -296,7 +286,23 @@ function Page() {
   const handleAcceptBalanceChange = async (id) => {
     const newBalance = editableBalances[id];
 
-  
+    console.log(originalBalances)
+
+    // Сумма всех балансов
+    const totalUserBalance = Object.values({
+      ...originalBalances,
+      [id]: Number(newBalance) // Убедимся, что newBalance — число
+    }).reduce((acc, curr) => acc + Number(curr), 0);
+    const requiredBalance = parseFloat(balance) + (parseFloat(balance) * (parseFloat(value) / 100));
+
+    console.log(totalUserBalance)
+    console.log(requiredBalance)
+
+    if (totalUserBalance > requiredBalance) {
+      setShowPopup(true);
+      return;
+    }
+
     const response = await fetch(`/api/update`, {
       method: "POST",
       headers: {
@@ -343,51 +349,46 @@ function Page() {
     return `${hours}:${minutes}, ${day} ${month}`;
   }
 
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
   return (
     <div>
       <div className={styles.parent}>
-      <div className={styles.total}>
-        <h1>Текущий баланс:</h1>
-        {balance !== null ? (
-          <h2 className={styles.sum}>{balance} $</h2>
-        ) : (
-          <p>{error || 'Загрузка данных...'}</p>
-        )}
-      </div>
-      <div className={styles.profit}>
-        <h1>Текущая наценка:</h1>
-        {value !== null ? (
-          <h2 className={styles.sum}>{value}%</h2>
-        ) : (
-          <p>{error || 'Загрузка данных...'}</p>
-        )}
-        <input
-          type="number"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          className={styles.searchInput}
-        />
-        <div className={styles.buttonContainer}>
-          <button onClick={rejectChange} className={styles.btnreject}>
-            Отклонить
-          </button>
-          <button onClick={updateValue} className={styles.btnconfirm}>
-            Подтвердить
-          </button>
+        <div className={styles.total}>
+          <h1>Текущий баланс:</h1>
+          {balance !== null ? (
+            <h2 className={styles.sum}>{balance} $</h2>
+          ) : (
+            <p>{error || 'Загрузка данных...'}</p>
+          )}
         </div>
-      </div>
+        <div className={styles.profit}>
+          <h1>Текущая наценка:</h1>
+          {value !== null ? (
+            <h2 className={styles.sum}>{value}%</h2>
+          ) : (
+            <p>{error || 'Загрузка данных...'}</p>
+          )}
+          <input
+            type="number"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            className={styles.searchInput}
+          />
+          <div className={styles.buttonContainer}>
+            <button onClick={rejectChange} className={styles.btnreject}>
+              Отклонить
+            </button>
+            <button onClick={updateValue} className={styles.btnconfirm}>
+              Подтвердить
+            </button>
+          </div>
+        </div>
       </div>
       <div className={styles.mainblock}>
         <h2>Запросы на регистрацию</h2>
-        {/* <input
-          type="text"
-          placeholder="Поиск..."
-          onChange={handleSearch}
-          className={styles.searchInput}
-        /> */}
-        {/* <button onClick={handleSort} className={styles.sortButton}>
-          Сортировать по времени ({sortOrder === 'asc' ? '⬆️' : '⬇️'})
-        </button> */}
         <div className={styles.scrollabletable}>
           {filteredData.length > 0 ? (
             <table className={styles.table}>
@@ -466,18 +467,6 @@ function Page() {
       </div>
       <div className={styles.mainblocktwo}>
         <h2>Пользователи</h2>
-        {/* <input
-          type="text"
-          placeholder="Поиск..."
-          onChange={handleSearchTwo}
-          className={styles.searchInput}
-        /> */}
-        {/* <button onClick={handleSortTwo} className={styles.sortButton}>
-          Сортировать по регистрации ({sortOrderTwo === 'asc' ? '⬆️' : '⬇️'})
-        </button> */}
-        {/* <button onClick={handleSortThree} className={styles.sortButton}>
-          Недавние пополнения ({sortOrderUpdated === 'asc' ? '🟩' : '🟥'})
-        </button> */}
         <div className={styles.scrollabletable}>
           {dataTwo.length > 0 ? (
             <table className={styles.table}>
@@ -598,6 +587,14 @@ function Page() {
           )}
         </div>
       </div>
+      {showPopup && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popup}>
+            <h3>Недостаточно средств на основном аккаунте</h3>
+            <button className={styles.popupButton} onClick={handleClosePopup}>OK</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

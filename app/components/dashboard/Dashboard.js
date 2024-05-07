@@ -7,8 +7,8 @@ import Link from 'next/link';
 const Dashboard = () => {
 
 
-  const [balance, setBalance] = useState(0); 
-  const [userId, setUserId] = useState(null); 
+  const [balance, setBalance] = useState(0);
+  const [userId, setUserId] = useState(null);
 
 
   const fetchUserId = async () => {
@@ -47,35 +47,40 @@ const Dashboard = () => {
     }
   }, [userId]);
 
-  
-    return (
-        <div className={styles.dashboard}>
-            <div className={styles.header}>
-                <div className={styles.headerContainer}>
-                    <h1>Dashboard</h1>
-                    <button className={styles.button}>Share</button>
-                </div>
-                <div className={styles.buttons}>
-                    <Link href="/cabinet/cards" style={{ textDecoration: 'none' }} passHref>
-
-                        <button className={styles.buy}>My cards</button>
-                    </Link>
-                    <Link href="/cabinet/buycard" style={{ textDecoration: 'none' }} passHref>
-                        <button className={styles.button}>Order a card</button>
-                    </Link>
-                    <Link href="/cabinet/topup" style={{ textDecoration: 'none' }} passHref>
-                        <button className={styles.button}>Top up</button>
-                    </Link>
-                </div>
-            </div>
-            <div className={styles.totalWorth}>
-                <span>Balance</span>
-                <h2>${balance}</h2>
-            </div>
+  const rootUrl = process.env.NEXT_PUBLIC_ROOT_URL;
+  const shareUrl = `https://telegram.me/share/url?url=${encodeURIComponent(rootUrl)}/&text=CVV888`;
 
 
+  return (
+    <div className={styles.dashboard}>
+      <div className={styles.header}>
+        <div className={styles.headerContainer}>
+          <h1>Dashboard</h1>
+          <a href={shareUrl} target="_blank" rel="noopener noreferrer">
+            <button className={styles.button}>Share</button>
+          </a>
         </div>
-    );
+        <div className={styles.buttons}>
+          <Link href="/cabinet/cards" style={{ textDecoration: 'none' }} passHref>
+
+            <button className={styles.buy}>My cards</button>
+          </Link>
+          <Link href="/cabinet/buycard" style={{ textDecoration: 'none' }} passHref>
+            <button className={styles.button}>Order a card</button>
+          </Link>
+          <Link href="/cabinet/topup" style={{ textDecoration: 'none' }} passHref>
+            <button className={styles.button}>Top up</button>
+          </Link>
+        </div>
+      </div>
+      <div className={styles.totalWorth}>
+        <span>Balance</span>
+        <h2>${balance}</h2>
+      </div>
+
+
+    </div>
+  );
 };
 
 export default Dashboard;

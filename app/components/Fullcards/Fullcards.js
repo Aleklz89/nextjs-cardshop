@@ -30,10 +30,10 @@ const Fullcards = () => {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      console.log(data)
-      return data.user.cardsIds;
+      return data.user.cardsIds || [];
     } catch (error) {
       console.error('Error fetching user cards:', error);
+      return [];
     }
   };
 
@@ -41,8 +41,8 @@ const Fullcards = () => {
     try {
       const response = await fetch('https://api.epn.net/card', {
         headers: {
-          'accept': 'application/json',
-          'Authorization': 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+          accept: 'application/json',
+          Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
         },
       });
       if (!response.ok) {
@@ -69,9 +69,8 @@ const Fullcards = () => {
     fetchAllCards();
   }, []);
 
-  const filteredCards = cardsData.filter((card) =>
-    userCards.includes(card.card_bin.id)
-  );
+  // Фильтруем карты по `external_id` из `cardsIds`
+  const filteredCards = cardsData.filter((card) => userCards.includes(card.external_id));
 
   return (
     <div className={styles.assetsContainer}>
@@ -92,7 +91,6 @@ const Fullcards = () => {
       </div>
 
       <div className={styles.cardsContainer}>
-
         {filteredCards.map((card) => (
           <Link
             href={`/cabinet/cards/${card.uuid}`}

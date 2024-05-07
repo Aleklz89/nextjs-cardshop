@@ -78,7 +78,7 @@ const FAQ = () => {
     return (
 
         <div className={styles.main}>
-            <Link href="/support" style={{ textDecoration: 'none' }}>
+            <Link href="/cabinet/support" style={{ textDecoration: 'none' }}>
                 <div className={styles.backLink} >‹ Support</div>
             </Link>
             <h3 className={styles.title}>Frequently Asked Questions</h3>
