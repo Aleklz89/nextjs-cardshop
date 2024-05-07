@@ -18,6 +18,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #eeeeee;
+  background-image: url("/public/ground.jpg");
+  background-size: cover;
+  background-position: center;
 }
 

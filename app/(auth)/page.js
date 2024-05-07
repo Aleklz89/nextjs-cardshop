@@ -1,10 +1,10 @@
-// components/SignInUpForm.js
 "use client";
 
 import { useState } from "react";
 import styles from "./login.module.css";
 import Head from "next/head";
 import { useRouter } from "next/navigation";
+import Image from "next/image"
 
 export default function SignInUpForm() {
   const router = useRouter();
@@ -85,8 +85,11 @@ export default function SignInUpForm() {
         setMessage("Email is already registered.");
         setMessageStyle({ color: "red" });
       } else if (data.error === "Invalid password format") {
-        setMessage("Invalid password format.");
-        setMessageStyle({ color: "red" });
+        setMessage("The password must be at least 8 characters long and include at least one lowercase letter, number and a special character from the list (@, $, !, %, *, ?, &).");
+        setMessageStyle({
+          color: "red",
+          fontSize: "12px"
+        });
       } else {
         throw new Error(data.error || "Registration error");
       }
@@ -98,7 +101,13 @@ export default function SignInUpForm() {
   };
 
   return (
-    <>
+    <div  className={styles.page}>
+      <Image 
+        src="/ground.jpg" 
+        fill={true}
+
+      />
+
       <Head>
         <title>Sign In/Up Form</title>
       </Head>
@@ -196,6 +205,6 @@ export default function SignInUpForm() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

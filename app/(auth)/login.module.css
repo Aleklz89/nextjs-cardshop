@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
 
 
+
+
 .h1 {
     font-weight: bold;
     margin: 0;
@@ -33,8 +35,10 @@
 .button {
     cursor: pointer;
     border-radius: 20px;
-    border: 1px solid #28a745; /* Зеленый оттенок */
-    background-color: #28a745; /* Зеленый оттенок */
+    border: 1px solid #28a745;
+    /* Зеленый оттенок */
+    background-color: #28a745;
+    /* Зеленый оттенок */
     color: #ffffff;
     font-size: 12px;
     font-weight: bold;
@@ -56,7 +60,7 @@
 .ghost {
     border-radius: 20px;
     border: 1px solid #28a745;
-    background-color: #28a745; 
+    background-color: #28a745;
     color: #ffffff;
     font-size: 12px;
     font-weight: bold;
@@ -78,6 +82,7 @@
     padding: 0 50px;
     height: 100%;
     text-align: center;
+    margin-top: 40px;
 }
 
 .input {
@@ -164,7 +169,7 @@
 .overlay {
     background: #28a745;
     background: -webkit-linear-gradient(to right, #28a745, #2ecc71);
-    background: linear-gradient(to right, #28a745, #2ecc71); 
+    background: linear-gradient(to right, #28a745, #2ecc71);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: 0 0;
@@ -233,11 +238,13 @@
 
 .message {
     margin-top: 25px;
+    height: 50px;
+    width: 100%;
 }
 
 @media (max-width: 767px) {
     .container {
-      width: 350px;
+        width: 350px;
     }
 
     .h1 {
@@ -245,7 +252,7 @@
     }
 
     .p {
-        font-size: 10px; 
+        font-size: 10px;
         width: 150px;
     }
 
@@ -260,5 +267,4 @@
     .span {
         width: 150px;
     }
-  }
-  
+}

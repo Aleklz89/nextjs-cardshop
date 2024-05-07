@@ -69,7 +69,7 @@ function AuthForm() {
         setMessage('You already have an account.');
         setMessageStyle({ color: 'red' });
       } else if (data.error === 'Invalid password format') {
-        setMessage('Invalid password format.');
+        setMessage('The password must be at least 8 characters long and include at least one lowercase letter, number and a special character from the list (@, $, !, %, *, ?, &).');
         setMessageStyle({ color: 'red' });
       } else {
         throw new Error(data.error || 'An error occurred during registration');
