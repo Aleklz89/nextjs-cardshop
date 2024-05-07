@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from "react";
 import styles from "./neworder.module.css";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function Page() {
+  const router = useRouter();
   const [balance, setBalance] = useState(0);
   const [userId, setUserId] = useState(null);
   const [value, setValue] = useState(null);
@@ -13,6 +15,9 @@ function Page() {
   const [depositAmount, setDepositAmount] = useState("");
   const [cardsQty, setCardsQty] = useState("");
   const [totalCost, setTotalCost] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [description, setDescription] = useState("");
+  const uuid = "dd89adb8-3710-4f25-aefd-d7116eb66b6b";
 
   const fetchValue = async () => {
     try {
@@ -104,6 +109,14 @@ function Page() {
     setTotalCost(total);
   };
 
+  const handleCardNameChange = (e) => {
+    setCardName(e.target.value);
+  };
+
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+  };
+
   const handleMaxButtonClick = () => {
     let maxAmount = balance;
     if (balance < 100) {
@@ -113,6 +126,121 @@ function Page() {
     const total = calculateTotalCost(maxAmount, cardsQty);
     setTotalCost(total);
   };
+
+  // Fetch bin by URL ID
+  const fetchBinById = async (id) => {
+    try {
+      const response = await fetch("https://api.epn.net/card-bins", {
+        headers: {
+          accept: "application/json",
+          Authorization: "Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ",
+        },
+      });
+      const data = await response.json();
+      const binEntry = data.data.find((item) => item.id === parseInt(id));
+      return binEntry ? binEntry.bin : null;
+    } catch (error) {
+      console.error("Error fetching bin:", error);
+      return null;
+    }
+  };
+
+  const handleIssueCard = async () => {
+    const urlSegments = window.location.pathname.split("/");
+    const binId = urlSegments[urlSegments.length - 1];
+  
+    if (!depositAmount || !cardsQty || !cardName || !description) {
+      setErrortwo("Fill in all the fields");
+      return;
+    }
+  
+    if (parseFloat(totalCost) > parseFloat(balance)) {
+      setErrortwo("Insufficient funds");
+      return;
+    }
+  
+    const bin = await fetchBinById(binId);
+  
+    if (!bin) {
+      setErrortwo("Unable to fetch BIN");
+      return;
+    }
+  
+    const postData = {
+      account_uuid: "dd89adb8-3710-4f25-aefd-d7116eb66b6b", // Fixed UUID as provided
+      start_balance: parseFloat(depositAmount),
+      description: description,
+      bin: bin,
+      cards_count: parseInt(cardsQty, 10),
+    };
+  
+    try {
+      // First POST request to buy the card
+      const buyResponse = await fetch("https://api.epn.net/card/buy", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: "Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ",
+          "X-CSRF-TOKEN": "",
+        },
+        body: JSON.stringify(postData),
+      });
+  
+      if (!buyResponse.ok) {
+        const errorData = await buyResponse.json();
+        console.error(
+          `Error buying card: ${buyResponse.status} - ${buyResponse.statusText}`,
+          errorData
+        );
+        throw new Error(`Error buying card: ${buyResponse.status}`);
+      }
+  
+      const addResponse = await fetch("/api/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, id: parseInt(binId) }),
+      });
+  
+      if (!addResponse.ok) {
+        const errorData = await addResponse.json();
+        console.error(
+          `Error adding card ID: ${addResponse.status} - ${addResponse.statusText}`,
+          errorData
+        );
+        throw new Error(`Error adding card ID: ${addResponse.status}`);
+      }
+  
+      // Update balance after the transaction
+      const updatedBalance = parseFloat(balance) - parseFloat(totalCost);
+      const updateBalanceResponse = await fetch("/api/min", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, balance: updatedBalance.toFixed(2) }),
+      });
+  
+      if (!updateBalanceResponse.ok) {
+        const errorData = await updateBalanceResponse.json();
+        console.error(
+          `Error updating balance: ${updateBalanceResponse.status} - ${updateBalanceResponse.statusText}`,
+          errorData
+        );
+        throw new Error(`Error updating balance: ${updateBalanceResponse.status}`);
+      }
+  
+      // Navigate back to the cards page
+      router.push("/cabinet/cards");
+    } catch (error) {
+      console.error("Error issuing card:", error);
+      setErrortwo("Error buying card");
+    }
+  };
+  
+  
 
   return (
     <div className={styles.main}>
@@ -136,6 +264,8 @@ function Page() {
               type="text"
               id="cardName"
               name="cardName"
+              value={cardName}
+              onChange={handleCardNameChange}
             />
             <div className={styles.dropdowncontainer}>
               <p className={styles.basetext}>Description</p>
@@ -143,8 +273,10 @@ function Page() {
                 <input
                   className={styles.input}
                   type="text"
-                  id="cardName"
-                  name="cardName"
+                  id="description"
+                  name="description"
+                  value={description}
+                  onChange={handleDescriptionChange}
                 />
               </div>
               <div className={styles.amountcontainer}>
@@ -193,8 +325,14 @@ function Page() {
                 <Link href="/cabinet/cards" style={{ textDecoration: "none" }}>
                   <button className={styles.cancelbutton}>Cancel</button>
                 </Link>
-                <button className={styles.issuebutton}>Issue a new card</button>
+                <button
+                  className={styles.issuebutton}
+                  onClick={handleIssueCard}
+                >
+                  Issue a new card
+                </button>
               </div>
+              {errortwo && <p className={styles.error}>{errortwo}</p>}
             </div>
           </div>
         </div>

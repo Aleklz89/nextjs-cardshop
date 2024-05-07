@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
 import Gears from "../../../components/gears/Gears";
 import styles from './security.module.css';
 import Link from 'next/link';
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
 
 export default function Cards() {
-
+    const [email, setEmail] = useState("");
+    const [userId, setUserId] = useState("");
     const [activities, setActivities] = useState([
         {
             id: 1,
@@ -53,11 +53,11 @@ export default function Cards() {
         },
     ]);
 
+    const [editMode, setEditMode] = useState(false);
+
     const handleRemove = (id) => {
         setActivities(activities.filter(activity => activity.id !== id));
     };
-
-    const [editMode, setEditMode] = useState(false);
 
     const handleEditClick = () => {
         setEditMode(true);
@@ -71,8 +71,6 @@ export default function Cards() {
         setEditMode(false);
     };
 
-
-
     const handleRemoveAll = () => {
         setActivities(currentActivities => {
             if (currentActivities.length > 0) {
@@ -81,17 +79,55 @@ export default function Cards() {
             return [];
         });
     };
+
+    const fetchUserId = async () => {
+        try {
+            const response = await fetch('/api/token');
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+            const data = await response.json();
+            setUserId(data.userId);
+        } catch (error) {
+            console.error('Error fetching user ID:', error);
+        }
+    };
+
+    const fetchUserEmail = async (id) => {
+        try {
+            const response = await fetch(`/api/cabinet?id=${id}`);
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+            const data = await response.json();
+            setEmail(data.user.email);
+        } catch (error) {
+            console.error('Error fetching user email:', error);
+        }
+    };
+
+    useEffect(() => {
+        const getEmail = async () => {
+            await fetchUserId();
+            if (userId) {
+                await fetchUserEmail(userId);
+            }
+        };
+
+        getEmail();
+    }, [userId]);
+
     return (
-        <main>
+        <div>
             <div className={styles.authorizationSettings}>
-                <Link href="/settings" style={{ textDecoration: 'none' }}>
+                <Link href="/cabinet/settings" style={{ textDecoration: 'none' }}>
                     <div className={styles.backLink}>‹ Settings</div>
                 </Link>
                 <h2 className={styles.title}>Safety and security</h2>
                 <div className={styles.authSettingsContainer}>
                     <div className={styles.authSettings}>
                         <label>Email</label>
-                        <input type="email" value="rapidcarmina@awgarstone.com" readOnly />
+                        <input className={styles.authSettings} type="email" value={email} readOnly />
                     </div>
                     {!editMode ? (
                         <div className={styles.authSettings}>
@@ -120,7 +156,6 @@ export default function Cards() {
                         </>
                     )}
                 </div>
-
             </div>
 
             <div className={styles.lastActivity}>
@@ -138,7 +173,6 @@ export default function Cards() {
                 </div>
                 {activities.length > 0 && <button onClick={handleRemoveAll} className={styles.deleteButton}>Delete All</button>}
             </div>
-
-        </main>
-    )
+        </div>
+    );
 }

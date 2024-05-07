@@ -1,73 +1,201 @@
-"use client"
+// components/SignInUpForm.js
+"use client";
 
-import React, { useState } from 'react';
-import { useFormState } from "react-dom"
-import styles from './login.module.css';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import loginAction from './loginAction';
+import { useState } from "react";
+import styles from "./login.module.css";
+import Head from "next/head";
+import { useRouter } from "next/navigation";
 
-
-function SignupForm() {
+export default function SignInUpForm() {
   const router = useRouter();
-  const [error, formAction] = useFormState(loginAction, undefined);
+  const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageStyle, setMessageStyle] = useState({});
+  const [termsAccepted, setTermsAccepted] = useState(false);
+
+  const handleSignUpClick = () => {
+    setIsRightPanelActive(true);
+    resetForm();
+  };
+
+  const handleSignInClick = () => {
+    setIsRightPanelActive(false);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setMessage("");
+    setMessageStyle({});
+    setTermsAccepted(false);
+  };
+
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        router.push("/cabinet/cards"); // Redirect to your desired page
+      } else {
+        setMessage("Invalid email or password");
+        setMessageStyle({ color: "red" });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setMessage("An unexpected error occurred. Please try again.");
+      setMessageStyle({ color: "red" });
+    }
+  };
+
+  const handleSignupSubmit = async (e) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setMessage("Passwords do not match");
+      setMessageStyle({ color: "red" });
+      return;
+    }
+
+    
+
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage("Registration successful. Check your email.");
+        setMessageStyle({ color: "green" });
+      } else if (data.error === "Email is already in use") {
+        setMessage("Email is already registered.");
+        setMessageStyle({ color: "red" });
+      } else if (data.error === "Invalid password format") {
+        setMessage("Invalid password format.");
+        setMessageStyle({ color: "red" });
+      } else {
+        throw new Error(data.error || "Registration error");
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      setMessage("An unexpected error occurred. Please try again.");
+      setMessageStyle({ color: "red" });
+    }
+  };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.signupform}>
-        <form action={formAction}>
-          <div className={styles.logo}>
-          </div>
-          <div className={styles.titleblock}>
-            <div className={styles.swap}>
-              <h2 className={styles.title}>Log in</h2>
-            </div>
-
-            <Link href="/signup" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
-              <div>
-                <h2 className={styles.sign}>Sign up</h2>
-              </div>
-            </Link>
-          </div>
-          <div className={styles.formgroup}>
-            <label htmlFor="email">Email</label>
+    <>
+      <Head>
+        <title>Sign In/Up Form</title>
+      </Head>
+      <div
+        className={`${styles.container} ${
+          isRightPanelActive ? styles.rightPanelActive : ""
+        }`}
+        id="container"
+      >
+        <div className={`${styles.formContainer} ${styles.signUpContainer}`}>
+          <form className={styles.form} onSubmit={handleSignupSubmit}>
+            <h1 className={styles.h1}>Create Account</h1>
+            <span className={styles.span}>Use your email for registration</span>
             <input
+              className={styles.input}
               type="email"
-              id="email"
-              name='email'
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
-          </div>
-          <div className={styles.formgroup}>
-            <label htmlFor="password">Password</label>
             <input
+              className={styles.input}
               type="password"
-              id="password"
-              name='password'
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               minLength="8"
             />
-          </div>
-          <div className={styles.formgroupformcheck}>
             <input
-              type="checkbox"
-              id="terms"
+              className={styles.input}
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
-            <label htmlFor="terms">
-              By signing up, you agree to our Terms of Use and Privacy Policy
-            </label>
+
+            <button type="submit" className={styles.button}>Sign Up</button>
+            <div
+              style={messageStyle}
+              className={styles.message}
+              dangerouslySetInnerHTML={{ __html: message }}
+            ></div>
+          </form>
+        </div>
+        <div className={`${styles.formContainer} ${styles.signInContainer}`}>
+          <form className={styles.form} onSubmit={handleLoginSubmit}>
+            <h1 className={styles.h1}>Sign in</h1>
+            <input
+              className={styles.input}
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <input
+              className={styles.input}
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button type="submit" className={styles.button}>Sign In</button>
+            <div
+              style={messageStyle}
+              className={styles.message}
+              dangerouslySetInnerHTML={{ __html: message }}
+            ></div>
+          </form>
+        </div>
+        <div className={styles.overlayContainer}>
+          <div className={styles.overlay}>
+            <div
+              className={`${styles.overlayPanel} ${styles.overlayLeft}`}
+            >
+              <h1 className={styles.h1}>Welcome Back!</h1>
+              <p className={styles.p}>Stay connected by logging in with your personal information.</p>
+              <button className={styles.ghost} onClick={handleSignInClick}>
+                Sign In
+              </button>
+            </div>
+            <div
+              className={`${styles.overlayPanel} ${styles.overlayRight}`}
+            >
+              <h1 className={styles.h1}>Hello, Friend!</h1>
+              <p className={styles.p}>Provide your personal details and embark on your journey with us.</p>
+              <button className={styles.ghost} onClick={handleSignUpClick}>
+                Sign Up
+              </button>
+            </div>
           </div>
-          <button type="submit" className={styles.btnprimary}>Log in</button>
-
-        </form>
-
-        <div className={styles.message}>{error}</div> 
+        </div>
       </div>
-    </div>
+    </>
   );
 }
-
-export default SignupForm;
-
-
