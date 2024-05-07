@@ -52,7 +52,9 @@ const Dashboard = () => {
       <div className={styles.header}>
         <div className={styles.headerContainer}>
           <h1>Dashboard</h1>
-          <button className={styles.button}>Share</button>
+          <a href={shareUrl} target="_blank" rel="noopener noreferrer">
+            <button className={styles.button}>Share</button>
+          </a>
         </div>
         <div className={styles.buttons}>
           <Link href="/cabinet/cards" style={{ textDecoration: 'none' }} passHref>

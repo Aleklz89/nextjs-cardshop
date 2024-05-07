@@ -8,15 +8,20 @@ const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
   try {
-    const valueRecord = await prisma.singleValue.findFirst();
+    const valueRecord = await prisma.singleValue.findUnique({
+      where: { id: 1 },
+    });
     const value = valueRecord ? valueRecord.value : null;
+
     return NextResponse.json({ value });
   } catch (error) {
-    console.error('Database query failed:', error);
-    return new NextResponse(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
+    console.error("Database query failed:", error);
+    return new NextResponse(
+      JSON.stringify({ error: "Internal Server Error" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 }
-
 
 export async function POST(request: Request) {
   try {
