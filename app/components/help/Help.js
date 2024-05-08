@@ -14,9 +14,11 @@ const Help = () => {
                 <div className={styles.supportcard}>
                     <h2>Technical support</h2>
                     <p>If you have any difficulties while working with the service, contact us</p>
+                    <Link href="https://t.me/cvv888sales" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
                     <div className={styles.supportbuttons}>
                         <button className={styles.supportbutton}><i className={styles.icontelegram}></i> Telegram</button>
                     </div>
+                    </Link>
                 </div>
                 <div className={styles.supportcard}>
                     <h2>Additional information</h2>

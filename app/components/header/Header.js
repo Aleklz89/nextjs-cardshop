@@ -112,8 +112,8 @@ const Header = () => {
             width="55"
           />
           <span className={styles.logoText}>
-            <span className={styles.logoTextCard}>Card</span>
-            <span className={styles.logoTextShop}>Shop</span>
+            <span className={styles.logoTextCard}>CVV</span>
+            <span className={styles.logoTextShop}>888</span>
           </span>
         </Link>
       </div>
