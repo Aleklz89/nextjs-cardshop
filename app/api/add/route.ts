@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
   try {
     const { userId, cardUuid } = await request.json();
 
-    // Ensure the necessary data is present
+
     if (!userId || !cardUuid) {
       return NextResponse.json(
         { error: "Missing userId or cardUuid" },
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Update the cardsIds array in the User model
+
     const user = await prisma.user.update({
       where: { id: userId },
       data: {

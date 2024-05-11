@@ -6,7 +6,6 @@ export const revalidate = 1
 export async function GET(request: Request) {
   try {
     const applications = await prisma.request.findMany();
-    console.log('Fetched applications:', applications);
 
     const response = NextResponse.json({ applications }, { status: 200 });
     response.headers.set('Cache-Control', 'no-store, max-age=0');

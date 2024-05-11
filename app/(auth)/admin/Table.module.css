@@ -3,6 +3,92 @@
     max-height: 400px;
     width: 100%;
     border-collapse: collapse;
+
+}
+
+.patron {
+    margin-left: -70px;
+}
+
+
+
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 7;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-bottom: 0.1px solid white;
+}
+
+.logo {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.themeSwitcher {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lightLabel,
+.darkLabel {
+    font-size: 1.5em;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 25px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 5px;
+    bottom: 2.5px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: rgb(14, 181, 14);
+}
+
+input:checked+.slider:before {
+    transform: translateX(25px);
 }
 
 .total {
@@ -10,7 +96,7 @@
 }
 
 .sum {
-    color: rgb(43, 40, 223);
+    color: rgb(14, 181, 14);
 }
 
 .profit {
@@ -20,7 +106,9 @@
 }
 
 .parent {
+    position: relative;
     display: flex;
+    z-index: -1;
 }
 
 
@@ -32,36 +120,39 @@
     border-top: 2px solid rgb(193, 191, 191);
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
-  }
+}
 
-  .balanceInput {
+.balanceInput {
+    text-align: center;
     width: 80px;
     padding: 4px;
     margin: 0 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    text-align: right;
-  }
-  
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
+    background-color: var(--primary-color);
+    color: var(--text-color);
+}
 
-  .spinner {
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
     border: 3px solid #f3f3f3;
     border-top: 3px solid #3498db;
     border-radius: 50%;
     width: 15px;
     height: 15px;
     animation: spin 1s linear infinite;
-  }
-  
-  
+}
+
+
 .mainblocktwo {
     margin-top: 200px;
     max-height: 400px;
@@ -71,6 +162,7 @@
 }
 
 .scrollabletable {
+    min-width: 1050px;
     max-height: 400px;
     overflow-y: auto;
     width: 100%;
@@ -87,19 +179,16 @@
 .table th,
 .table td {
     border: 1px solid #ddd;
-    /* Добавляем границу для ячеек */
     text-align: left;
-    /* Выравнивание текста по левому краю */
     padding: 8px;
-    /* Паддинг внутри ячеек */
 }
 
 .table th {
-    background-color: #f2f2f2;
-    /* Цвет фона заголовков */
+    background-color: var(--primary-color);
+    color: var(--text-color);
 }
 
-/* Добавление стилей для кнопок */
+
 .btnreject {
     padding: 8px 16px;
     font-size: 16px;
@@ -135,7 +224,6 @@
     margin: 5px;
     transition: background-color 0.3s;
     background-color: #4CAF50;
-    /* Зеленый цвет для кнопки подтверждения */
 }
 
 .sortButton {
@@ -147,11 +235,11 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-  }
-  
-  .sortButton:hover {
+}
+
+.sortButton:hover {
     background-color: #0056b3;
-  }
+}
 
 .btnreject:hover {
     opacity: 0.9;
@@ -177,18 +265,20 @@
     align-items: center;
     justify-content: center;
     z-index: 9999;
-  }
-  
-  .popup {
+}
+
+.popup {
     background: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     max-width: 400px;
     text-align: center;
-  }
-  
-  .popupButton {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+}
+
+.popupButton {
     margin-top: 20px;
     padding: 8px 16px;
     background-color: green;
@@ -196,37 +286,45 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
-  }
-  
-  .popupButton:hover {
+}
+
+.popupButton:hover {
     background-color: rgb(3, 75, 3);
-  }
+}
 
 @media (max-width: 767px) {
     .total {
         margin-left: 15%;
         margin-top: 1300px;
     }
-    
+
     .profit {
         margin-left: 15%;
         height: 500px;
         margin-top: 50px;
     }
+
     .parent {
         display: flex;
         flex-direction: column;
     }
+
     .noData {
         font-size: 12px;
         margin-left: 0;
         margin-top: 10px;
     }
+
     .scrollabletable {
         max-height: 400px;
         overflow-y: auto;
         border-collapse: collapse;
         width: 275px;
+        min-width: 0px;
+    }
+
+    .table {
+        min-width: 1050px;
     }
 
     .mainblock {
@@ -254,6 +352,32 @@
         cursor: pointer;
         margin-left: 8px;
         margin-bottom: 10px;
-      }
-    
+    }
+
+    .btnconfirm {
+        padding: 8px 16px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        margin: 5px;
+        transition: background-color 0.3s;
+        background-color: #4CAF50;
+        /* Зеленый цвет для кнопки подтверждения */
+    }
+
+    .btnreject {
+        padding: 8px 16px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        margin: 5px;
+        transition: background-color 0.3s;
+        background-color: #f44336;
+        /* Красный цвет для кнопки отклонения */
+    }
+
 }

@@ -20,7 +20,6 @@ export async function GET(request: Request) {
         id: parseInt(id, 10)
       }
     });
-    console.log('User fetch result:', user);
 
     if (!user) {
       return NextResponse.json(

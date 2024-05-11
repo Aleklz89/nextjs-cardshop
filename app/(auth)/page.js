@@ -46,7 +46,7 @@ export default function SignInUpForm() {
       });
 
       if (response.ok) {
-        router.push("/cabinet/cards"); // Redirect to your desired page
+        router.push("/cabinet/cards"); 
       } else {
         setMessage("Invalid email or password");
         setMessageStyle({ color: "red" });
@@ -79,7 +79,7 @@ export default function SignInUpForm() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage("Registration successful. Check your email.");
+        setMessage("The registration request was successful. We will contact you by email.");
         setMessageStyle({ color: "green" });
       } else if (data.error === "Email is already in use") {
         setMessage("Email is already registered.");
@@ -147,7 +147,7 @@ export default function SignInUpForm() {
               required
             />
 
-            <button type="submit" className={styles.button}>Sign Up</button>
+            <button type="submit" className={styles.button}>Request registration</button>
             <div
               style={messageStyle}
               className={styles.message}

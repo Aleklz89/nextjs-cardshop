@@ -8,13 +8,14 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
+  id        Int           @id @default(autoincrement())
+  email     String        @unique
   password  String
-  balance   Decimal   @default(0) @db.Decimal(10, 2)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  balance   Decimal       @default(0) @db.Decimal(10, 2)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
   cardsIds  String[]
+  transactions Transaction[] // Связь с таблицей транзакций
 }
 
 model Request {
@@ -24,8 +25,17 @@ model Request {
   submissionTime DateTime @default(now())
 }
 
-
 model SingleValue {
   id    Int    @id @default(autoincrement())
   value Float
+}
+
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  type        String   
+  description String   
+  amount      Float    
+  timestamp   DateTime @default(now())
 }

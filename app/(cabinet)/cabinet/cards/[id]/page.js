@@ -63,7 +63,7 @@ export default function CardPage() {
 
     try {
       // Комментируем запрос на удаление в epn
-      /*
+      
       const response = await fetch('https://api.epn.net/card', {
         method: 'DELETE',
         headers: {
@@ -80,7 +80,7 @@ export default function CardPage() {
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-      */
+      
 
       // Удаление карты из массива пользователя
       const removeResponse = await fetch('/api/del', {
@@ -181,17 +181,6 @@ export default function CardPage() {
             </a>
           </div>
           <div className={styles.greyline}></div>
-          <div className={styles.buttons}>
-            <Link href={`/cabinet/cards/${selectedCard.uuid}`} style={{ textDecoration: 'none' }}>
-              <button className={styles.buy}>Overview</button>
-            </Link>
-            <Link href={`/cabinet/cards/${selectedCard.uuid}/transfer`} style={{ textDecoration: 'none' }}>
-              <button className={styles.button}>Transfer</button>
-            </Link>
-            <Link href={`/cabinet/cards/${selectedCard.uuid}/auto`} style={{ textDecoration: 'none' }}>
-              <button className={styles.button}>Auto top up</button>
-            </Link>
-          </div>
         </div>
       </div>
       <div className={styles.cardblock}>

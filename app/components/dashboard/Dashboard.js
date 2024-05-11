@@ -5,11 +5,9 @@ import styles from './Dashboard.module.css';
 import Link from 'next/link';
 
 const Dashboard = () => {
-
-
-  const [balance, setBalance] = useState(0);
+  const [balance, setBalance] = useState(null); // Начальное значение - `null`
   const [userId, setUserId] = useState(null);
-
+  const [isLoadingBalance, setIsLoadingBalance] = useState(true); // Добавлено состояние загрузки баланса
 
   const fetchUserId = async () => {
     try {
@@ -34,6 +32,9 @@ const Dashboard = () => {
       setBalance(data.user.balance);
     } catch (error) {
       console.error('Error fetching user balance:', error);
+      setBalance(null); // При ошибке устанавливаем `null`
+    } finally {
+      setIsLoadingBalance(false); // Отключаем состояние загрузки
     }
   };
 
@@ -50,7 +51,6 @@ const Dashboard = () => {
   const rootUrl = process.env.NEXT_PUBLIC_ROOT_URL;
   const shareUrl = `https://telegram.me/share/url?url=${encodeURIComponent(rootUrl)}/&text=CVV888`;
 
-
   return (
     <div className={styles.dashboard}>
       <div className={styles.header}>
@@ -62,7 +62,6 @@ const Dashboard = () => {
         </div>
         <div className={styles.buttons}>
           <Link href="/cabinet/cards" style={{ textDecoration: 'none' }} passHref>
-
             <button className={styles.buy}>My cards</button>
           </Link>
           <Link href="/cabinet/buycard" style={{ textDecoration: 'none' }} passHref>
@@ -75,10 +74,10 @@ const Dashboard = () => {
       </div>
       <div className={styles.totalWorth}>
         <span>Balance</span>
-        <h2>${balance}</h2>
+        <h2>
+          {isLoadingBalance ? "Loading balance..." : `$${balance}`}
+        </h2>
       </div>
-
-
     </div>
   );
 };

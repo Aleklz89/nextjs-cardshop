@@ -14,10 +14,9 @@ const Fullhistory = ({ transactions }) => {
               <div className={styles.transactionType}>{transaction.type}</div>
               <div className={styles.transactionDescription}>{transaction.description}</div>
               <div className={styles.transactionAmount} style={{ color: transaction.amount >= 0 ? 'green' : 'red' }}>
-                {transaction.amount >= 0 ? `+${transaction.amount.toFixed(2)}` : transaction.amount.toFixed(2)}
-              </div>
-              <div className={styles.transactionConfirmed}>
-                {transaction.confirmed ? '✓' : '✕'}
+                <p className={styles.number}>
+                  {transaction.amount >= 0 ? `+${transaction.amount.toFixed(2)}` : transaction.amount.toFixed(2)}
+                </p>
               </div>
             </div>
           ))}
@@ -29,4 +28,3 @@ const Fullhistory = ({ transactions }) => {
 
 export default Fullhistory;
 
-  

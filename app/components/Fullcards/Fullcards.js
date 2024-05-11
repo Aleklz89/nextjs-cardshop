@@ -69,25 +69,13 @@ const Fullcards = () => {
     fetchAllCards();
   }, []);
 
-  // Фильтруем карты по `external_id` из `cardsIds`
+
   const filteredCards = cardsData.filter((card) => userCards.includes(card.external_id));
 
   return (
     <div className={styles.assetsContainer}>
       <div className={styles.header}>
         <h2 className={styles.amount}>Cards: {filteredCards.length}</h2>
-        <Link href="/cabinet/tags" style={{ textDecoration: 'none' }}>
-          <button className={styles.managetagsbtn}>
-            <Image
-              src="https://i.ibb.co/cx5rk1n/tune-icon-137067.png"
-              alt="Manage tags"
-              className={styles.icontags}
-              width={20}
-              height={20}
-            />
-            Manage tags
-          </button>
-        </Link>
       </div>
 
       <div className={styles.cardsContainer}>

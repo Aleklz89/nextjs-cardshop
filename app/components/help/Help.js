@@ -26,9 +26,6 @@ const Help = () => {
                         <Link href="/cabinet/faq" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
                             <li>FAQ</li>
                         </Link>
-                        <Link href="/cabinet/refund" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
-                            <li>Refunds search</li>
-                        </Link>
                     </ul>
                 </div>
             </div>

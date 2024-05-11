@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './Table.module.css';
+import '../globals.css'
 
 function Page() {
   const [data, setData] = useState([]);
@@ -25,6 +26,9 @@ function Page() {
   const [originalValue, setOriginalValue] = useState('');
   const [errortwo, setErrortwo] = useState('');
   const [showPopup, setShowPopup] = useState(false);
+  const [loadingRequests, setLoadingRequests] = useState(true);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+  
 
   const fetchValue = async () => {
     try {
@@ -128,6 +132,7 @@ function Page() {
 
       setData(sortedData);
       setFilteredData(sortedData);
+      setLoadingRequests(false);
     } else {
       console.error("Не удалось загрузить данные");
     }
@@ -146,6 +151,7 @@ function Page() {
       setOriginalBalances(balances);
 
       applyFiltersAndSortTwo(users);
+      setLoadingUsers(false);
     } else {
       console.error("Не удалось загрузить данные для второй таблицы");
     }
@@ -284,34 +290,69 @@ function Page() {
   };
 
   const handleAcceptBalanceChange = async (id) => {
-    const newBalance = editableBalances[id];
-
-    console.log(originalBalances)
-
-    // Сумма всех балансов
+    const newBalance = Number(editableBalances[id]);
+  
+    // Получение баланса пользователя перед изменением
+    const response = await fetch(`/api/user`);
+    const usersData = await response.json();
+    const user = usersData.users.find((item) => item.id === id);
+    const currentBalance = Number(user.balance);
+  
+    // Вычисляем изменение баланса
+    const balanceChange = newBalance - currentBalance;
+  
+  
+    console.log(originalBalances);
+  
+    // Считаем суммарный баланс пользователей
     const totalUserBalance = Object.values({
       ...originalBalances,
-      [id]: Number(newBalance) // Убедимся, что newBalance — число
+      [id]: newBalance
     }).reduce((acc, curr) => acc + Number(curr), 0);
     const requiredBalance = parseFloat(balance) + (parseFloat(balance) * (parseFloat(value) / 100));
-
-    console.log(totalUserBalance)
-    console.log(requiredBalance)
-
-    if (totalUserBalance > requiredBalance) {
+  
+    console.log(totalUserBalance - 1);
+    console.log(requiredBalance);
+  
+    // Проверка наличия достаточного основного баланса
+    if ((totalUserBalance - 1) > requiredBalance) {
       setShowPopup(true);
       return;
     }
-
-    const response = await fetch(`/api/update`, {
-      method: "POST",
+  
+    // Обновление баланса
+    const updateResponse = await fetch(`/api/update`, {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ id, balance: newBalance }),
     });
 
-    if (response.ok) {
+    // Если новый баланс меньше текущего, не добавляем транзакцию
+    if (balanceChange <= 0) {
+      return;
+    }
+  
+    if (updateResponse.ok) {
+      // Добавление транзакции после успешного обновления баланса
+      const transactionResponse = await fetch('/api/newtrans', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: id,
+          type: 'deposit',
+          description: 'Debited from Main account',
+          amount: balanceChange,
+        }),
+      });
+  
+      if (!transactionResponse.ok) {
+        console.error('Ошибка при добавлении транзакции');
+      }
+  
       setOriginalBalances((prevBalances) => ({
         ...prevBalances,
         [id]: newBalance,
@@ -321,9 +362,10 @@ function Page() {
         [id]: newBalance,
       }));
     } else {
-      console.error("Ошибка при обновлении баланса");
+      console.error('Ошибка при обновлении баланса');
     }
   };
+  
 
   function formatDate(isoString) {
     const date = new Date(isoString);
@@ -353,8 +395,39 @@ function Page() {
     setShowPopup(false);
   };
 
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    setTheme(savedTheme);
+    document.documentElement.setAttribute("data-theme", savedTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+  };
+
   return (
-    <div>
+    <div className={styles.patron}>
+      <header className={styles.header}>
+        <div className={styles.logo}>CVV888</div>
+        <div>Admin panel</div>
+        <div className={styles.themeSwitcher}>
+          <span className={styles.lightLabel}>🌞</span>
+          <label className={styles.switch}>
+            <input
+              type="checkbox"
+              checked={theme === "dark"}
+              onChange={toggleTheme}
+            />
+            <span className={styles.slider}></span>
+          </label>
+          <span className={styles.darkLabel}>🌜</span>
+        </div>
+      </header>
       <div className={styles.parent}>
         <div className={styles.total}>
           <h1>Текущий баланс:</h1>
@@ -390,7 +463,12 @@ function Page() {
       <div className={styles.mainblock}>
         <h2>Запросы на регистрацию</h2>
         <div className={styles.scrollabletable}>
-          {filteredData.length > 0 ? (
+          {loadingRequests ? (
+            <div className={styles.loaderContainer}>
+              <div className={styles.loader}></div>
+              <p>Загрузка данных...</p>
+            </div>
+          ) : filteredData.length > 0 ? (
             <table className={styles.table}>
               <thead>
                 <tr>
@@ -451,13 +529,20 @@ function Page() {
                     <tr key={item.id}>
                       <td>{formatDate(item.submissionTime)}</td>
                       <td>{item.email}</td>
-                      <td><button onClick={() => handleReject(item.id)} className={styles.btnreject}>Отклонить</button></td>
-                      <td><button onClick={() => handleAccept(item.id, item.email, item.password)} className={styles.btnconfirm}>Подтвердить</button></td>
+                      <td>
+                        <button onClick={() => handleReject(item.id)} className={styles.btnreject}>
+                          Отклонить
+                        </button>
+                      </td>
+                      <td>
+                        <button onClick={() => handleAccept(item.id, item.email, item.password)} className={styles.btnconfirm}>
+                          Подтвердить
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-
               <div className={styles.noData}>
                 Запросов на регистрацию нет
               </div>
@@ -468,12 +553,17 @@ function Page() {
       <div className={styles.mainblocktwo}>
         <h2>Пользователи</h2>
         <div className={styles.scrollabletable}>
-          {dataTwo.length > 0 ? (
+          {loadingUsers ? (
+            <div className={styles.loaderContainer}>
+              <div className={styles.loader}></div>
+              <p>Загрузка данных...</p>
+            </div>
+          ) : dataTwo.length > 0 ? (
             <table className={styles.table}>
               <thead>
                 <tr>
                   <th>Зарегистрировался</th>
-                  <th>Последнее пополнение</th>
+                  <th>Последнее изменение баланса</th>
                   <th>Почта</th>
                   <th>Баланс</th>
                   <th>Отклонить</th>
@@ -481,12 +571,12 @@ function Page() {
                 </tr>
               </thead>
               <tbody>
-                {dataTwo.map((item) => (
+                {dataTwo.slice().reverse().map((item) => (
                   <tr key={item.id}>
                     <td>{formatDate(item.createdAt)}</td>
                     <td>
                       {item.createdAt === item.updatedAt
-                        ? "Никогда не пополнял"
+                        ? 'Никогда не пополнял'
                         : formatDate(item.updatedAt)}
                     </td>
                     <td>{item.email}</td>
@@ -542,7 +632,7 @@ function Page() {
                       <td>{formatDate(item.createdAt)}</td>
                       <td>
                         {item.createdAt === item.updatedAt
-                          ? "Никогда не пополнял"
+                          ? 'Никогда не пополнял'
                           : formatDate(item.updatedAt)}
                       </td>
                       <td>{item.email}</td>
@@ -560,18 +650,12 @@ function Page() {
                         $
                       </td>
                       <td>
-                        <button
-                          onClick={() => handleRejectBalanceChange(item.id)}
-                          className={styles.btnreject}
-                        >
+                        <button onClick={() => handleRejectBalanceChange(item.id)} className={styles.btnreject}>
                           Отклонить
                         </button>
                       </td>
                       <td>
-                        <button
-                          onClick={() => handleAcceptBalanceChange(item.id)}
-                          className={styles.btnconfirm}
-                        >
+                        <button onClick={() => handleAcceptBalanceChange(item.id)} className={styles.btnconfirm}>
                           Подтвердить
                         </button>
                       </td>
@@ -579,7 +663,6 @@ function Page() {
                   ))}
                 </tbody>
               </table>
-
               <div className={styles.noData}>
                 Пользователей нет
               </div>
