@@ -6,6 +6,7 @@ import Transhistory from '../../../components/transhistory/Transhistory';
 import Fullhistory from '../../../components/transhistory/fullhistory/Fullhistory';
 
 const Transactions = () => {
+  const [userId, setUserId] = useState(null); // State to store the user ID
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('');
   const [dateRange, setDateRange] = useState({
@@ -16,19 +17,40 @@ const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
   const [filteredTransactions, setFilteredTransactions] = useState({});
 
+  // Fetch user ID on mount
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const response = await fetch('/api/token');
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+        const data = await response.json();
+        setUserId(data.userId);
+        console.log(data.userId)
+      } catch (error) {
+        console.error('Error fetching user ID:', error);
+      }
+    };
+    fetchUserId();
+  }, []);
+
   const fetchTransactions = async () => {
-    try {
-      const response = await fetch('/api/gettrans');
-      const data = await response.json();
-      setTransactions(data);
-    } catch (error) {
-      console.error('Error fetching transactions:', error);
+    if (userId) {
+      try {
+        const response = await fetch(`/api/gettrans?userId=${userId}`);
+        const data = await response.json();
+        setTransactions(data);
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
     }
   };
 
+  // Fetch transactions when userId is set
   useEffect(() => {
     fetchTransactions();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     const lowerCaseSearchQuery = searchQuery.toLowerCase();
