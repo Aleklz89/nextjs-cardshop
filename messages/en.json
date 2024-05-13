@@ -1,0 +1,177 @@
+{
+    "IndexPage": {
+        "signin": "Sign in",
+        "email": "Email",
+        "password": "Password",
+        "hello": "Hello, Friend!",
+        "provide": "Provide your personal details and embark on your journey with us.",
+        "signup": "Sign Up",
+        "welcome": "Welcome Back!",
+        "stay": "Stay connected by logging in with your personal information.",
+        "create": "Create Account",
+        "use": "Use your email and telegram for registration",
+        "confirm": "Confirm Password",
+        "request": "request registration"
+        
+    },
+
+    "BuyCard": {
+        "dashboard": "Dashboard",
+        "cards": "My cards",
+        "order": "Order a card",
+        "topup": "Top up",
+        "balance": "Balance",
+        "become": "Become the owner of CVV888 card",
+        "share": "Share",
+        "wide": "A wide selection of cards to suit everyone's needs",
+        "from": "from $10/month",
+        "fromtwo": "from 10%",
+        "start": "Starting next month from 10%",
+        "commission": "Commission for replenishment",
+        "market": "Market",
+        "bin": "BINs",
+        "design": "Ad-cards are designed and optimized to pay for ads.",
+        "buy": "Buy"
+    },
+
+    "BuyCardId": {
+        "market": "Market",
+        "order": "Ordering a card",
+        "account": "Account",
+        "loading":"Loading balance...",
+        "personal": "Personal account",
+        "name": "Name of the card",
+        "deposit": "Deposit amount per card",
+        "max": "MAXIMUM",
+        "quantity": "Cards quantity",
+        "replenish": "When replenishing the card for an amount less than $99.99, the card issue will cost $9.00",
+        "total": "Total cost",
+        "cancel": "Cancel",
+        "issue": "Issue a new card",
+        "search": "Search"
+    },
+
+    "Cards": {
+        "cards": "Cards",
+        "share": "Share",
+        "requisites": "Card requisites",
+        "number": "Card number",
+        "date": "Card expiry date",
+        "cvc": "CVC/CVV",
+        "owner": "Card owner",
+        "address": "Address",
+        "delete": "Are you sure you want to delete the card?",
+        "yes": "yes",
+        "no": "no"
+    },
+
+    "FAQ": {
+        "terms": "Terms of money withdrawal from the card to the account?",
+        "transfer": "The transfer of funds from the card to the account balance takes no more than 1 day.",
+        "support": "Support service operating hours?",
+        "personal": "24/7 personal support.",
+        "bin": "What is BIN?",
+        "bank": "Bank identification number, it defines the payment system of the card (Visa, MS, etc.), the country of the issued card, the bank that issued the card, etc. You can independently check our BINs using any BINchecker # https://bincheck.io/",
+        "account": "Why is it necessary to verify the account?",
+        "verification": "Account verification allows you to issue an unlimited number of cards and get access to additional BINs.",
+        "possible": "Is it possible to withdraw money from the service?",
+        "service": "Yes, it is possible. The service charges a commission of 10% of the withdrawal amount. Please note that the minimum withdrawal amount is $100",
+        "level": "What is the level of trust to our cards among media platforms?",
+        "cards": "Our cards are highly trusted and are compatible with almost all advertising services. We are actively fighting with fraudulent actions that affect credibility from media platforms towards our cards. Users violating the companys policy may be banned.",
+        "view": "How to view the transactions history?",
+        "history": "You can view the history of transactions in the 'Transaction history' section. To do that go to the 'Transactions' section, select the necessary card by clicking on the icon and you will find the transaction history.",
+        "topup": "How to top up the balance?",
+        "section": "Go to the 'Cards --> Top up' section. Enter the deposit amount (at least 30.00 USD). Choose the 'Top up' section. Select the deposit method 'BTC' or 'USDT'. Make the transfer.",
+        "turnon": "How can I turn on the automatic card replenishment?",
+        "issue": "When the card is issued, you will be asked to add an option for an automatic replenishment of the card. If you did not use this function and wish to do it later, you need to open 'Cards' section, select the card you need and click 'Auto-top-up'. Enter the required amount and click 'Save'.",
+        "forget": "What happens if you forget to top up your card on time?",
+        "case": "In this case, your card will be blocked without further possibility to unblock it. For your convenience, use the 'auto-top-up' option.",
+        "cost": "How much does the card service cost?",
+        "fee": "Service monthly fees: Universal cards - 15 USD per month Advertisement cards - 10 USD per month. Also, the service charges a single commission of 2.5-7%, depending on the amount.",
+        "time": "How long does it take to issue a card?",
+        "when": "The card will be issued immediately.",
+        "order": "How to order the card?",
+        "choose": "Choose the 'Cards' section, click 'Order a card', choose the type of the card you are interested in and click 'Buy', enter the amount you would like to deposit, confirm the terms of the service, click 'Order a new card' button.",
+        "back": "Support",
+        "question": "Frequently Asked Questions"
+    },
+
+    "Settings": {
+        "safety": "Safety and security",
+        "email": "Email",
+        "password": "Password",
+        "edit": "Edit",
+        "old": "Enter old password",
+        "new": "New password",
+        "repeat": "Repeat new password",
+        "cancel": "Cancel",
+        "save": "Save"
+    },
+
+    "Topup": {
+        "dashboard": "Dashboard",
+        "share": "Share",
+        "cards": "My cards",
+        "order": "Order a card",
+        "topup": "Top up",
+        "balance": "Balance",
+        "date": "For up-to-date requisites, please contact the manager.",
+        "telegram": "Telegram:"
+    },
+
+    "Cardlist": {
+        "loading": "Loading...",
+        "nothing": "Nothing so far 💸",
+        "order": "Order a card to get started!",
+        "card": "Order a card"
+    },
+    "Dashboard": {
+        "dashboard": "Dashboard",
+        "share":"Share",
+        "cards": "My cards",
+        "order": "Order a card",
+        "topup": "Top up",
+        "balance": "Balance"
+    },
+
+    "Filters": {
+        "transactions": "Transactions",
+        "share": "Share",
+        "transaction": "Transaction type",
+        "confirmed": "Confirmed",
+        "declined": "Declined",
+        "deposit": "Deposit",
+        "withdraw": "Withdraw"
+    },
+
+    "Fullcards": {
+        "cards": "Cards:"
+    },
+
+    "Header": {
+        "logout": "Log Out",
+        "security": "Safety and security"
+    },
+
+    "Support": {
+        "support": "Support",
+        "technical": "Technical support",
+        "service": "If you have any difficulties while working with the service, contact us",
+        "telegram": "Telegram",
+        "information": "Additional information",
+        "FAQ": "FAQ"
+    },
+
+    "Sidebar": {
+        "cards": "Cards",
+        "transactions": "Transactions",
+        "support": "Support",
+        "settings": "Settings"
+    },
+
+    "TransHistory": {
+        "transactions": "No transactions to display 🕵️",
+        "activity": "Up your transactions activity first!‍"
+    }
+
+}

@@ -6,87 +6,104 @@ import bcrypt from "bcryptjs";
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { email, password } = body;
+        const { email, password, telegram } = body;
 
-        // Separate validation for email
+        // Validation for email
         if (!validateEmail(email)) {
             return new Response(
-                JSON.stringify({
-                    error: "Invalid email format",
-                }),
+                JSON.stringify({ error: "Invalid email format" }),
                 { status: 400, headers: { 'Content-Type': 'application/json' } }
             );
         }
 
-        // Separate validation for password
+        // Validation for password
         if (!validatePassword(password)) {
             return new Response(
-                JSON.stringify({
-                    error: "Invalid password format",
-                }),
+                JSON.stringify({ error: "Invalid password format" }),
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+
+        // Validation for telegram
+        if (!telegram || telegram.trim() === "") {
+            return new Response(
+                JSON.stringify({ error: "Telegram username is required" }),
                 { status: 400, headers: { 'Content-Type': 'application/json' } }
             );
         }
 
         // Check if the email is already in use
-        const existingUser = await prisma.user.findUnique({
+        const existingUserByEmail = await prisma.user.findUnique({
             where: { email },
         });
 
-        if (existingUser) {
+        if (existingUserByEmail) {
             return new Response(
-                JSON.stringify({
-                    error: "Email is already in use",
-                }),
+                JSON.stringify({ error: "Email is already in use" }),
                 { status: 400, headers: { 'Content-Type': 'application/json' } }
             );
         }
 
+        // Check if the telegram username is already in use
+        const existingUserByTelegram = await prisma.user.findUnique({
+            where: { telegram },
+        });
+
+        if (existingUserByTelegram) {
+            return new Response(
+                JSON.stringify({ error: "Telegram username is already in use" }),
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+
+        // Проверка, что email уже не использован в запросах регистрации
+        const existingRequestByEmail = await prisma.request.findUnique({
+            where: { email },
+        });
+
+        if (existingRequestByEmail) {
+            return new Response(
+                JSON.stringify({ error: "Email is already in use" }),
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+
+        // Проверка, что telegram уже не использован в запросах регистрации
+        const existingRequestByTelegram = await prisma.request.findUnique({
+            where: { telegram },
+        });
+
+        if (existingRequestByTelegram) {
+            return new Response(
+                JSON.stringify({ error: "Telegram username is already in use" }),
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+
+
         // Hash the password
         const hash = bcrypt.hashSync(password, 8);
 
-        // Try to create a registration request
-        try {
-            await prisma.request.create({
-                data: {
-                    email,
-                    password: hash,
-                },
-            });
-        } catch (error) {
-            // Handle unique constraint violations
-            if (error.code === "P2002" && error.meta?.target.includes("email")) {
-                return new Response(
-                    JSON.stringify({
-                        error: "You have already submitted a registration request.",
-                    }),
-                    { status: 400, headers: { 'Content-Type': 'application/json' } }
-                );
-            } else {
-                console.error("Database insertion error:", error);
-                return new Response(
-                    JSON.stringify({
-                        error: "Internal server error",
-                    }),
-                    { status: 500, headers: { 'Content-Type': 'application/json' } }
-                );
-            }
-        }
+        // Create a registration request
+        await prisma.request.create({
+            data: {
+                email,
+                password: hash,
+                telegram,
+            },
+        });
 
-        // Return success response
+        // Success response
         return new Response(
-            JSON.stringify({
-                message: "Registration request created successfully",
-            }),
+            JSON.stringify({ message: "Registration request created successfully" }),
             { status: 200, headers: { 'Content-Type': 'application/json' } }
         );
     } catch (error) {
         console.error('Error handling registration request:', error);
         return new Response(
-            JSON.stringify({
-                error: "Internal server error",
-            }),
+            JSON.stringify({ error: "Internal server error" }),
             { status: 500, headers: { 'Content-Type': 'application/json' } }
         );
     }
 }
+

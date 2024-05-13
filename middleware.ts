@@ -1,14 +1,22 @@
 import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import * as jose from "jose";
+import createMiddleware from 'next-intl/middleware';
 
+// Объединённый async middleware
 export async function middleware(request: NextRequest) {
-  const cookieToken = cookies().get("Authorization")?.value || ''; 
+  const intlMiddleware = createMiddleware({
+    locales: ['en', 'uk'],
+    defaultLocale: 'en'
+  });
 
+  // Вызов middleware для интернационализации
+  const response = intlMiddleware(request);
+  if (response) return response;
+
+  // Обработка JWT
+  const cookieToken = cookies().get("Authorization")?.value || '';
   const urlToken = request.nextUrl.searchParams.get('token') || '';
-
-
   const jwt = urlToken || cookieToken;
   
   if (!jwt) {
@@ -44,5 +52,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/cabinet/:path*', '/admin/:path*'],
-}
+  // Матчеры для обоих видов маршрутов
+  matcher: ['/', '/(uk|en)/:path*', '/cabinet/:path*', '/admin/:path*']
+};

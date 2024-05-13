@@ -18,7 +18,6 @@ export async function DELETE(request: Request) {
         id: parseInt(id, 10),
       },
     });
-    console.log('Delete operation result:', deletedRequest);
 
     if (!deletedRequest) {
       return NextResponse.json(

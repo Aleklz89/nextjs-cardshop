@@ -1,39 +1,42 @@
-// app/api/single-value/route.js
 import { PrismaClient } from '@prisma/client';
 import { NextResponse } from 'next/server';
-export const revalidate = 1
 
 const prisma = new PrismaClient();
 
-
 export async function GET(request: Request) {
-  try {
-    const valueRecord = await prisma.singleValue.findUnique({
-      where: { id: 1 },
-    });
-    const value = valueRecord ? valueRecord.value : null;
+  const url = new URL(request.url);
+  const userId = url.searchParams.get('id'); // Предполагается, что id передается через query параметры
 
-    return NextResponse.json({ value });
+  if (!userId) {
+    return new NextResponse(
+      JSON.stringify({ error: "User ID is required" }),
+      { status: 400, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(userId) },
+      select: { markup: true },
+    });
+
+
+    if (!user) {
+      return new NextResponse(
+        JSON.stringify({ error: "User not found" }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    return new NextResponse(
+      JSON.stringify({ markup: user.markup }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   } catch (error) {
     console.error("Database query failed:", error);
     return new NextResponse(
       JSON.stringify({ error: "Internal Server Error" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
-  }
-}
-
-export async function POST(request: Request) {
-  try {
-    const { value } = await request.json();
-    const updatedValue = await prisma.singleValue.upsert({
-      where: { id: 1 },
-      update: { value },
-      create: { value },
-    });
-    return new NextResponse(JSON.stringify({ value: updatedValue.value }), { status: 200 });
-  } catch (error) {
-    console.error('Database query failed:', error);
-    return new NextResponse(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
   }
 }
