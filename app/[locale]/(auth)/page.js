@@ -6,6 +6,7 @@ import Head from "next/head";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useTranslations } from "next-intl"
+import Switcher from "../components/switcher/Switcher";
 
 
 export default function SignInUpForm() {
@@ -131,7 +132,7 @@ export default function SignInUpForm() {
       <Head>
         <title>Sign In/Up Form</title>
       </Head>
-      
+
       <div
         className={`${styles.container} ${isRightPanelActive ? styles.rightPanelActive : ""
           }`}
@@ -197,7 +198,7 @@ export default function SignInUpForm() {
             <input
               className={styles.input}
               type="password"
-              placeholder="Password"
+              placeholder={translations('IndexPage.password')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -218,7 +219,7 @@ export default function SignInUpForm() {
               <h1 className={styles.h1}>{translations('IndexPage.hello')}</h1>
               <p className={styles.p}>{translations('IndexPage.stay')}</p>
               <button className={styles.ghost} onClick={handleSignInClick}>
-              {translations('IndexPage.signin')}
+                {translations('IndexPage.signin')}
               </button>
             </div>
             <div
@@ -227,7 +228,7 @@ export default function SignInUpForm() {
               <h1 className={styles.h1}>{translations('IndexPage.hello')}</h1>
               <p className={styles.p}>{translations('IndexPage.provide')}</p>
               <button className={styles.ghost} onClick={handleSignUpClick}>
-              {translations('IndexPage.signin')}
+                {translations('IndexPage.signin')}
               </button>
             </div>
           </div>

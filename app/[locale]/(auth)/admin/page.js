@@ -304,13 +304,13 @@ function Page() {
       [id]: originalBalances[id],
     }));
     setTimeout(() => {
-      setLoadingRejectBalance(null); // Сбрасываем состояние загрузки
-    }, 5000); // Допустим, процесс занимает 5 секунд
+      setLoadingRejectBalance(null); 
+    }, 5000); 
   };
 
   const handleAcceptBalanceChange = async (id) => {
     console.log(id)
-    setLoadingAcceptBalance(id); // Устанавливаем состояние загрузки
+    setLoadingAcceptBalance(id);
     const newBalance = Number(editableBalances[id]);
     const newMarkup = Number(editableMarkups[id]);
     const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/user`);
@@ -370,8 +370,8 @@ function Page() {
       }
     }
     setTimeout(() => {
-      setLoadingAcceptBalance(null); // Сбрасываем состояние загрузки
-    }, 5000); // Допустим, процесс занимает 5 секунд
+      setLoadingAcceptBalance(null); 
+    }, 5000); 
   };
 
 

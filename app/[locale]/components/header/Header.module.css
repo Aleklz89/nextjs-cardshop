@@ -277,3 +277,104 @@
     transform: translateX(-100%);
   }
 }
+
+.sidebar {
+  width: 250px; 
+  background: #FFF; 
+  margin-top: 40px;
+  
+}
+
+@media (max-width: 850px) {
+  .sidebar {
+    display: none;
+    
+  }
+
+  .pressed {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+  }
+}
+
+
+.navList {
+  list-style: none; 
+  padding: 0; 
+  
+  
+}
+
+.navItem {
+  padding: 10px;
+  border-radius: 10px; 
+  height: 35px;
+  font-weight: 700px;
+  padding-top: 18px;
+  cursor: pointer;
+}
+
+
+.navItem a {
+  text-decoration: none;
+  color: #333; 
+  display: flex;
+  align-items: center; 
+  font-weight: 600;
+  margin-top: -3px;
+}
+
+.icon {
+  margin-right: 10px; 
+}
+
+.navItem:hover {
+  background: #d7fadc;
+}
+
+.active {
+  padding: 10px;
+  border-radius: 10px;
+  height: 35px;
+  font-weight: 700px;
+  padding-top: 18px;
+  cursor: pointer;
+  background: #d7fadc;
+}
+
+.active a {
+  text-decoration: none;
+  color: #333;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  margin-top: -3px;
+}
+
+/* styles.module.css */
+.nav {
+  display: flex; /* делаем меню горизонтальным */
+  align-items: center; /* выравнивание элементов по центру по вертикали */
+  background-color: #fff; /* фоновый цвет меню */
+  padding: 10px 20px; /* отступы внутри меню */
+}
+
+.icon {
+  margin-right: 8px; /* отступ справа от иконки */
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  margin-right: 20px; /* отступ между элементами меню */
+  color: #333; /* цвет текста элементов */
+  font-size: 16px; /* размер шрифта */
+  text-decoration: none; /* убрать подчеркивание текста */
+  cursor: pointer; /* курсор в виде указателя */
+}
+
+.menuItem:last-child {
+  margin-right: 0; /* убрать отступ у последнего элемента */
+}
