@@ -149,7 +149,7 @@ function Page() {
   const handleMaxButtonClick = () => {
     let maxAmount = balance;
     if (balance < 100) {
-      maxAmount = Math.max(0, balance - 10);
+      maxAmount = Math.max(0, balance);
     }
     setDepositAmount(maxAmount.toFixed(2));
     const total = calculateTotalCost(maxAmount, cardsQty);

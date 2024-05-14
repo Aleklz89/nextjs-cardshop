@@ -97,7 +97,7 @@ const Transactions = () => {
       return acc;
     }, {});
 
-    console.log('Filtered transactions:', newFilteredTransactions); // Log filtered transactions
+    console.log('Filtered transactions:', newFilteredTransactions);
 
     setFilteredTransactions(newFilteredTransactions);
     setIsEmpty(Object.keys(newFilteredTransactions).length === 0);

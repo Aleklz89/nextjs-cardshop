@@ -55,7 +55,10 @@
         "total": "Total cost",
         "cancel": "Cancel",
         "issue": "Issue a new card",
-        "search": "Search"
+        "search": "Search",
+        "fill": "Fill in all the fields",
+        "funds": "Insufficient funds",
+        "error": "Error buying card"
     },
 
     "Cards": {
