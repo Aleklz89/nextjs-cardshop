@@ -169,13 +169,13 @@ export default function CardPage() {
     <div>
       <div className={styles.dashboard}>
         <Link href="/cabinet/cards" style={{ textDecoration: 'none' }}>
-          <div className={styles.backLink}>‹ {translations('BuyCard.cards')}</div>
+          <div className={styles.backLink}>‹ {translations('Cards.cards')}</div>
         </Link>
         <div className={styles.header}>
           <div className={styles.headerContainer}>
             <h2 className={styles.title}>{selectedCard.tariff.name} {selectedCard.ordered_at}</h2>
             <a href={shareUrl} target="_blank" rel="noopener noreferrer">
-              <button className={styles.button}>{translations('BuyCard.share')}</button>
+              <button className={styles.button}>{translations('Cards.share')}</button>
             </a>
           </div>
           <div className={styles.greyline}></div>
@@ -191,43 +191,43 @@ export default function CardPage() {
           </div>
         </div>
         <div className={styles.desc}>
-          <p className={styles.smalltitle}>{translations('BuyCard.requisites')}</p>
+          <p className={styles.smalltitle}>{translations('Cards.requisites')}</p>
           <div className={styles.topblock}>
             <div className={styles.top}>
-              <p className={styles.smalltext}>{translations('BuyCard.number')}</p>
+              <p className={styles.smalltext}>{translations('Cards.number')}</p>
               <p className={styles.maintext}>{cardDetails.number}</p>
             </div>
             <div className={styles.top}>
-              <p className={styles.smalltext}>{translations('BuyCard.date')}</p>
+              <p className={styles.smalltext}>{translations('Cards.date')}</p>
               <p className={styles.maintext}>{cardDetails.exp_month}/{cardDetails.exp_year}</p>
             </div>
             <div className={styles.top}>
-              <p className={styles.smalltext}>{translations('BuyCard.cvc')}</p>
+              <p className={styles.smalltext}>{translations('Cards.cvc')}</p>
               <p className={styles.maintext}>{cardDetails.cvx2}</p>
             </div>
           </div>
           <div className={styles.bottomblock}>
             <div className={styles.bottom}>
-              <p className={styles.smalltext}>{translations('BuyCard.owner')}</p>
+              <p className={styles.smalltext}>{translations('Cards.owner')}</p>
               <p className={styles.maintext}>{selectedCard.holder_name}</p>
             </div>
             <div className={styles.bottom}>
-              <p className={styles.smalltext}>{translations('BuyCard.address')}</p>
+              <p className={styles.smalltext}>{translations('Cards.address')}</p>
               <p className={styles.maintext}>{selectedCard.holder_address}</p>
             </div>
           </div>
         </div>
       </div>
       <button className={styles.buttonDelete} onClick={handleDeleteClick}>
-        {isDeleting ? <div className={styles.loader}></div> : 'Block and delete the card'}
+        {isDeleting ? <div className={styles.loader}></div> : `${translations('Cards.block')}`}
       </button>
       {isPopupVisible && (
         <div className={styles.popupOverlay}>
           <div className={styles.popup}>
-            <h3>{translations('BuyCard.delete')}</h3>
+            <h3>{translations('Cards.delete')}</h3>
             <div className={styles.popupButtons}>
-              <button className={styles.popupButton} onClick={handleDeleteConfirmation}>{translations('BuyCard.yes')}</button>
-              <button className={styles.popupButton} onClick={handleCancel}>{translations('BuyCard.no')}</button>
+              <button className={styles.popupButton} onClick={handleDeleteConfirmation}>{translations('Cards.yes')}</button>
+              <button className={styles.popupButton} onClick={handleCancel}>{translations('Cards.no')}</button>
             </div>
           </div>
         </div>

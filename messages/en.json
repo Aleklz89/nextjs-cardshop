@@ -71,6 +71,7 @@
         "owner": "Card owner",
         "address": "Address",
         "delete": "Are you sure you want to delete the card?",
+        "block": "Block and delete the card",
         "yes": "yes",
         "no": "no"
     },
