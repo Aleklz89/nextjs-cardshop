@@ -55,12 +55,12 @@ export default function SignInUpForm() {
       if (response.ok) {
         router.push("/cabinet/cards");
       } else {
-        setMessage("Invalid email or password");
+        setMessage(translations('IndexPage.invalid'));
         setMessageStyle({ color: "red" });
       }
     } catch (error) {
       console.error("Login error:", error);
-      setMessage("An unexpected error occurred. Please try again.");
+      setMessage(translations('IndexPage.error'));
       setMessageStyle({ color: "red" });
     }
   };
@@ -96,16 +96,16 @@ export default function SignInUpForm() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage("The registration request was successful. We will contact you by email.");
+        setMessage(translations('IndexPage.registration'));
         setMessageStyle({ color: "green" });
       } else if (data.error === "Email is already in use") {
-        setMessage("Email is already registered.");
+        setMessage(translations('IndexPage.already'));
         setMessageStyle({ color: "red" });
       } else if (data.error === 'Telegram username is already in use') {
-        setMessage('Telegram username is already in use');
+        setMessage(translations('IndexPage.inuse'));
         setMessageStyle({ color: 'red' });
       } else if (data.error === "Invalid password format") {
-        setMessage("The password must be at least 8 characters long and include at least one lowercase letter, number and a special character from the list (@, $, !, %, *, ?, &).");
+        setMessage(translations('IndexPage.atleast'));
         setMessageStyle({
           color: "red",
           fontSize: "12px"
@@ -115,7 +115,7 @@ export default function SignInUpForm() {
       }
     } catch (error) {
       console.error("Signup error:", error);
-      setMessage("An unexpected error occurred. Please try again.");
+      setMessage(translations('IndexPage.error'));
       setMessageStyle({ color: "red" });
     }
   };

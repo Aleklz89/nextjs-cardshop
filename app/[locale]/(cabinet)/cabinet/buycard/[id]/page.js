@@ -114,13 +114,16 @@ function Page() {
 
   
     const additionalPercentage = 0.05;
+    
 
-    const gas = parseFloat(constant)
+    const count = total + (total * additionalPercentage - constant);
 
-    console.log(parseFloat(constant))
-
-    console.log(additionalPercentage)
-    total += total * additionalPercentage + gas;
+    if (count <= 0)  {
+      total = 1
+    } else {
+      total += total * additionalPercentage - constant;
+    }
+    
 
     return total.toFixed(2);
   };
@@ -201,13 +204,13 @@ function Page() {
     const binId = urlSegments[urlSegments.length - 1];
   
     if (!depositAmount || !cardsQty || !description) {
-      setErrortwo("Fill in all the fields");
+      setErrortwo(translations('BuyCardId.fill'));
       setIsIssuing(false);
       return;
     }
   
     if (parseFloat(totalCost) > parseFloat(balance)) {
-      setErrortwo("Insufficient funds");
+      setErrortwo(translations('BuyCardId.funds'));
       setIsIssuing(false);
       return;
     }
@@ -304,7 +307,7 @@ function Page() {
     } catch (error) {
       setIsIssuing(false);
       console.error("Error issuing card:", error);
-      setErrortwo("Error buying card");
+      setErrortwo(translations('BuyCardId.error'));
     }
   };
   
