@@ -186,7 +186,7 @@ export default function SignInUpForm() {
         </div>
         <div className={`${styles.formContainer} ${styles.signInContainer}`}>
           <form className={styles.form} onSubmit={handleLoginSubmit}>
-            <h1 className={styles.h1}>{translations('IndexPage.signup')}</h1>
+            <h1 className={styles.h1}>{translations('IndexPage.signin')}</h1>
             <input
               className={styles.input}
               type="email"
@@ -228,7 +228,7 @@ export default function SignInUpForm() {
               <h1 className={styles.h1}>{translations('IndexPage.hello')}</h1>
               <p className={styles.p}>{translations('IndexPage.provide')}</p>
               <button className={styles.ghost} onClick={handleSignUpClick}>
-                {translations('IndexPage.signin')}
+                {translations('IndexPage.signup')}
               </button>
             </div>
           </div>
