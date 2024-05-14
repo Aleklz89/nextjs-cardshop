@@ -4,6 +4,7 @@ import styles from './transactions.css';
 import Filters from '../../../components/filters/Filters';
 import Transhistory from '../../../components/transhistory/Transhistory';
 import Fullhistory from '../../../components/transhistory/fullhistory/Fullhistory';
+import '../globals.css'
 
 const Transactions = () => {
   const [userId, setUserId] = useState(null); // State to store the user ID

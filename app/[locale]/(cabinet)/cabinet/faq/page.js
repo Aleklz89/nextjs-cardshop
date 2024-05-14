@@ -4,6 +4,7 @@ import styles from './faq.module.css';
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from "next-intl"
+import '../globals.css'
 
 
 const FAQ = () => {

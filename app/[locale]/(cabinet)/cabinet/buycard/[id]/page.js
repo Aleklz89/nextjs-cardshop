@@ -5,6 +5,7 @@ import styles from "./neworder.module.css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl"
+import '../../globals.css'
 
 function Page() {
   const translations = useTranslations()

@@ -4,7 +4,7 @@
     padding: 20px;
     padding-left: 0;
     padding-right: 0;
-    background: #fff;
+    background-color: var(--background-color);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -40,7 +40,7 @@
   }
   
   .description {
-    color: #666;
+    color: var(--text-color);
     margin-bottom: 10px;
   }
   
@@ -76,7 +76,7 @@
 
 
   .description {
-    color: #666;
+    color: var(--text-color);
     margin-bottom: 10px;
   }
   
@@ -114,7 +114,7 @@
 .loadingText {
     margin-top: 10px;
     font-size: 16px;
-    color: #777;
+    color: var(--text-color);
 }
 
 .loader {

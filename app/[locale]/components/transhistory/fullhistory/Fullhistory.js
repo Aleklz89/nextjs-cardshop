@@ -1,6 +1,7 @@
 "use client"
 import React from 'react';
 import styles from './Fullhistory.module.css';
+import '../../globals.css'
 
 const Fullhistory = ({ transactions }) => {
   return (

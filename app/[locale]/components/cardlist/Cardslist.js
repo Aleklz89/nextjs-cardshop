@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './Cardslist.module.css';
 import Link from 'next/link';
 import { useTranslations } from "next-intl"
+import '../globals.css'
 
 const Cardslist = () => {
     const translations = useTranslations()

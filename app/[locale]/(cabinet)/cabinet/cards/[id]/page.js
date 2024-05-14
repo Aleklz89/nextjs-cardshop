@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import styles from './id.module.css';
 import { useTranslations } from "next-intl"
+import '../../globals.css'
 
 export default function CardPage() {
   const translations = useTranslations()

@@ -2,6 +2,7 @@ import React from 'react';
 import styles from './Help.module.css';
 import Link from 'next/link';
 import { useTranslations } from "next-intl"
+import '../globals.css'
 
 const Help = () => {
     const translations = useTranslations()

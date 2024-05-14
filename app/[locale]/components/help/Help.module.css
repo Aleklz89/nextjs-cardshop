@@ -23,7 +23,7 @@
      margin: 5px; 
      font-size: 16px;
      cursor: pointer; 
-     background-color: #fff;
+     background-color: var(--background-color);
      display: inline-flex; 
      align-items: center;
      justify-content: center; 
@@ -38,7 +38,7 @@
      margin: 5px; 
      font-size: 16px; 
      cursor: pointer; 
-     background-color: #fff;
+     background-color: var(--background-color);
      display: inline-flex; 
      align-items: center; 
      justify-content: center;
@@ -67,7 +67,7 @@
      margin: 5px; 
      font-size: 16px; 
      cursor: pointer; 
-     background-color: #fff;
+     background-color: var(--background-color);
      display: inline-flex; 
      align-items: center; 
      justify-content: center;
@@ -103,7 +103,7 @@
   
   .supportcard {
     border: 1px solid #e0e0e0; 
-    background-color: #fff;
+    background-color: var(--background-color);
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -112,12 +112,12 @@
   }
   
   .supportcard h2 {
-    color: #333;
+    color: var(--text-color);
     margin-bottom: 16px;
   }
   
   .supportcard p {
-    color: #666;
+    color: var(--text-color);
     margin-bottom: 24px;
   }
   
@@ -131,8 +131,8 @@
     padding: 10px 20px;
     border-radius: 20px;
     border: none;
-    color: white;
-    background-color: #333;
+    color: var(--text-color);
+    background-color: green;
     cursor: pointer;
     transition: background-color 0.3s;
   }

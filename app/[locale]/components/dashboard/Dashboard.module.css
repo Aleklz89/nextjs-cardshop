@@ -18,7 +18,7 @@
     margin: 5px;
     font-size: 16px;
     cursor: pointer;
-    background-color: #fff;
+    background-color: var(--background-color);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -33,12 +33,13 @@
     margin: 5px;
     font-size: 16px;
     cursor: pointer;
-    background-color: #fff;
+    background-color: var(--background-color);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     transition: all 0.3s;
+    color: var(--text-color);
   }
 
   .button:hover,
@@ -66,7 +67,7 @@
     margin: 5px;
     font-size: 16px;
     cursor: pointer;
-    background-color: #fff;
+    background-color: white;
     display: inline-flex;
     align-items: center;
     justify-content: center;

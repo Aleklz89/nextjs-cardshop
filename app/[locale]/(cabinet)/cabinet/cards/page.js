@@ -5,6 +5,7 @@ import Dashboard from "../../../components/dashboard/Dashboard";
 import Cardslist from "../../../components/cardlist/Cardslist";
 import Fullcards from "../../../components/Fullcards/Fullcards";
 import styles from './cards.css';
+import '../globals.css'
 
 export default function Cards() {
   const [userId, setUserId] = useState(null);

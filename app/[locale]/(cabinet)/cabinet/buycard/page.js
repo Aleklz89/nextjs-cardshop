@@ -5,9 +5,10 @@ import styles from './buycard.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslations } from "next-intl"
+import '../globals.css'
 
 const Dashboard = () => {
-  const translations = useTranslations()
+  const translations = useTranslations();
   const [balance, setBalance] = useState(null);
   const [userId, setUserId] = useState(null);
   const [cardsdata, setCardsdata] = useState([]);
@@ -70,7 +71,6 @@ const Dashboard = () => {
         const result = await response.json();
 
         const filteredCards = result.data.filter(card => card.available_on_grade === 0);
-
 
         setCardsdata(filteredCards);
       } catch (error) {
@@ -136,7 +136,7 @@ const Dashboard = () => {
           {cardsdata.map((card) => (
             <div className={styles.visa} key={card.id}>
               <div className={styles.cardblock}>
-                <h3>Visa</h3>
+                <h3>{String(card.bin).startsWith('5') ? 'Master' : 'Visa'}</h3>
                 <p className={styles.cardnumber}>{String(card.bin).slice(0, 6)}</p>
                 <Link href={`/cabinet/buycard/${card.id}`} style={{ textDecoration: 'none' }} passHref key={card.id}>
                   <button className={styles.buybutton}>{translations('BuyCard.buy')}</button>

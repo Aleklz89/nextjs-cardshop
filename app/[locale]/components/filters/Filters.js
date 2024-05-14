@@ -7,6 +7,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from "next-intl"
+import '../globals.css'
 
 const Filters = ({ setSearchQuery, setFilterType, setDateRange }) => {
     const translations = useTranslations()

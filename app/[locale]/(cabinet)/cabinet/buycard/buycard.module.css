@@ -27,7 +27,7 @@
      margin: 5px; 
      font-size: 16px;
      cursor: pointer; 
-     background-color: #fff;
+     background-color: var(--background-color);
      display: inline-flex; 
      align-items: center;
      justify-content: center; 
@@ -42,12 +42,13 @@
      margin: 5px; 
      font-size: 16px; 
      cursor: pointer; 
-     background-color: #fff;
+     background-color: var(--background-color);
      display: inline-flex; 
      align-items: center; 
      justify-content: center;
      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
      transition: all 0.3s; 
+     color: var(--text-color);
    }
  
    .button:hover, .button:focus {
@@ -74,7 +75,7 @@
      margin: 5px; 
      font-size: 16px; 
      cursor: pointer; 
-     background-color: #fff;
+     background-color: var(--background-color);
      display: inline-flex; 
      align-items: center; 
      justify-content: center;
@@ -115,7 +116,7 @@
    .cardissuecontainer {
     border: 1px solid #F7F9FB;
     border-radius: 10px;
-    background-color: #F7F9FB;
+    background-color: var(--background-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -154,12 +155,12 @@
   
   .description {
     display: block;
-    color: #666;
+    color: var(--text-color);
   }
   
   
   .advertisingcontainer {
-    background-color: #F7F9FB;
+    background-color: var(--background-color);
     border-radius: 10px;
     max-width: 1200px;
     margin: 0 auto;

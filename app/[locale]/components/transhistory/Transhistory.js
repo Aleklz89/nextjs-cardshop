@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Transhistory.module.css';
 import { useTranslations } from "next-intl"
+import '../globals.css'
 
 const Transhistory = () => {
     const translations = useTranslations()

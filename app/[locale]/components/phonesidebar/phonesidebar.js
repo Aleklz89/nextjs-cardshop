@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslations } from "next-intl"
+import '../globals.css'
 
 const Phonesidebar = ({ onClose, isVisible }) => {
   const translations = useTranslations()

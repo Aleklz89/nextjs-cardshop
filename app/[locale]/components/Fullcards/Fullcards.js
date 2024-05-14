@@ -5,6 +5,7 @@ import styles from './Fullcards.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from "next-intl"
+import '../globals.css'
 
 const Fullcards = () => {
   const translations = useTranslations()

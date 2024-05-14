@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Phonesidebar from '../phonesidebar/phonesidebar';
 import { useTranslations } from "next-intl"
 import Switcher from '../switcher/Switcher';
+import '../globals.css'
 
 const Header = () => {
   const translations = useTranslations()
@@ -192,7 +193,7 @@ const Header = () => {
         <div className={styles.controls} ref={secondMenuRef}>
           <div onClick={toggleSecondMenu} className={styles.iconContainer}>
             <Image
-              src="https://i.ibb.co/K048YRF/png-transparent-settings-gear-icon-gear-configuration-set-up-thumbnail-removebg-preview.png"
+              src="https://i.ibb.co/3hjkB4z/17157052055290438-1.png"
               alt="Settings icon"
               height="25"
               width="25"
@@ -215,7 +216,7 @@ const Header = () => {
           <div className={styles.divider}></div>
           <div className={styles.phonemenu} onClick={toggleSidebar}>
             <Image
-              src="https://i.ibb.co/2M2gcpK/images.png"
+              src="https://i.ibb.co/5rjgtP6/17157052055290438-2-removebg-preview.png"
               alt="Logo"
               height="25"
               width="25"

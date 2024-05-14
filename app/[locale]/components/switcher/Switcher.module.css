@@ -4,7 +4,7 @@
     padding: 8px 12px;
     border: 2px solid #ccc;
     border-radius: 8px;
-    background-color: white;
+    background-color: var(--background-color);
     cursor: pointer;
     outline: none;
     transition: border-color 0.3s ease;
@@ -28,7 +28,7 @@
     padding: 8px;
     border: 1px solid #ccc;
     cursor: pointer;
-    background-color: #fff;
+    background-color: var(--background-color);
     position: relative;
 }
 
@@ -50,7 +50,7 @@
     top: 100%;
     width: 100%;
     border: 1px solid #ccc;
-    background-color: #fff;
+    background-color: var(--background-color);
     z-index: 1000;
 }
 
@@ -98,7 +98,7 @@
         padding: 8px 12px;
         border: 2px solid #ccc;
         border-radius: 8px;
-        background-color: white;
+        background-color: var(--background-color);
         cursor: pointer;
         outline: none;
         transition: border-color 0.3s ease;

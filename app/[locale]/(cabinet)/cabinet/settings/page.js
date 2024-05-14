@@ -3,10 +3,13 @@
 import styles from './security.module.css';
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import { useTranslations } from "next-intl"
+import { useTranslations } from "next-intl";
+import '../globals.css';
+import { useTheme } from '../../../context/ThemeContext';
 
 export default function Cards() {
-    const translations = useTranslations()
+    const { theme, toggleTheme } = useTheme();
+    const translations = useTranslations();
     const [email, setEmail] = useState("");
     const [userId, setUserId] = useState("");
     const [oldPassword, setOldPassword] = useState("");
@@ -15,10 +18,6 @@ export default function Cards() {
     const [editMode, setEditMode] = useState(false);
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("");
-
-    const handleRemove = (id) => {
-        setActivities(activities.filter(activity => activity.id !== id));
-    };
 
     const handleEditClick = () => {
         setEditMode(true);
@@ -72,7 +71,6 @@ export default function Cards() {
         }
     };
 
-
     const fetchUserId = async () => {
         try {
             const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/token');
@@ -109,6 +107,9 @@ export default function Cards() {
 
         getEmail();
     }, [userId]);
+
+
+    
 
     return (
         <div>
@@ -152,6 +153,32 @@ export default function Cards() {
                     </div>
                 )}
             </div>
+            <div className={styles.themeblock}>
+            <h2>Theme switch</h2>
+            <div className={styles.themebox}>
+                <label htmlFor="theme" className={styles.theme}>
+                    <span>Light</span>
+                    <span className={styles.themeToggleWrap}>
+                        <input
+                            id="theme"
+                            className={styles.themeToggle}
+                            type="checkbox"
+                            role="switch"
+                            name="theme"
+                            checked={theme === 'dark'}
+                            onChange={toggleTheme}
+                        />
+                        <span className={styles.themeFill}></span>
+                        <span className={styles.themeIcon}>
+                            {[...Array(9)].map((_, index) => (
+                                <span key={index} className={styles.themeIconPart}></span>
+                            ))}
+                        </span>
+                    </span>
+                    <span>Dark</span>
+                </label>
+            </div>
+        </div>
         </div>
     );
 }

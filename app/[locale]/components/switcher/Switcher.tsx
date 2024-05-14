@@ -5,6 +5,7 @@ import { ChangeEvent, useTransition, useEffect, useState } from "react";
 import { usePathname } from 'next/navigation';
 import styles from './Switcher.module.css';
 import Image from "next/image";
+import '../globals.css'
 
 const options = [
     { value: 'en', label: 'English', imgSrc: 'https://i.ibb.co/mF214kL/en.png' },
