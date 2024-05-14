@@ -366,9 +366,7 @@ function Page() {
                   value={cardsQty}
                   onChange={handleCardsQtyChange}
                 />
-                <p className={styles.infotext}>
-                {translations('BuyCardId.replenish')}
-                </p>
+                
                 <label htmlFor="totalCost">{translations('BuyCardId.total')}</label>
                 <div className={styles.dropdown}>
                   <input

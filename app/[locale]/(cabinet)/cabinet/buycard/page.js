@@ -116,16 +116,6 @@ const Dashboard = () => {
         <div className={styles.cardissuecontent}>
           <h2>{translations('BuyCard.become')}</h2>
           <p>{translations('BuyCard.wide')}</p>
-          <div className={styles.cardissuedetails}>
-            <div className={styles.detail}>
-              <span className={styles.price}>{translations('BuyCard.fromtwo')}</span>
-              <span className={styles.description}>{translations('BuyCard.start')}</span>
-            </div>
-            <div className={styles.detail}>
-              <span className={styles.price}>{translations('BuyCard.fromtwo')}</span>
-              <span className={styles.description}>{translations('BuyCard.commission')}</span>
-            </div>
-          </div>
         </div>
         <div>
           <Image
