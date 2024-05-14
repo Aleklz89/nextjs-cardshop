@@ -11,12 +11,7 @@
     width: 400px;
 }
 
-.transactionItem {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid #e6e6e6;
-}
+
 
 .transactionItem:last-child {
     border-bottom: none;
@@ -25,6 +20,7 @@
 .transactionTime {
     font-size: 14px;
     color: #999;
+    min-width: 200px;
 }
 
 .transactionDetails {
@@ -34,6 +30,7 @@
 
 .transactionType {
     font-weight: bold;
+    min-width: 200px;
 }
 
 .transactionDescription {
@@ -42,7 +39,7 @@
 }
 
 .transactionAmount {
-    width: 500px;
+    min-width: 200px;
     font-size: 16px;
     display: flex;
     align-items: right;
@@ -62,13 +59,6 @@
     color: green;
 }
 
-.transactionItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-}
 
 .transactionTime,
 .transactionType,
@@ -110,7 +100,8 @@
     display: flex;
     justify-content: space-between;
     padding: 10px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #e6e6e6;
+    min-width: 500px;
 }
 
 @media (max-width: 800px) {
@@ -150,6 +141,7 @@
 
 .dailyTransactionBlock {
     margin-bottom: 20px;
+    min-width: 650px;
 }
 
 .transactionDate {

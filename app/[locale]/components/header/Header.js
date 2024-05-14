@@ -202,7 +202,7 @@ const Header = () => {
               <div className={styles.dropdownMenu}>
                 <ul>
                   <li>
-                    <Link href="/cabinet/security" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
+                    <Link href="/cabinet/settings" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
                     {translations('Header.security')}
                     </Link>
                   </li>
