@@ -293,23 +293,6 @@
   padding: 10px 20px; /* отступы внутри меню */
 }
 
-@media (max-width: 950px) {
-
-  .nav {
-    display: none;
-  }
-  .sidebar {
-    display: none;
-    
-  }
-
-  .pressed {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-  }
-}
 
 
 .navList {
@@ -491,5 +474,23 @@
   100% {
     transform-origin: center center;
     transform: scale(1, 1);
+  }
+}
+
+@media (max-width: 1350px) {
+
+  .nav {
+    display: none;
+  }
+  .sidebar {
+    display: none;
+    
+  }
+
+  .pressed {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
   }
 }

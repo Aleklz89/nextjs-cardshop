@@ -131,7 +131,7 @@ const Header = () => {
                     width={28}
                     height={28}
                 />
-                {translations('cards')}
+                {translations('Sidebar.cards')}
             </a>
             <a className={styles.menuItem} href="/cabinet/transactions">
                 <Image
@@ -141,7 +141,7 @@ const Header = () => {
                     width={28}
                     height={28}
                 />
-                {translations('transactions')}
+                {translations('Sidebar.transactions')}
             </a>
             <a className={styles.menuItem} href="/cabinet/support">
                 <Image
@@ -151,7 +151,7 @@ const Header = () => {
                     width={28}
                     height={28}
                 />
-                {translations('support')}
+                {translations('Sidebar.support')}
             </a>
             <a className={styles.menuItem} href="/cabinet/settings">
                 <Image
@@ -161,7 +161,7 @@ const Header = () => {
                     width={28}
                     height={28}
                 />
-                {translations('settings')}
+                {translations('Sidebar.settings')}
             </a>
         </nav>
       <div className={styles.controlGroup} ref={menuRef}>
