@@ -604,7 +604,7 @@ function Page() {
                         onChange={(e) => handleMarkupChange(e, item.id)}
                         className={styles.balanceInput}
                       />
-                      <span className={styles.percentSign}>%</span>
+                      <span className={styles.percentSign}>$</span>
                     </td>
                     <td>
                       <button onClick={() => handleRejectBalanceChange(item.id)} className={styles.btnreject}>
@@ -663,7 +663,7 @@ function Page() {
                           onChange={(e) => handleMarkupChange(e, item.id)}
                           className={styles.balanceInput}
                         />
-                        <span className={styles.percentSign}>%</span>
+                        <span className={styles.percentSign}>$</span>
                       </td>
                       <td>
                         <button onClick={() => handleRejectBalanceChange(item.id)} className={styles.btnreject}>

@@ -113,13 +113,14 @@ function Page() {
     }
 
   
-    const additionalPercentage =
-      ((parseFloat(constant) || 0) + 5) / 100;
+    const additionalPercentage = 0.05;
 
-    console.log(parseFloat(value) )
+    const gas = parseFloat(constant)
+
+    console.log(parseFloat(constant))
 
     console.log(additionalPercentage)
-    total += total * additionalPercentage;
+    total += total * additionalPercentage + gas;
 
     return total.toFixed(2);
   };

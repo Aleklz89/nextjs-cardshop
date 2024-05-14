@@ -97,7 +97,7 @@ const Dashboard = () => {
           <Link href="/cabinet/cards" style={{ textDecoration: 'none' }} passHref>
             <button className={styles.button}>{translations('BuyCard.cards')}</button>
           </Link>
-          <Link href="/cabinet/shop" style={{ textDecoration: 'none' }} passHref>
+          <Link href="/cabinet/buycard" style={{ textDecoration: 'none' }} passHref>
             <button className={styles.buy}>{translations('BuyCard.order')}</button>
           </Link>
           <Link href="/cabinet/topup" style={{ textDecoration: 'none' }} passHref>
