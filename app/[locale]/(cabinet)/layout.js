@@ -22,7 +22,6 @@ export default function RootLayout({ children }) {
         <Header />
         <div className={styles.psevdo}></div>
         <div style={{ display: 'flex' }}>
-          <Sidebar />
           <div className={styles.container}>{children}</div>
         </div>
       </body>

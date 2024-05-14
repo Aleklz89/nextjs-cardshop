@@ -140,3 +140,22 @@
   .telegramcontact a:hover {
     text-decoration: underline;
   }
+
+  @media (max-width: 767px) {
+    .dashboard {
+      margin-left: 25px;
+      margin-top: 40px;
+      width: 90%;
+  
+    }
+  
+    .button {
+      font-size: 12px;
+    }
+  
+    
+    .buy {
+      font-size: 12px;
+    }
+  
+  }
