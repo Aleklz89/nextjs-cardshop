@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
   }
 
+
   try {
     // Fetch transactions for the specified user from the database
     const transactions = await prisma.transaction.findMany({
@@ -22,6 +23,7 @@ export async function GET(request: NextRequest) {
         timestamp: 'desc',
       },
     });
+
 
     return NextResponse.json(transactions, { status: 200 });
   } catch (error) {

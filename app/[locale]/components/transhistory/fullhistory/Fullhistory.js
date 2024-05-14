@@ -8,6 +8,8 @@ const Fullhistory = ({ transactions }) => {
       {Object.entries(transactions).map(([date, dailyTransactions], index) => (
         <div key={index} className={styles.dailyTransactionBlock}>
           <div className={styles.transactionDate}>{date}</div>
+          {console.log("dailyTransactions")}
+          {console.log(dailyTransactions)}
           {dailyTransactions.map((transaction, idx) => (
             <div key={idx} className={styles.transactionItem}>
               <div className={styles.transactionTime}>{transaction.time}</div>

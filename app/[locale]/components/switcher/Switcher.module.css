@@ -1,0 +1,29 @@
+.sel {
+    width: 200px;
+    padding: 8px 12px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.3s ease;
+    font-size: 16px;
+    appearance: none;
+    margin-right: 20px;
+}
+
+@media (max-width: 850px) { 
+    .sel {
+        width: 100px;
+        padding: 8px 12px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        background-color: white;
+        cursor: pointer;
+        outline: none;
+        transition: border-color 0.3s ease;
+        font-size: 13px;
+        appearance: none;
+        margin-right: 20px;
+    }
+}

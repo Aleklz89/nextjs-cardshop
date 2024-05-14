@@ -1,57 +1,88 @@
-import { cookies } from 'next/headers';
 import { NextResponse, NextRequest } from 'next/server';
 import * as jose from "jose";
 import createMiddleware from 'next-intl/middleware';
 
-// Объединённый async middleware
 export async function middleware(request: NextRequest) {
+  console.log("Middleware called");
+
+
   const intlMiddleware = createMiddleware({
     locales: ['en', 'uk'],
     defaultLocale: 'en'
   });
 
-  // Вызов middleware для интернационализации
-  const response = intlMiddleware(request);
-  if (response) return response;
 
-  // Обработка JWT
-  const cookieToken = cookies().get("Authorization")?.value || '';
-  const urlToken = request.nextUrl.searchParams.get('token') || '';
-  const jwt = urlToken || cookieToken;
+  let intlResponse = intlMiddleware(request);
+  console.log("Localization middleware applied");
+
+  const jwt = request.nextUrl.searchParams.get('token') || request.cookies.get("Authorization")?.value || '';
+  console.log("JWT:", jwt);
+  const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+
+
+  const isAdminPath = request.nextUrl.pathname.startsWith('/uk/admin') || request.nextUrl.pathname.startsWith('/en/admin');
+  const isCabinetPath = request.nextUrl.pathname.startsWith('/uk/cabinet') || request.nextUrl.pathname.startsWith('/en/cabinet');
   
+
+
+  console.log(isAdminPath)
+  console.log(isCabinetPath)
+
   if (!jwt) {
-    return NextResponse.redirect(new URL('/', request.url));
+    if (isAdminPath) {
+      return
+    }
+    if (isCabinetPath) {
+      return
+    }
+  }
+  
+  try {
+    const { payload } = await jose.jwtVerify(jwt, secret);
+    console.log("Verified JWT with payload:", payload);
+  
+    if (isAdminPath && !payload.is_staff) {
+      return;
+    }
+  
+  } catch (error) {
+    console.error("JWT verification failed:", error);
   }
 
-  const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+
+
+  // Если intlMiddleware возвращает NextResponse, возвращаем его
+  if (intlResponse instanceof NextResponse) return intlResponse;
+
+  // Извлекаем JWT из URL или cookies
+
+  // Если JWT отсутствует, перенаправляем пользователя
+  if (!jwt) {
+    return NextResponse.redirect(new URL('/en', request.url));
+  }
+
 
   try {
     const { payload } = await jose.jwtVerify(jwt, secret);
     console.log("Verified JWT with payload:", payload);
 
+    // Проверка доступа на страницы администратора и кабинета
     const isAdminPath = request.nextUrl.pathname.startsWith('/admin');
-    const isCabinetPath = request.nextUrl.pathname.startsWith('/cabinet');
-
-    if (payload.is_staff) {
-      if (isAdminPath) {
-        return NextResponse.rewrite(new URL('/admin', request.url));
-      } else {
-        return NextResponse.redirect(new URL("/admin", request.url));
-      }
-    }
-
-    if (!payload.is_staff && isCabinetPath) {
+    const isCabinetPath = request.nextUrl.pathname.startsWith('/en/cabinet');
+    if (payload.is_staff && isAdminPath) {
       return NextResponse.next();
-    } else {
-      return NextResponse.redirect(new URL("/", request.url));
+    } else if (!payload.is_staff && isCabinetPath) {
+      return NextResponse.next();
     }
-  } catch(err) {
+
+    // Перенаправление на главную страницу, если условия не соблюдены
+    return NextResponse.redirect(new URL("/", request.url));
+  } catch (err) {
     console.error("Error verifying JWT:", err);
     return NextResponse.redirect(new URL("/", request.url));
   }
 }
 
 export const config = {
-  // Матчеры для обоих видов маршрутов
   matcher: ['/', '/(uk|en)/:path*', '/cabinet/:path*', '/admin/:path*']
 };

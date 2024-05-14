@@ -17,7 +17,6 @@ const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
   const [filteredTransactions, setFilteredTransactions] = useState({});
 
-  // Fetch user ID on mount
   useEffect(() => {
     const fetchUserId = async () => {
       try {
@@ -27,7 +26,7 @@ const Transactions = () => {
         }
         const data = await response.json();
         setUserId(data.userId);
-        console.log(data.userId)
+        console.log('Fetched user ID:', data.userId); // Log userId
       } catch (error) {
         console.error('Error fetching user ID:', error);
       }
@@ -38,8 +37,12 @@ const Transactions = () => {
   const fetchTransactions = async () => {
     if (userId) {
       try {
-        const response = await fetch(`../api/gettrans?userId=${userId}`);
+        const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/gettrans?userId=${userId}`);
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
         const data = await response.json();
+        console.log('Fetched transactions:', data); // Log transactions data
         setTransactions(data);
       } catch (error) {
         console.error('Error fetching transactions:', error);
@@ -53,11 +56,13 @@ const Transactions = () => {
   }, [userId]);
 
   useEffect(() => {
+    console.log('Transactions before filtering:', transactions); // Log transactions before filtering
+
     const lowerCaseSearchQuery = searchQuery.toLowerCase();
-    const isMatch = (transaction, transactionDateStr) => {
+    const isMatch = (transaction) => {
       const typeMatch = transaction.type.toLowerCase().includes(lowerCaseSearchQuery);
       const descriptionMatch = transaction.description.toLowerCase().includes(lowerCaseSearchQuery);
-      const transactionDate = new Date(transactionDateStr);
+      const transactionDate = new Date(transaction.timestamp);
       const start = new Date(dateRange.startDate);
       const end = new Date(dateRange.endDate);
       const dateMatch = transactionDate >= start && transactionDate <= end;
@@ -73,12 +78,14 @@ const Transactions = () => {
         default:
           break;
       }
+
+      console.log(`Transaction ${transaction.id}: typeMatch=${typeMatch}, descriptionMatch=${descriptionMatch}, dateMatch=${dateMatch}, filterMatch=${filterMatch}`);
       return (typeMatch || descriptionMatch) && filterMatch && dateMatch;
     };
 
     const newFilteredTransactions = transactions.reduce((acc, transaction) => {
       const date = new Date(transaction.timestamp).toLocaleDateString('en-GB');
-      if (isMatch(transaction, date)) {
+      if (isMatch(transaction)) {
         if (!acc[date]) acc[date] = [];
         acc[date].push({
           time: new Date(transaction.timestamp).toLocaleTimeString('en-GB'),
@@ -90,6 +97,8 @@ const Transactions = () => {
       return acc;
     }, {});
 
+    console.log('Filtered transactions:', newFilteredTransactions); // Log filtered transactions
+
     setFilteredTransactions(newFilteredTransactions);
     setIsEmpty(Object.keys(newFilteredTransactions).length === 0);
   }, [searchQuery, filterType, dateRange, transactions]);
@@ -97,6 +106,7 @@ const Transactions = () => {
   return (
     <main>
       <Filters setSearchQuery={setSearchQuery} setFilterType={setFilterType} setDateRange={setDateRange} />
+
       {!isEmpty ? (
         <Fullhistory transactions={filteredTransactions} />
       ) : (

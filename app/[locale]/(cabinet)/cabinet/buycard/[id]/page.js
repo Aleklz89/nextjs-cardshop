@@ -244,6 +244,20 @@ function Page() {
         console.error(`Error buying card: ${buyResponse.status} - ${buyResponse.statusText}`, errorData);
         throw new Error(`Error buying card: ${buyResponse.status}`);
       }
+
+      const updateUserResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, cardUuid: value.toString() }),
+      });
+  
+      if (!updateUserResponse.ok) {
+        const errorData = await updateUserResponse.json();
+        console.error(`Error updating user: ${updateUserResponse.status} - ${updateUserResponse.statusText}`, errorData);
+        throw new Error(`Error updating user: ${updateUserResponse.status}`);
+      }
   
       const updatedBalance = parseFloat(balance) - parseFloat(totalCost);
       const updateBalanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/min", {

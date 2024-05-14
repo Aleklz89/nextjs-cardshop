@@ -3,6 +3,7 @@ import { useLocale } from "use-intl";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useTransition } from "react"
 import { usePathname } from 'next/navigation'
+import styles from './Switcher.module.css'
 
 function Switcher() {
     const [isPending, startTransition] = useTransition();
@@ -22,20 +23,7 @@ function Switcher() {
         });
     }
     return (
-        <select style={{
-
-            width: '200px',
-            padding: '8px 12px',
-            border: '2px solid #ccc',
-            borderRadius: '8px',
-            backgroundColor: 'white',
-            cursor: 'pointer',
-            outline: 'none',
-            transition: 'border-color 0.3s ease',
-            fontSize: '16px',
-            appearance: 'none',
-            marginRight: '20px'
-        }} onChange={onSelectChange} defaultValue={localActive}>
+        <select className={styles.sel} onChange={onSelectChange} defaultValue={localActive}>
             <option style={{
 
                 cursor: 'pointer'
@@ -43,7 +31,7 @@ function Switcher() {
             <option style={{
 
                 cursor: 'pointer'
-            }} value='uk'>Ukrainian</option>
+            }} value='uk'>Українська</option>
         </select>
     )
 }

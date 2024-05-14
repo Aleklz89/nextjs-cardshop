@@ -108,7 +108,7 @@ const Header = () => {
           isVisible={isSidebarOpen}
         />
       )}
-      <div className={styles.logoContainer}>
+        <div>
         <Link href="/cabinet/cards" style={{ textDecoration: 'none' }} passHref>
           <Image
             src="https://i.ibb.co/FWQ7tRc/Screenshot-1043-removebg-preview.png"
