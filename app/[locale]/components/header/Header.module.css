@@ -21,7 +21,6 @@
 }
 
 .navLink {
-  background-color: #ffffff;
   color: #333333;
   padding: 10px 20px;
   border: none;
@@ -102,7 +101,6 @@
 
 .navLink {
   display: inline-block;
-  background-color: #ffffff;
   color: #333333;
   padding: 8px 16px;
   font-size: 16px;
@@ -292,7 +290,6 @@
 .nav {
   display: flex; /* делаем меню горизонтальным */
   align-items: center; /* выравнивание элементов по центру по вертикали */
-  background-color: #fff; /* фоновый цвет меню */
   padding: 10px 20px; /* отступы внутри меню */
 }
 
@@ -386,4 +383,113 @@
 
 .menuItem:last-child {
   margin-right: 0; /* убрать отступ у последнего элемента */
+}
+
+
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: 1rem 2rem 1.15rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: #ebebeb;
+  min-width: 200px;
+  margin: auto;
+  transition: transform 300ms ease-out, color 300ms ease-out;
+}
+
+.menuItem:hover {
+  background-image: url('https://scottyzen.sirv.com/Images/v/button.png');
+  background-size: 100% 100%;
+  color: #27262c;
+  animation: spring 300ms ease-out;
+  text-shadow: 0 -1px 0 #ef816c;
+  font-weight: bold;
+}
+
+.menuItem:active {
+  transform: translateY(4px);
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+@keyframes spring {
+  15% {
+    transform-origin: center center;
+    transform: scale(1.2, 1.1);
+  }
+  40% {
+    transform-origin: center center;
+    transform: scale(0.95, 0.95);
+  }
+  75% {
+    transform-origin: center center;
+    transform: scale(1.05, 1);
+  }
+  100% {
+    transform-origin: center center;
+    transform: scale(1, 1);
+  }
+}
+
+
+.nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 50%;
+  max-width: 1000px;
+  margin: auto;
+  margin-top: -8px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: 1rem 2rem 1.15rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: #9b9b9b;
+  min-width: 50px;
+  margin: auto;
+  transition: transform 300ms ease-out, color 300ms ease-out;
+}
+
+.menuItem:hover {
+  background-image: url('https://i.ibb.co/9GgfC0F/imgonline-com-ua-Replace-color-c-P2u40-PUGq-Iy.jpg');
+  background-size: 100% 100%;
+  color: #27262c;
+  animation: spring 300ms ease-out;
+  text-shadow: 0 -1px 0 #a1fd8f;
+  font-weight: bold;
+}
+
+.menuItem:active {
+  transform: translateY(4px);
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+@keyframes spring {
+  15% {
+    transform-origin: center center;
+    transform: scale(1.2, 1.1);
+  }
+  40% {
+    transform-origin: center center;
+    transform: scale(0.95, 0.95);
+  }
+  75% {
+    transform-origin: center center;
+    transform: scale(1.05, 1);
+  }
+  100% {
+    transform-origin: center center;
+    transform: scale(1, 1);
+  }
 }
