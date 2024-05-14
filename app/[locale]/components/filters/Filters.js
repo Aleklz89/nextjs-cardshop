@@ -52,8 +52,6 @@ const Filters = ({ setSearchQuery, setFilterType, setDateRange }) => {
                 <div className={styles.dropdown}>
                     <select className={styles.dropdown__select} onChange={handleFilterChange}>
                         <option value="">{translations('Filters.transaction')}</option>
-                        <option value="confirmed"></option>
-                        <option value="declined">{translations('Filters.declined')}</option>
                         <option value="deposit">{translations('Filters.deposit')}</option>
                         <option value="withdraw">{translations('Filters.withdraw')}</option>
                     </select>
