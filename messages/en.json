@@ -11,7 +11,7 @@
         "create": "Create Account",
         "use": "Use your email and telegram for registration",
         "confirm": "Confirm Password",
-        "request": "request registration",
+        "request": "request",
         "invalid": "Invalid email or password",
         "error": "An unexpected error occurred. Please try again.",
         "match": "Passwords do not match",

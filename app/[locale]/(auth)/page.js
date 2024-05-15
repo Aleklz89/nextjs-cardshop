@@ -216,7 +216,7 @@ export default function SignInUpForm() {
             <div
               className={`${styles.overlayPanel} ${styles.overlayLeft}`}
             >
-              <h1 className={styles.h1}>{translations('IndexPage.hello')}</h1>
+              <h1 className={styles.hello}>{translations('IndexPage.welcome')}</h1>
               <p className={styles.p}>{translations('IndexPage.stay')}</p>
               <button className={styles.ghost} onClick={handleSignInClick}>
                 {translations('IndexPage.signin')}
@@ -225,7 +225,7 @@ export default function SignInUpForm() {
             <div
               className={`${styles.overlayPanel} ${styles.overlayRight}`}
             >
-              <h1 className={styles.h1}>{translations('IndexPage.hello')}</h1>
+              <h1 className={styles.hello}>{translations('IndexPage.hello')}</h1>
               <p className={styles.p}>{translations('IndexPage.provide')}</p>
               <button className={styles.ghost} onClick={handleSignUpClick}>
                 {translations('IndexPage.signup')}
