@@ -4,11 +4,11 @@ import React, { useState, useEffect } from "react";
 import styles from "./neworder.module.css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl"
-import '../../globals.css'
+import { useTranslations } from "next-intl";
+import "../../globals.css";
 
 function Page() {
-  const translations = useTranslations()
+  const translations = useTranslations();
   const router = useRouter();
   const [balance, setBalance] = useState(null); 
   const [userId, setUserId] = useState(null);
@@ -19,7 +19,6 @@ function Page() {
   const [isLoadingBalance, setIsLoadingBalance] = useState(true); 
 
   const [depositAmount, setDepositAmount] = useState("");
-  const [cardsQty, setCardsQty] = useState("");
   const [totalCost, setTotalCost] = useState("");
   const [description, setDescription] = useState("");
 
@@ -100,10 +99,10 @@ function Page() {
   }, [userId]);
 
 
-  const calculateTotalCost = (depositAmount, cardsQty) => {
+  const calculateTotalCost = (depositAmount) => {
     let deposit = parseFloat(depositAmount);
-    let qty = parseInt(cardsQty, 10);
-    if (isNaN(deposit) || deposit <= 0 || isNaN(qty) || qty <= 0) {
+    let qty = 1;
+    if (isNaN(deposit) || deposit <= 0) {
       return "";
     }
 
@@ -119,6 +118,8 @@ function Page() {
 
     const count = total + (total * additionalPercentage - constant);
 
+    console.log(`${count} = ${total} + (${total} * ${additionalPercentage} - ${constant})`);
+
     if (count <= 0)  {
       total = 1
     } else {
@@ -132,14 +133,7 @@ function Page() {
   const handleDepositAmountChange = (e) => {
     let value = e.target.value.replace(/[^0-9.]/g, "");
     setDepositAmount(value);
-    const total = calculateTotalCost(value, cardsQty);
-    setTotalCost(total);
-  };
-
-  const handleCardsQtyChange = (e) => {
-    let value = e.target.value.replace(/[^0-9]/g, "");
-    setCardsQty(value);
-    const total = calculateTotalCost(depositAmount, value);
+    const total = calculateTotalCost(value);
     setTotalCost(total);
   };
 
@@ -153,7 +147,7 @@ function Page() {
       maxAmount = Math.max(0, balance);
     }
     setDepositAmount(maxAmount.toFixed(2));
-    const total = calculateTotalCost(maxAmount, cardsQty);
+    const total = calculateTotalCost(maxAmount);
     setTotalCost(total);
   };
 
@@ -204,7 +198,7 @@ function Page() {
     const urlSegments = window.location.pathname.split("/");
     const binId = urlSegments[urlSegments.length - 1];
   
-    if (!depositAmount || !cardsQty || !description) {
+    if (!depositAmount || !description) {
       setErrortwo(translations('BuyCardId.fill'));
       setIsIssuing(false);
       return;
@@ -228,7 +222,7 @@ function Page() {
       start_balance: parseFloat(depositAmount) + 0.01,
       description: description,
       bin: bin,
-      cards_count: parseInt(cardsQty, 10),
+      cards_count: 1,
       external_id: value.toString(),
     };
   
@@ -362,15 +356,6 @@ function Page() {
                 >
                   {translations('BuyCardId.max')}
                 </button>
-                <label htmlFor="cardsQty">{translations('BuyCardId.quantity')}</label>
-                <input
-                  type="text"
-                  id="cardsQty"
-                  name="cardsQty"
-                  placeholder="1"
-                  value={cardsQty}
-                  onChange={handleCardsQtyChange}
-                />
                 
                 <label htmlFor="totalCost">{translations('BuyCardId.total')}</label>
                 <div className={styles.dropdown}>
