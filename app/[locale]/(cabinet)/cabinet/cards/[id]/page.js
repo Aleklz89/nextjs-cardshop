@@ -65,7 +65,7 @@ export default function CardPage() {
     setIsDeleting(true);
 
     try {
-      
+
       const response = await fetch('https://api.epn.net/card', {
         method: 'DELETE',
         headers: {
@@ -78,11 +78,11 @@ export default function CardPage() {
           card_uuids: [uuid],
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-      
+
 
       const removeResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/del', {
         method: 'POST',
@@ -216,11 +216,11 @@ export default function CardPage() {
               <p className={styles.maintext}>{selectedCard.holder_address}</p>
             </div>
           </div>
+          <button className={styles.buttonDelete} onClick={handleDeleteClick}>
+            {isDeleting ? <div className={styles.loader}></div> : `${translations('Cards.block')}`}
+          </button>
         </div>
       </div>
-      <button className={styles.buttonDelete} onClick={handleDeleteClick}>
-        {isDeleting ? <div className={styles.loader}></div> : `${translations('Cards.block')}`}
-      </button>
       {isPopupVisible && (
         <div className={styles.popupOverlay}>
           <div className={styles.popup}>
