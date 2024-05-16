@@ -19,10 +19,10 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body style={{ margin: '0' }}>
-        <ThemeProvider>
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            {children}
-          </NextIntlClientProvider>
+      <ThemeProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -99,7 +99,7 @@ const Fullcards = () => {
                   <p className={styles.cardBalance}>${card.account.balance.toFixed(2)}</p>
                 </div>
               </div>
-              <h3 className={styles.cardTitle}>{card.holder_name}</h3>
+              <h3 className={styles.cardTitle}>{card.description}</h3>
               <p className={styles.cardDescription}>{card.tariff.name}</p>
             </div>
           </Link>
