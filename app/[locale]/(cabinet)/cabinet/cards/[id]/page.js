@@ -173,7 +173,7 @@ export default function CardPage() {
         </Link>
         <div className={styles.header}>
           <div className={styles.headerContainer}>
-            <h2 className={styles.title}>{selectedCard.tariff.name} {selectedCard.ordered_at}</h2>
+            <h2 className={styles.title}>{selectedCard.description}</h2>
             <a href={shareUrl} target="_blank" rel="noopener noreferrer">
               <button className={styles.button}>{translations('Cards.share')}</button>
             </a>
