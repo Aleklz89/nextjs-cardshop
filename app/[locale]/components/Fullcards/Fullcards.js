@@ -21,7 +21,7 @@ const Fullcards = () => {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      setUserId(data.userId);
+      setUserId(8);
     } catch (error) {
       console.error('Error fetching user ID:', error);
     }

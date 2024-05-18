@@ -222,22 +222,22 @@ function Page() {
     };
   
     try {
-      // const buyResponse = await fetch("https://api.epn.net/card/buy", {
-      //   method: "POST",
-      //   headers: {
-      //     accept: "application/json",
-      //     "Content-Type": "application/json",
-      //     Authorization: "Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ",
-      //     "X-CSRF-TOKEN": "",
-      //   },
-      //   body: JSON.stringify(postData),
-      // });
+      const buyResponse = await fetch("https://api.epn.net/card/buy", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: "Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ",
+          "X-CSRF-TOKEN": "",
+        },
+        body: JSON.stringify(postData),
+      });
   
-      // if (!buyResponse.ok) {
-      //   const errorData = await buyResponse.json();
-      //   console.error(`Error buying card: ${buyResponse.status} - ${buyResponse.statusText}`, errorData);
-      //   throw new Error(`Error buying card: ${buyResponse.status}`);
-      // }
+      if (!buyResponse.ok) {
+        const errorData = await buyResponse.json();
+        console.error(`Error buying card: ${buyResponse.status} - ${buyResponse.statusText}`, errorData);
+        throw new Error(`Error buying card: ${buyResponse.status}`);
+      }
 
       const updateUserResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/add", {
         method: "POST",
