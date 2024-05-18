@@ -156,7 +156,9 @@
     },
 
     "Fullcards": {
-        "cards": "Cards:"
+        "cards": "Cards:",
+        "copyData": "Copy card details",
+        "detailedInfo": "Open details page"
     },
 
     "Header": {

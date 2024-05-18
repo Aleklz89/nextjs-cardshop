@@ -51,13 +51,13 @@ const Transactions = () => {
     }
   };
 
-  // Fetch transactions when userId is set
+
   useEffect(() => {
     fetchTransactions();
   }, [userId]);
 
   useEffect(() => {
-    console.log('Transactions before filtering:', transactions); // Log transactions before filtering
+    console.log('Transactions before filtering:', transactions);
 
     const lowerCaseSearchQuery = searchQuery.toLowerCase();
     const isMatch = (transaction) => {
@@ -104,11 +104,14 @@ const Transactions = () => {
     setIsEmpty(Object.keys(newFilteredTransactions).length === 0);
   }, [searchQuery, filterType, dateRange, transactions]);
 
+  console.log(filteredTransactions)
+
   return (
     <main>
       <Filters setSearchQuery={setSearchQuery} setFilterType={setFilterType} setDateRange={setDateRange} />
 
       {!isEmpty ? (
+        
         <Fullhistory transactions={filteredTransactions} />
       ) : (
         <Transhistory />

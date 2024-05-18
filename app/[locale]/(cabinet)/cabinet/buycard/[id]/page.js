@@ -38,7 +38,6 @@ function Page() {
     }
   };
 
-
   const fetchConstant = async (id) => {
     try {
       const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/constant?id=${id}`);
@@ -98,7 +97,6 @@ function Page() {
     }
   }, [userId]);
 
-
   const calculateTotalCost = (depositAmount) => {
     let deposit = parseFloat(depositAmount);
     let qty = 1;
@@ -112,20 +110,17 @@ function Page() {
       total += 10 * qty;
     }
 
-  
     const additionalPercentage = 0.05;
-    
 
     const count = total + (total * additionalPercentage - constant);
 
     console.log(`${count} = ${total} + (${total} * ${additionalPercentage} - ${constant})`);
 
     if (count <= 0)  {
-      total = 1
+      total = 1;
     } else {
       total += total * additionalPercentage - constant;
     }
-    
 
     return total.toFixed(2);
   };
@@ -219,7 +214,7 @@ function Page() {
   
     const postData = {
       account_uuid: "dd89adb8-3710-4f25-aefd-d7116eb66b6b",
-      start_balance: parseFloat(depositAmount) + 0.01,
+      start_balance: parseFloat(depositAmount),
       description: description,
       bin: bin,
       cards_count: 1,
@@ -227,22 +222,22 @@ function Page() {
     };
   
     try {
-      const buyResponse = await fetch("https://api.epn.net/card/buy", {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: "Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ",
-          "X-CSRF-TOKEN": "",
-        },
-        body: JSON.stringify(postData),
-      });
+      // const buyResponse = await fetch("https://api.epn.net/card/buy", {
+      //   method: "POST",
+      //   headers: {
+      //     accept: "application/json",
+      //     "Content-Type": "application/json",
+      //     Authorization: "Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ",
+      //     "X-CSRF-TOKEN": "",
+      //   },
+      //   body: JSON.stringify(postData),
+      // });
   
-      if (!buyResponse.ok) {
-        const errorData = await buyResponse.json();
-        console.error(`Error buying card: ${buyResponse.status} - ${buyResponse.statusText}`, errorData);
-        throw new Error(`Error buying card: ${buyResponse.status}`);
-      }
+      // if (!buyResponse.ok) {
+      //   const errorData = await buyResponse.json();
+      //   console.error(`Error buying card: ${buyResponse.status} - ${buyResponse.statusText}`, errorData);
+      //   throw new Error(`Error buying card: ${buyResponse.status}`);
+      // }
 
       const updateUserResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/add", {
         method: "POST",
@@ -273,7 +268,6 @@ function Page() {
         throw new Error(`Error updating balance: ${updateBalanceResponse.status}`);
       }
   
-      
       const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
         method: 'POST',
         headers: {
@@ -282,7 +276,7 @@ function Page() {
         body: JSON.stringify({
           userId,
           type: 'purchase', 
-          description: 'Card Purchase',
+          description: 'Card purchase',
           amount: -parseFloat(totalCost) 
         }),
       });
@@ -292,7 +286,25 @@ function Page() {
         console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
         throw new Error(`Error logging transaction: ${transactionResponse.status}`);
       }
+
+     
+      const cardTransactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/cardtrans', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cardId: value.toString(),
+          amount: parseFloat(depositAmount)
+        }),
+      });
   
+      if (!cardTransactionResponse.ok) {
+        const errorData = await cardTransactionResponse.json();
+        console.error(`Error logging card transaction: ${cardTransactionResponse.status}`, errorData);
+        throw new Error(`Error logging card transaction: ${cardTransactionResponse.status}`);
+      }
+
       await updateExternalId(value + 1);
   
       setTimeout(() => {

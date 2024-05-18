@@ -4,13 +4,12 @@ import styles from './Fullhistory.module.css';
 import '../../globals.css'
 
 const Fullhistory = ({ transactions }) => {
+  console.log(transactions)
   return (
     <div className={styles.fullHistory}>
       {Object.entries(transactions).map(([date, dailyTransactions], index) => (
         <div key={index} className={styles.dailyTransactionBlock}>
           <div className={styles.transactionDate}>{date}</div>
-          {console.log("dailyTransactions")}
-          {console.log(dailyTransactions)}
           {dailyTransactions.map((transaction, idx) => (
             <div key={idx} className={styles.transactionItem}>
               <div className={styles.transactionTime}>{transaction.time}</div>

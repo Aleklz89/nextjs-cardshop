@@ -146,7 +146,9 @@
         "withdraw": "Купівля"
     },
     "Fullcards": {
-        "cards": "Картки:"
+        "cards": "Картки:",
+        "copyData": "Скопіювати дані картки",
+        "detailedInfo": "Відкрити подробиці"
     },
     "Header": {
         "logout": "Вийти",

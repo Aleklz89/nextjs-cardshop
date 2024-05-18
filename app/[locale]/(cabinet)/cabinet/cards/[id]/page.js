@@ -1,14 +1,17 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import styles from './id.module.css';
-import { useTranslations } from "next-intl"
-import '../../globals.css'
+import { useTranslations } from "next-intl";
+import '../../globals.css';
+import Transhistory from '../../../../components/transhistory/Transhistory';
+import Cardstory from '../../../../components/cardstory/Cardstory';
+import axios from 'axios';
 
 export default function CardPage() {
-  const translations = useTranslations()
+  const translations = useTranslations();
   const pathname = usePathname();
   const router = useRouter();
   const [uuid, setUuid] = useState(null);
@@ -18,20 +21,36 @@ export default function CardPage() {
   const [userId, setUserId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [transactions, setTransactions] = useState({});
+  const [isEmpty, setIsEmpty] = useState(false);
 
   const fetchAllCards = async () => {
+    let allCards = [];
+    let currentPage = 1;
+    const perPage = 25; // Количество карт на странице
+
     try {
-      const response = await fetch('https://api.epn.net/card', {
-        headers: {
-          accept: 'application/json',
-          Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+      while (true) {
+        const response = await fetch(`https://api.epn.net/card?page=${currentPage}`, {
+          headers: {
+            accept: 'application/json',
+            Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+        const data = await response.json();
+        allCards = allCards.concat(data.data);
+
+        // Проверяем, есть ли следующая страница
+        if (data.meta.current_page * perPage >= data.meta.total) {
+          break;
+        }
+        currentPage++;
       }
-      const data = await response.json();
-      setCardsData(data.data);
+
+      setCardsData(allCards);
     } catch (error) {
       console.error('Error fetching all cards:', error);
     }
@@ -65,7 +84,7 @@ export default function CardPage() {
     setIsDeleting(true);
 
     try {
-
+      // Удаление карты из epn.net
       const response = await fetch('https://api.epn.net/card', {
         method: 'DELETE',
         headers: {
@@ -83,7 +102,7 @@ export default function CardPage() {
         throw new Error(`Error: ${response.status}`);
       }
 
-
+      // Удаление карты из базы данных вашего приложения
       const removeResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/del', {
         method: 'POST',
         headers: {
@@ -94,6 +113,30 @@ export default function CardPage() {
 
       if (!removeResponse.ok) {
         throw new Error(`Error removing card ID: ${removeResponse.status}`);
+      }
+
+      // Получение текущего баланса пользователя
+      const balanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/user`);
+      if (!balanceResponse.ok) {
+        throw new Error(`Error fetching user balance: ${balanceResponse.status}`);
+      }
+      const usersData = await balanceResponse.json();
+      const user = usersData.users.find((item) => item.id === userId);
+      const currentBalance = Number(user.balance);
+
+      // Обновление баланса
+      const newBalance = currentBalance + selectedCard.account.balance;
+
+      const updateResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: userId, balance: newBalance }),
+      });
+
+      if (!updateResponse.ok) {
+        throw new Error(`Error updating user balance: ${updateResponse.status}`);
       }
 
       setTimeout(() => {
@@ -117,6 +160,21 @@ export default function CardPage() {
 
   const handleCancel = () => {
     setIsPopupVisible(false);
+  };
+
+  const fetchCardTransactions = async (cardId) => {
+    try {
+      const response = await axios.post('/api/getcardtrans', { cardId });
+      if (response.status === 200) {
+        setTransactions(response.data.transactions);
+        setIsEmpty(response.data.transactions.length === 0);
+      } else {
+        setIsEmpty(true);
+      }
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+      setIsEmpty(true);
+    }
   };
 
   useEffect(() => {
@@ -154,6 +212,7 @@ export default function CardPage() {
 
       if (card && card.uuid) {
         fetchCardDetails(card.uuid);
+        fetchCardTransactions(card.external_id);
       }
     }
   }, [uuid, cardsData]);
@@ -232,6 +291,13 @@ export default function CardPage() {
           </div>
         </div>
       )}
+      <div>
+        {!isEmpty ? (
+          <Cardstory transactions={transactions} />
+        ) : (
+          <Transhistory />
+        )}
+      </div>
     </div>
   );
 }

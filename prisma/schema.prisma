@@ -20,9 +20,6 @@ model User {
   transactions Transaction[] 
 }
 
-
-
-
 model Request {
   id             Int      @id @default(autoincrement())
   email          String   @unique
@@ -40,6 +37,15 @@ model Transaction {
   id          Int      @id @default(autoincrement())
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
+  type        String   
+  description String   
+  amount      Float    
+  timestamp   DateTime @default(now())
+}
+
+model CardTransaction {
+  id          Int      @id @default(autoincrement())
+  cardId      String
   type        String   
   description String   
   amount      Float    

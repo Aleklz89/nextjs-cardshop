@@ -1,0 +1,155 @@
+.transactionList {
+    border: 1px solid #e6e6e6;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 100px;
+    margin-left: 50px;
+    width: 90%;
+}
+
+.number {
+    width: 400px;
+}
+
+
+
+.transactionItem:last-child {
+    border-bottom: none;
+}
+
+.transactionTime {
+    font-size: 14px;
+    color: var(--text-color);
+    min-width: 200px;
+}
+
+.transactionDetails {
+    flex-grow: 1;
+    padding: 0 10px;
+}
+
+.transactionType {
+    font-weight: bold;
+    min-width: 200px;
+}
+
+.transactionDescription {
+    font-size: 12px;
+    color: var(--text-color);
+}
+
+.transactionAmount {
+    min-width: 200px;
+    font-size: 16px;
+    display: flex;
+    align-items: right;
+    text-align: right;
+}
+
+.positive {
+    color: green;
+}
+
+.negative {
+    color: red;
+}
+
+.confirmed {
+    margin-left: 5px;
+    color: green;
+}
+
+
+.transactionTime,
+.transactionType,
+.transactionDescription,
+.transactionAmount,
+.transactionConfirmed {
+    flex: 1;
+}
+
+.transactionConfirmed {
+    flex: 0.2;
+    text-align: center;
+}
+
+
+.transactionAmount.positive {
+    color: green;
+}
+
+.transactionAmount.negative {
+    color: red;
+}
+
+
+.fullHistory {
+    margin-top: 60px;
+    margin-left: 50px;
+    width: 90%;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.transactionList {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.transactionItem {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #e6e6e6;
+    min-width: 500px;
+}
+
+@media (max-width: 800px) {
+
+    .transactionList {
+        overflow-x: auto;
+        min-width: 600px;
+    }
+
+    .fullHistory {
+        margin-left: 0;
+        width: 100%;
+        margin-bottom: 50px;
+    }
+
+    .transactionDescription {
+        display: none;
+    }
+
+    .transactionConfirmed {
+        display: none;
+    }
+
+    .transactionType {
+        width: 100%;
+        font-size: 14px;
+    }
+
+    .transactionItem > * {
+        flex: 1;
+      }
+      
+      .transactionAmount {
+        flex: 0 1 10%;
+      }
+}
+
+.dailyTransactionBlock {
+    margin-bottom: 20px;
+    min-width: 650px;
+}
+
+.transactionDate {
+    background-color: var(--background-color);
+    padding: 10px;
+    font-weight: bold;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+
