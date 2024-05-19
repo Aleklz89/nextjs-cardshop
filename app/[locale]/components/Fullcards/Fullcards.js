@@ -10,7 +10,7 @@ const Fullcards = () => {
   const [userId, setUserId] = useState(null);
   const [userCards, setUserCards] = useState([]);
   const [cardsData, setCardsData] = useState([]);
-  const [menuOpen, setMenuOpen] = useState(null);
+  const [hoveredCardId, setHoveredCardId] = useState(null);
   const [cardDetails, setCardDetails] = useState(null);
   const [copiedCardId, setCopiedCardId] = useState(null);
 
@@ -60,7 +60,6 @@ const Fullcards = () => {
         const data = await response.json();
         allCards = allCards.concat(data.data);
   
-       
         if (data.meta.current_page * perPage >= data.meta.total) {
           break;
         }
@@ -120,16 +119,13 @@ const Fullcards = () => {
     }).catch(err => console.error('Failed to copy text: ', err));
   };
 
-  const handleMenuClick = (event, cardUuid) => {
-    event.stopPropagation();
-    setMenuOpen(cardUuid === menuOpen ? null : cardUuid);
-    if (cardUuid !== menuOpen) {
-      setCopiedCardId(null); 
-    }
+  const handleMouseEnter = (cardUuid) => {
+    setHoveredCardId(cardUuid);
+    setCopiedCardId(null); 
   };
 
-  const handleCloseMenu = () => {
-    setMenuOpen(null);
+  const handleMouseLeave = () => {
+    setHoveredCardId(null);
     setCopiedCardId(null); 
   };
 
@@ -140,14 +136,19 @@ const Fullcards = () => {
   const filteredCards = cardsData.filter((card) => userCards.includes(card.external_id));
 
   return (
-    <div className={styles.assetsContainer} onClick={handleCloseMenu}>
+    <div className={styles.assetsContainer}>
       <div className={styles.header}>
         <h2 className={styles.amount}>{translations('Fullcards.cards')} {filteredCards.length}</h2>
       </div>
 
       <div className={styles.cardsContainer}>
         {filteredCards.map((card) => (
-          <div key={card.uuid} className={styles.cardContainer} onClick={(e) => handleMenuClick(e, card.uuid)}>
+          <div
+            key={card.uuid}
+            className={styles.cardContainer}
+            onMouseEnter={() => handleMouseEnter(card.uuid)}
+            onMouseLeave={handleMouseLeave}
+          >
             <div className={styles.card}>
               <div className={styles.cardImageContainer}>
                 <img
@@ -162,14 +163,16 @@ const Fullcards = () => {
               <h3 className={styles.cardTitle}>{card.description}</h3>
               <p className={styles.cardDescription}>{card.tariff.name}</p>
             </div>
-            <div className={`${styles.menu} ${menuOpen === card.uuid ? styles.menuOpen : ''}`} onClick={(e) => e.stopPropagation()}>
-              <div className={styles.menuItem} onClick={(e) => { e.stopPropagation(); handleCopyData(card.uuid); }}>
-                {translations('Fullcards.copyData')} {copiedCardId === card.uuid && <span className={styles.copiedMark}>✓</span>}
+            {hoveredCardId === card.uuid && (
+              <div className={styles.menu}>
+                <div className={styles.menuItem} onClick={() => handleCopyData(card.uuid)}>
+                  {translations('Fullcards.copyData')} {copiedCardId === card.uuid && <span className={styles.copiedMark}>✓</span>}
+                </div>
+                <div className={styles.menuItem} onClick={() => handleDetailedInfoClick(card.uuid)}>
+                  {translations('Fullcards.detailedInfo')}
+                </div>
               </div>
-              <div className={styles.menuItem} onClick={(e) => { e.stopPropagation(); handleDetailedInfoClick(card.uuid); }}>
-                {translations('Fullcards.detailedInfo')}
-              </div>
-            </div>
+            )}
           </div>
         ))}
       </div>
