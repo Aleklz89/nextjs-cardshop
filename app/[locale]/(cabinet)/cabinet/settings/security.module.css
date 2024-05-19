@@ -149,7 +149,7 @@
 /* ThemeSwitch.module.css */
 .themeblock {
   width: 550px;
-  height: 500px;
+  height: 300px;
   margin-left: 30%;
   margin-top: 40px;
   margin-bottom: 30px;
@@ -403,7 +403,7 @@
 
   .themeblock {
     width: 80%;
-    height: 500px;
+    height: 300px;
     margin-top: 40px;
     margin-bottom: 30px;
     margin-left: 5%;

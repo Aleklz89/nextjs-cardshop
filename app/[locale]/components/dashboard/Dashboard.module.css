@@ -115,11 +115,13 @@
 
   .button {
     font-size: 12px;
+    padding: 8px 16px;
   }
 
   
   .buy {
     font-size: 12px;
+    padding:8px 16px;
   }
 
 }

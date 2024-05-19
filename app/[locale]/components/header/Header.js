@@ -189,29 +189,6 @@ const Header = () => {
             )}
           </div>
         </div>
-        <div className={styles.divider}></div>
-        <div className={styles.controls} ref={secondMenuRef}>
-          <div onClick={toggleSecondMenu} className={styles.iconContainer}>
-            <Image
-              src="https://i.ibb.co/3hjkB4z/17157052055290438-1.png"
-              alt="Settings icon"
-              height="25"
-              width="25"
-              className={styles.hoverEffectwo}
-            />
-            {secondMenuOpen && (
-              <div className={styles.dropdownMenu}>
-                <ul>
-                  <li>
-                    <Link href="/cabinet/settings" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
-                    {translations('Header.security')}
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
         <div className={styles.phonemenublock}>
           <div className={styles.divider}></div>
           <div className={styles.phonemenu} onClick={toggleSidebar}>

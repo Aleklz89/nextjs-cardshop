@@ -81,6 +81,10 @@
     background: #d7fadc;
 }
 
+.navItem:hover a {
+    color: black;
+}
+
 .active {
     padding: 10px;
     border-radius: 10px;
@@ -99,6 +103,11 @@
     font-weight: 600;
     margin-top: -3px;
 }
+
+.navItem:hover .active a  {
+    color: black;
+}
+
 
 .visible {
     background-color: red;

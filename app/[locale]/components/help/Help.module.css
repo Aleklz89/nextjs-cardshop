@@ -156,7 +156,7 @@
   
   .infolist li {
     margin-bottom: 10px;
-    color: green;
+    color: var(--text-color);
     text-decoration: underline;
   }
 
