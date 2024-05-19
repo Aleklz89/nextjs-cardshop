@@ -44,10 +44,17 @@
 
 .menuItem:hover {
   background-color: green;
+  color: white;
 }
 
+.menuItem:hover .copiedMark {
+  color: white;
+}
+
+
 .copiedMark {
-  color: red;
+  font-size: 14px;
+  color: green;
   margin-left: 8px;
 }
 

@@ -44,7 +44,7 @@ const Fullcards = () => {
   const fetchAllCards = async () => {
     let allCards = [];
     let currentPage = 1;
-    const perPage = 25; // Количество карт на странице
+    const perPage = 25; 
   
     try {
       while (true) {
@@ -60,7 +60,7 @@ const Fullcards = () => {
         const data = await response.json();
         allCards = allCards.concat(data.data);
   
-        // Проверяем, есть ли следующая страница
+       
         if (data.meta.current_page * perPage >= data.meta.total) {
           break;
         }
@@ -116,7 +116,7 @@ const Fullcards = () => {
     const details = await fetchCardDetails(uuid);
     const dataToCopy = `${details.number} ${details.cvx2} ${details.exp_month}/${details.exp_year}`;
     navigator.clipboard.writeText(dataToCopy).then(() => {
-      setCopiedCardId(uuid); // Set the ID of the copied card
+      setCopiedCardId(uuid); 
     }).catch(err => console.error('Failed to copy text: ', err));
   };
 
@@ -124,13 +124,13 @@ const Fullcards = () => {
     event.stopPropagation();
     setMenuOpen(cardUuid === menuOpen ? null : cardUuid);
     if (cardUuid !== menuOpen) {
-      setCopiedCardId(null); // Reset copied state if the menu is reopened
+      setCopiedCardId(null); 
     }
   };
 
   const handleCloseMenu = () => {
     setMenuOpen(null);
-    setCopiedCardId(null); // Reset copied state when menu is closed
+    setCopiedCardId(null); 
   };
 
   const handleDetailedInfoClick = (uuid) => {
