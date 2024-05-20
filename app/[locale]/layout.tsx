@@ -1,7 +1,7 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { ThemeProvider } from './context/ThemeContext';
+import { Providers } from './providers'
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -17,18 +17,14 @@ export default async function RootLayout({
 
   const messages = await getMessages();
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       
-      <body style={{ 
-  margin: '0', 
-  backgroundColor: 'var(--background-color)', // Использование CSS переменной для фонового цвета
-  color: 'var(--text-color)' // Добавление цвета текста, если требуется
-}}>
-      <ThemeProvider>
+      <body>
+      <Providers>
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
         </NextIntlClientProvider>
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );
