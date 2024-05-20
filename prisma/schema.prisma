@@ -51,3 +51,9 @@ model CardTransaction {
   amount      Float    
   timestamp   DateTime @default(now())
 }
+
+model CardBalance {
+  id      Int      @id @default(autoincrement())
+  cardId  String   @unique
+  balance Decimal  @default(0) @db.Decimal(10, 2)
+}

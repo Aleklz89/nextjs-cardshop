@@ -1,23 +1,22 @@
-"use client"
+'use client'
 import React, { useState, useEffect } from "react";
 import styles from './Cardstory.module.css';
 import '../globals.css';
 import { useTranslations } from "next-intl";
-import axios from 'axios';
 import { format, parseISO } from 'date-fns';
 import Transhistory from "../transhistory/Transhistory";
 
 const groupTransactionsByDate = (transactions) => {
   return transactions.reduce((acc, transaction) => {
-    const date = format(parseISO(transaction.timestamp), 'dd/MM/yyyy');
+    const date = format(parseISO(transaction.created_at), 'dd/MM/yyyy');
     if (!acc[date]) {
       acc[date] = [];
     }
     acc[date].push({
-      time: format(parseISO(transaction.timestamp), 'HH:mm:ss'),
-      type: transaction.type,
+      time: format(parseISO(transaction.created_at), 'HH:mm:ss'),
+      type: transaction.type_enum,
       description: transaction.description,
-      amount: transaction.amount,
+      amount: parseFloat(transaction.amount),
     });
     return acc;
   }, {});
@@ -26,7 +25,6 @@ const groupTransactionsByDate = (transactions) => {
 const CardTransactionHistory = ({ transactions }) => {
   const translations = useTranslations();
   const [dailyTransactions, setDailyTransactions] = useState({});
-  const [message, setMessage] = useState('');
 
   useEffect(() => {
     if (transactions.length > 0) {
@@ -34,24 +32,6 @@ const CardTransactionHistory = ({ transactions }) => {
       setDailyTransactions(groupedTransactions);
     }
   }, [transactions]);
-
-  const handleBalanceCheck = async () => {
-    try {
-      const response = await axios.get('/api/monitor');
-      if (response.status === 200) {
-        setMessage('Balance monitoring started successfully!');
-      } else {
-        setMessage('Failed to start balance monitoring.');
-      }
-    } catch (error) {
-      console.error('Error starting balance monitoring:', error);
-      setMessage('Error starting balance monitoring.');
-    }
-  };
-
-  useEffect(() => {
-    handleBalanceCheck();
-  }, []);
 
   return (
     <div className={styles.fullHistory}>

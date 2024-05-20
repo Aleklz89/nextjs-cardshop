@@ -18,6 +18,8 @@
 }
 
 .transactionTime {
+    display: flex;
+    align-items: center;
     font-size: 14px;
     color: var(--text-color);
     min-width: 200px;
@@ -29,11 +31,15 @@
 }
 
 .transactionType {
+    display: flex;
+    align-items: center;
     font-weight: bold;
     min-width: 200px;
 }
 
 .transactionDescription {
+    display: flex;
+    align-items: center;
     font-size: 12px;
     color: var(--text-color);
 }

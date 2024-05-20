@@ -8,7 +8,6 @@ import { useTranslations } from "next-intl";
 import '../../globals.css';
 import Transhistory from '../../../../components/transhistory/Transhistory';
 import Cardstory from '../../../../components/cardstory/Cardstory';
-import axios from 'axios';
 
 export default function CardPage() {
   const translations = useTranslations();
@@ -21,13 +20,13 @@ export default function CardPage() {
   const [userId, setUserId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const [transactions, setTransactions] = useState({});
+  const [transactions, setTransactions] = useState([]);
   const [isEmpty, setIsEmpty] = useState(false);
 
   const fetchAllCards = async () => {
     let allCards = [];
     let currentPage = 1;
-    const perPage = 25; // Количество карт на странице
+    const perPage = 25;
 
     try {
       while (true) {
@@ -43,7 +42,6 @@ export default function CardPage() {
         const data = await response.json();
         allCards = allCards.concat(data.data);
 
-        // Проверяем, есть ли следующая страница
         if (data.meta.current_page * perPage >= data.meta.total) {
           break;
         }
@@ -84,7 +82,6 @@ export default function CardPage() {
     setIsDeleting(true);
 
     try {
-      // Удаление карты из epn.net
       const response = await fetch('https://api.epn.net/card', {
         method: 'DELETE',
         headers: {
@@ -102,7 +99,6 @@ export default function CardPage() {
         throw new Error(`Error: ${response.status}`);
       }
 
-      // Удаление карты из базы данных вашего приложения
       const removeResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/del', {
         method: 'POST',
         headers: {
@@ -115,7 +111,6 @@ export default function CardPage() {
         throw new Error(`Error removing card ID: ${removeResponse.status}`);
       }
 
-      // Получение текущего баланса пользователя
       const balanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/user`);
       if (!balanceResponse.ok) {
         throw new Error(`Error fetching user balance: ${balanceResponse.status}`);
@@ -124,7 +119,6 @@ export default function CardPage() {
       const user = usersData.users.find((item) => item.id === userId);
       const currentBalance = Number(user.balance);
 
-      // Обновление баланса
       const newBalance = currentBalance + selectedCard.account.balance;
 
       const updateResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/update`, {
@@ -163,19 +157,53 @@ export default function CardPage() {
   };
 
   const fetchCardTransactions = async (cardId) => {
+    let allTransactions = [];
+    let currentPage = 1;
+  
     try {
-      const response = await axios.post('/api/getcardtrans', { cardId });
-      if (response.status === 200) {
-        setTransactions(response.data.transactions);
-        setIsEmpty(response.data.transactions.length === 0);
-      } else {
-        setIsEmpty(true);
+      while (true) {
+        const response = await fetch(`https://api.epn.net/transaction`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+            'X-CSRF-TOKEN': '',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type: 'output,output_transfer',
+            account_uuid: cardId,
+            page: currentPage
+          })
+        });
+  
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Error: ${response.status}, ${errorText}`);
+        }
+  
+        const data = await response.json();
+        allTransactions = allTransactions.concat(data.data);
+  
+        if (!data.links.next) {
+          break;
+        }
+        currentPage++;
       }
+  
+      setTransactions(allTransactions);
+      setIsEmpty(allTransactions.length === 0);
     } catch (error) {
       console.error('Error fetching transactions:', error);
       setIsEmpty(true);
     }
   };
+  
+  // Example usage:
+  // fetchCardTransactions('65bb3bfa-b695-46ca-93e9-f9c047932871');
+  
+  
+  
 
   useEffect(() => {
     const match = pathname.match(/\/([a-f0-9-]+)$/i);
@@ -212,7 +240,7 @@ export default function CardPage() {
 
       if (card && card.uuid) {
         fetchCardDetails(card.uuid);
-        fetchCardTransactions(card.external_id);
+        fetchCardTransactions(card.account.uuid);
       }
     }
   }, [uuid, cardsData]);
