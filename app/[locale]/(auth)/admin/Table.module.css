@@ -32,7 +32,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    z-index: 7;
+    z-index: 1000;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     border-bottom: 0.1px solid white;
 }

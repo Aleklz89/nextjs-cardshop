@@ -2,9 +2,17 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './Table.module.css';
-import '../globals.css'
+import '../globals.css';
+import { useTheme } from 'next-themes';
 
 function Page() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [sortOrder, setSortOrder] = useState("asc");
@@ -28,13 +36,9 @@ function Page() {
   const [showPopup, setShowPopup] = useState(false);
   const [loadingRequests, setLoadingRequests] = useState(true);
   const [loadingUsers, setLoadingUsers] = useState(true);
-
   const [loadingRejectBalance, setLoadingRejectBalance] = useState(null);
   const [loadingAcceptBalance, setLoadingAcceptBalance] = useState(null);
-
   const [editableMarkups, setEditableMarkups] = useState({});
-
-
 
   const fetchValue = async () => {
     try {
@@ -403,44 +407,27 @@ function Page() {
     setShowPopup(false);
   };
 
-  const [theme, setTheme] = useState("light");
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    setTheme(savedTheme);
-    document.documentElement.setAttribute("data-theme", savedTheme);
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-  };
-
-
+  if (!mounted) return null;
 
   return (
     <div className={styles.patron}>
       <header className={styles.header}>
         <div className={styles.logo}>CVV888</div>
         <div className={styles.parent}>
-        
           <h3>Текущий баланс:</h3>
           {balance !== null ? (
             <h3 className={styles.sum}>{balance} $</h3>
           ) : (
             <p className={styles.load}>{error || 'Загрузка данных...'}</p>
           )}
-        
-      </div>
+        </div>
         <div className={styles.themeSwitcher}>
           <span className={styles.lightLabel}>🌞</span>
           <label className={styles.switch}>
             <input
               type="checkbox"
               checked={theme === "dark"}
-              onChange={toggleTheme}
+              onChange={() => setTheme(theme === "dark" ? "light" : "dark")}
             />
             <span className={styles.slider}></span>
           </label>
@@ -472,13 +459,10 @@ function Page() {
                     <td>{formatDate(item.submissionTime)}</td>
                     <td>{item.email}</td>
                     <td>
-                      <a href={`https://t.me/${item.telegram}`} target="_blank" rel="noopener noreferrer"  className={styles.telegramlink}>
+                      <a href={`https://t.me/${item.telegram}`} target="_blank" rel="noopener noreferrer" className={styles.telegramlink}>
                         @{item.telegram}
                       </a>
                     </td>
-
-
-
                     <td>
                       <button
                         onClick={() => handleReject(item.id)}
@@ -527,12 +511,10 @@ function Page() {
                       <td>{formatDate(item.submissionTime)}</td>
                       <td>{item.email}</td>
                       <td>
-                        <a href={`https://t.me/${item.telegram}`} target="_blank" rel="noopener noreferrer"  className={styles.telegramlink}>
+                        <a href={`https://t.me/${item.telegram}`} target="_blank" rel="noopener noreferrer" className={styles.telegramlink}>
                           @{item.telegram}
                         </a>
                       </td>
-
-
                       <td>
                         <button onClick={() => handleReject(item.id)} className={styles.btnreject}>
                           Отклонить
@@ -591,12 +573,10 @@ function Page() {
                       /> $
                     </td>
                     <td>
-                      <a href={`https://t.me/${item.telegram}`} target="_blank" rel="noopener noreferrer"  className={styles.telegramlink}>
+                      <a href={`https://t.me/${item.telegram}`} target="_blank" rel="noopener noreferrer" className={styles.telegramlink}>
                         @{item.telegram}
                       </a>
                     </td>
-
-
                     <td>
                       <input
                         type="number"
@@ -654,8 +634,6 @@ function Page() {
                           @{item.telegram}
                         </a>
                       </td>
-
-
                       <td>
                         <input
                           type="number"
