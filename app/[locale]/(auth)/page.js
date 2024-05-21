@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl"
 import Switcher from "../components/switcher/Switcher";
 
 
+
 export default function SignInUpForm() {
   const translations = useTranslations()
   const router = useRouter();
@@ -53,6 +54,8 @@ export default function SignInUpForm() {
       });
 
       if (response.ok) {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
         router.push("/cabinet/cards");
       } else {
         setMessage(translations('IndexPage.invalid'));

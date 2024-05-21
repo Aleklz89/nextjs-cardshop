@@ -5,12 +5,23 @@ import Dashboard from "../../../components/dashboard/Dashboard";
 import Cardslist from "../../../components/cardlist/Cardslist";
 import Fullcards from "../../../components/Fullcards/Fullcards";
 import styles from './cards.css';
-import '../globals.css'
+import '../globals.css';
 
 export default function Cards() {
   const [userId, setUserId] = useState(null);
   const [cardsCount, setCardsCount] = useState(0);
 
+  // Function to set the theme
+  const applyTheme = () => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
+
+  // Fetch User ID
   const fetchUserId = async () => {
     try {
       const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/token');
@@ -24,6 +35,7 @@ export default function Cards() {
     }
   };
 
+  // Fetch User Cards
   const fetchUserCards = async (userId) => {
     try {
       const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/cabinet?id=${userId}`);
@@ -39,6 +51,10 @@ export default function Cards() {
   };
 
   useEffect(() => {
+    // Apply the theme before rendering the component
+    applyTheme();
+
+    // Fetch user data
     const fetchData = async () => {
       await fetchUserId();
     };

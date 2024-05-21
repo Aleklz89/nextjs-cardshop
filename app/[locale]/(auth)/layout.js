@@ -3,6 +3,7 @@ import Header from '../components/header/Header';
 import Sidebar from '../components/sidebar/Sidebar';
 import { Roboto } from "next/font/google";
 import styles from './auth.module.css'
+import './globals.css'
 
 const roboto = Roboto({
   subsets: ["latin"],

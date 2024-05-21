@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Providers } from './providers'
+import './globals.css'
 
 interface RootLayoutProps {
   children: React.ReactNode;
