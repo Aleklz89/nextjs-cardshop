@@ -14,7 +14,7 @@
     margin-top: 50px;
     border: 1px solid #ccc; 
     width: 90%;
-    height: 310px;
+    height: 350px;
     margin-bottom: 100px;
   }
 
@@ -22,6 +22,7 @@
     .assetsContainer {
       margin-left: 25px;
       margin-bottom: 50px;
+      height: 700px;
      }
   }
 

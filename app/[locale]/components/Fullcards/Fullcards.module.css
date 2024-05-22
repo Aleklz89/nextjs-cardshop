@@ -123,6 +123,19 @@
   margin-bottom: 100px;
 }
 
+.relativeContainer {
+  position: relative;
+}
+
+.cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  margin-top: -50px;
+}
+
 @media (max-width: 767px) {
   .assetsContainer {
     margin-left: 25px;

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './Fullcards.module.css';
 import { useTranslations } from "next-intl";
 import '../globals.css';
+import Cardslist from '../cardlist/Cardslist'; // Убедитесь, что путь правильный
 
 const Fullcards = () => {
   const translations = useTranslations();
@@ -13,6 +14,16 @@ const Fullcards = () => {
   const [hoveredCardId, setHoveredCardId] = useState(null);
   const [cardDetails, setCardDetails] = useState(null);
   const [copiedCardId, setCopiedCardId] = useState(null);
+  const [showCardlist, setShowCardlist] = useState(true);
+
+  useEffect(() => {
+    // Показываем Cardlist на 3 секунды после загрузки страницы
+    const timer = setTimeout(() => {
+      setShowCardlist(false);
+    }, 3000);
+
+    return () => clearTimeout(timer); // Очистка таймера при размонтировании компонента
+  }, []);
 
   const fetchUserId = async () => {
     try {
@@ -136,45 +147,47 @@ const Fullcards = () => {
   const filteredCards = cardsData.filter((card) => userCards.includes(card.external_id));
 
   return (
-    <div className={styles.assetsContainer}>
-      <div className={styles.header}>
-        <h2 className={styles.amount}>{translations('Fullcards.cards')} {filteredCards.length}</h2>
-      </div>
-
-      <div className={styles.cardsContainer}>
-        {filteredCards.map((card) => (
-          <div
-            key={card.uuid}
-            className={styles.cardContainer}
-            onMouseEnter={() => handleMouseEnter(card.uuid)}
-            onMouseLeave={handleMouseLeave}
-          >
-            <div className={styles.card}>
-              <div className={styles.cardImageContainer}>
-                <img
-                  src="https://i.ibb.co/k1LcxWK/Screenshot-1124-removebg-preview.png"
-                  className={styles.cardImage}
-                />
-                <div className={styles.cardDetailsOverlay}>
-                  <h3 className={styles.cardNumber}>{card.mask}</h3>
-                  <p className={styles.cardBalance}>${card.account.balance.toFixed(2)}</p>
+    <div className={styles.relativeContainer}>
+      {showCardlist && <div className={styles.cover}><Cardslist  className={styles.coverblock}/></div>}
+      <div className={styles.assetsContainer}>
+        <div className={styles.header}>
+          <h2 className={styles.amount}>{translations('Fullcards.cards')} {filteredCards.length}</h2>
+        </div>
+        <div className={styles.cardsContainer}>
+          {filteredCards.map((card) => (
+            <div
+              key={card.uuid}
+              className={styles.cardContainer}
+              onMouseEnter={() => handleMouseEnter(card.uuid)}
+              onMouseLeave={handleMouseLeave}
+            >
+              <div className={styles.card}>
+                <div className={styles.cardImageContainer}>
+                  <img
+                    src="https://i.ibb.co/k1LcxWK/Screenshot-1124-removebg-preview.png"
+                    className={styles.cardImage}
+                  />
+                  <div className={styles.cardDetailsOverlay}>
+                    <h3 className={styles.cardNumber}>{card.mask}</h3>
+                    <p className={styles.cardBalance}>${card.account.balance.toFixed(2)}</p>
+                  </div>
                 </div>
+                <h3 className={styles.cardTitle}>{card.description}</h3>
+                <p className={styles.cardDescription}>{card.tariff.name}</p>
               </div>
-              <h3 className={styles.cardTitle}>{card.description}</h3>
-              <p className={styles.cardDescription}>{card.tariff.name}</p>
+              {hoveredCardId === card.uuid && (
+                <div className={styles.menu}>
+                  <div className={styles.menuItem} onClick={() => handleCopyData(card.uuid)}>
+                    {translations('Fullcards.copyData')} {copiedCardId === card.uuid && <span className={styles.copiedMark}>✓</span>}
+                  </div>
+                  <div className={styles.menuItem} onClick={() => handleDetailedInfoClick(card.uuid)}>
+                    {translations('Fullcards.detailedInfo')}
+                  </div>
+                </div>
+              )}
             </div>
-            {hoveredCardId === card.uuid && (
-              <div className={styles.menu}>
-                <div className={styles.menuItem} onClick={() => handleCopyData(card.uuid)}>
-                  {translations('Fullcards.copyData')} {copiedCardId === card.uuid && <span className={styles.copiedMark}>✓</span>}
-                </div>
-                <div className={styles.menuItem} onClick={() => handleDetailedInfoClick(card.uuid)}>
-                  {translations('Fullcards.detailedInfo')}
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
