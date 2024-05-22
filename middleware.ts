@@ -36,6 +36,7 @@ export async function middleware(request: NextRequest) {
       return
     }
   }
+
   
   try {
     const { payload } = await jose.jwtVerify(jwt, secret);
@@ -43,6 +44,10 @@ export async function middleware(request: NextRequest) {
   
     if (isAdminPath && !payload.is_staff) {
       return;
+    }
+
+    if (isCabinetPath && payload.is_staff) {
+      return
     }
   
   } catch (error) {
