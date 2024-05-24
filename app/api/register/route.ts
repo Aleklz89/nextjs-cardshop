@@ -8,7 +8,6 @@ export async function POST(request: Request) {
         const body = await request.json();
         const { email, password, telegram } = body;
 
-        // Validation for email
         if (!validateEmail(email)) {
             return new Response(
                 JSON.stringify({ error: "Invalid email format" }),
@@ -16,7 +15,6 @@ export async function POST(request: Request) {
             );
         }
 
-        // Validation for password
         if (!validatePassword(password)) {
             return new Response(
                 JSON.stringify({ error: "Invalid password format" }),
@@ -24,7 +22,6 @@ export async function POST(request: Request) {
             );
         }
 
-        // Validation for telegram
         if (!telegram || telegram.trim() === "") {
             return new Response(
                 JSON.stringify({ error: "Telegram username is required" }),
@@ -32,7 +29,6 @@ export async function POST(request: Request) {
             );
         }
 
-        // Check if the email is already in use
         const existingUserByEmail = await prisma.user.findUnique({
             where: { email },
         });
@@ -44,7 +40,6 @@ export async function POST(request: Request) {
             );
         }
 
-        // Check if the telegram username is already in use
         const existingUserByTelegram = await prisma.user.findUnique({
             where: { telegram },
         });
@@ -56,7 +51,6 @@ export async function POST(request: Request) {
             );
         }
 
-        // Проверка, что email уже не использован в запросах регистрации
         const existingRequestByEmail = await prisma.request.findUnique({
             where: { email },
         });
@@ -68,7 +62,6 @@ export async function POST(request: Request) {
             );
         }
 
-        // Проверка, что telegram уже не использован в запросах регистрации
         const existingRequestByTelegram = await prisma.request.findUnique({
             where: { telegram },
         });
@@ -81,10 +74,8 @@ export async function POST(request: Request) {
         }
 
 
-        // Hash the password
         const hash = bcrypt.hashSync(password, 8);
 
-        // Create a registration request
         await prisma.request.create({
             data: {
                 email,
@@ -93,7 +84,6 @@ export async function POST(request: Request) {
             },
         });
 
-        // Success response
         return new Response(
             JSON.stringify({ message: "Registration request created successfully" }),
             { status: 200, headers: { 'Content-Type': 'application/json' } }

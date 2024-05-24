@@ -56,12 +56,11 @@ export async function middleware(request: NextRequest) {
 
 
 
-  // Если intlMiddleware возвращает NextResponse, возвращаем его
   if (intlResponse instanceof NextResponse) return intlResponse;
 
-  // Извлекаем JWT из URL или cookies
 
-  // Если JWT отсутствует, перенаправляем пользователя
+
+
   if (!jwt) {
     return NextResponse.redirect(new URL('/en', request.url));
   }
@@ -71,7 +70,7 @@ export async function middleware(request: NextRequest) {
     const { payload } = await jose.jwtVerify(jwt, secret);
     console.log("Verified JWT with payload:", payload);
 
-    // Проверка доступа на страницы администратора и кабинета
+
     const isAdminPath = request.nextUrl.pathname.startsWith('/admin');
     const isCabinetPath = request.nextUrl.pathname.startsWith('/en/cabinet');
     if (payload.is_staff && isAdminPath) {
@@ -80,7 +79,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // Перенаправление на главную страницу, если условия не соблюдены
+ 
     return NextResponse.redirect(new URL("/", request.url));
   } catch (err) {
     console.error("Error verifying JWT:", err);

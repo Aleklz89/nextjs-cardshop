@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './Fullcards.module.css';
 import { useTranslations } from "next-intl";
 import '../globals.css';
-import Cardslist from '../cardlist/Cardslist'; // Убедитесь, что путь правильный
+import Cardslist from '../cardlist/Cardslist';
 
 const Fullcards = () => {
   const translations = useTranslations();
@@ -17,12 +17,12 @@ const Fullcards = () => {
   const [showCardlist, setShowCardlist] = useState(true);
 
   useEffect(() => {
-    // Показываем Cardlist на 3 секунды после загрузки страницы
+
     const timer = setTimeout(() => {
       setShowCardlist(false);
     }, 3000);
 
-    return () => clearTimeout(timer); // Очистка таймера при размонтировании компонента
+    return () => clearTimeout(timer); 
   }, []);
 
   const fetchUserId = async () => {

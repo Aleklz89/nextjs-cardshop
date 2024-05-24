@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { cardId, amount } = body;
 
-    // Проверка наличия необходимых данных
+
     if (!cardId || typeof amount !== 'number') {
       return new NextResponse(
         JSON.stringify({ error: 'Missing or invalid cardId or amount' }),
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Определение типа и описания транзакции
+
     let type: string;
     let description: string;
     if (amount < 0) {
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       description = 'Card purchase';
     }
 
-    // Создание транзакции
+
     const newTransaction = await prisma.cardTransaction.create({
       data: {
         cardId,

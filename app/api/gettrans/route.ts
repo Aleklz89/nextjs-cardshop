@@ -1,4 +1,4 @@
-// File: /app/api/transactions/route.js
+
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '../../lib/prisma';
 
@@ -11,13 +11,13 @@ export async function GET(request: NextRequest) {
 
 
   try {
-    // Fetch transactions for the specified user from the database
+
     const transactions = await prisma.transaction.findMany({
       where: {
         userId: parseInt(userId),
       },
       include: {
-        user: true, // Assuming you still want to include user details in the response
+        user: true, 
       },
       orderBy: {
         timestamp: 'desc',

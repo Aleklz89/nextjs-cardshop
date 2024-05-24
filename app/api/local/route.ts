@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '../../lib/prisma';
 
-// GET: Получить значение второго элемента из таблицы
+
 export async function GET() {
   try {
     const secondValue = await prisma.singleValue.findUnique({
@@ -19,7 +19,7 @@ export async function GET() {
   }
 }
 
-// PATCH: Изменить значение второго элемента в таблице
+
 export async function PATCH(request: NextRequest) {
   try {
     const { value } = await request.json();
