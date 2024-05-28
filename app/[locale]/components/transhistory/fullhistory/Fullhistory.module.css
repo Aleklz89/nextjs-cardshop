@@ -47,7 +47,7 @@
 }
 
 .positive {
-    color: green;
+    color: #2A27A4;
 }
 
 .negative {
@@ -56,7 +56,7 @@
 
 .confirmed {
     margin-left: 5px;
-    color: green;
+    color: #2A27A4;
 }
 
 
@@ -75,7 +75,7 @@
 
 
 .transactionAmount.positive {
-    color: green;
+    color: #2A27A4;
 }
 
 .transactionAmount.negative {

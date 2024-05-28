@@ -2,13 +2,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  justify-content: right;
   padding-left: 10px;
   padding-right: 10px;
-  margin-left: -10px;
+  margin-left: -20px;
   width: 100%;
   height: 65px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .logoContainer {
@@ -40,7 +39,7 @@
 
 .navLink:hover,
 .navLink:active {
-  background-color: #399D6B;
+  background-color: #2A27A4;
   color: #ffffff;
 }
 
@@ -52,7 +51,7 @@
 .navLink:active .navLinkUnderline {
   display: block;
   height: 2px;
-  background-color: #399D6B;
+  background-color: #2A27A4;
   transition: width 0.3s;
 }
 
@@ -117,7 +116,7 @@
 }
 
 .navLink:hover {
-  background-color: #399D6B;
+  background-color: #2A27A4;
   color: #ffffff;
   font-weight: 700;
 }
@@ -132,7 +131,7 @@
 }
 
 .number {
-  color: green;
+  color: #2A27A4;
   margin-top: 18px;
   margin-left: 5px;
 }
@@ -203,7 +202,7 @@
   }
 
   .header {
-
+    justify-content: right;
     align-items: center;
     padding: 0 20px;
     height: 65px;
@@ -222,6 +221,8 @@
 .hoverEffect {
   margin-right: 3px;
   transition: transform 0.3s ease;
+  margin-top: 40px;
+  margin-right: 10px;
 }
 
 .hoverEffectwo {

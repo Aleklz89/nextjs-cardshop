@@ -1,15 +1,15 @@
 'use client';
 import { useLocale } from "use-intl";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useTransition, useEffect, useState } from "react";
+import { useTransition, useEffect, useState } from "react";
 import { usePathname } from 'next/navigation';
 import styles from './Switcher.module.css';
 import Image from "next/image";
 import '../globals.css'
 
 const options = [
-    { value: 'en', label: 'English', imgSrc: 'https://i.ibb.co/mF214kL/en.png' },
-    { value: 'uk', label: 'Українська', imgSrc: 'https://i.ibb.co/MN3NTMY/ukr.png' }
+    { value: 'en', label: 'English', imgSrc: '/eng.svg' },
+    { value: 'uk', label: 'Українська', imgSrc: '/ukr.svg' }
 ];
 
 function Switcher() {
@@ -43,23 +43,16 @@ function Switcher() {
     };
 
     return (
-        <div className={styles.customSelect}>
-            <div className={styles.selectedOption}>
-                <Image src={selectedOption.imgSrc} alt={selectedOption.label} width={20} height={20} />
-                <span className={styles.text}>{selectedOption.label}</span>
-            </div>
-            <div className={styles.options}>
-                {options.map(option => (
-                    <div
-                        key={option.value}
-                        className={styles.option}
-                        onClick={() => handleOptionClick(option)}
-                    >
-                        <Image src={option.imgSrc} alt={option.label} width={20} height={20} />
-                        <span className={styles.droptext}>{option.label}</span>
-                    </div>
-                ))}
-            </div>
+        <div className={styles.switcher}>
+            {options.map(option => (
+                <div
+                    key={option.value}
+                    className={`${styles.option} ${selectedOption.value === option.value ? styles.selected : ''}`}
+                    onClick={() => handleOptionClick(option)}
+                >
+                    <Image src={option.imgSrc} alt={option.label} width={20} height={20} />
+                </div>
+            ))}
         </div>
     );
 }

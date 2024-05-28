@@ -1,6 +1,6 @@
 .html,
 .body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Inter', sans-serif;
 
 }
 
@@ -23,6 +23,11 @@
   background-color: var(--primary-color);
   color: var(--text-color);
 }
+
+.bd {
+  display: flex;
+}
+
 
 @media (max-width: 767px) { 
   .body {

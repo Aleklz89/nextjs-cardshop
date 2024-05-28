@@ -307,7 +307,7 @@ input:checked+.slider:before {
 .popupButton {
     margin-top: 20px;
     padding: 8px 16px;
-    background-color: green;
+    background-color: #2A27A4;
     color: white;
     border: none;
     border-radius: 4px;

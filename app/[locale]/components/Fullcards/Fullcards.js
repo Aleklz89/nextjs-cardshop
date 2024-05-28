@@ -17,12 +17,25 @@ const Fullcards = () => {
   const [showCardlist, setShowCardlist] = useState(true);
 
   useEffect(() => {
+    const disableScroll = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('scroll', disableScroll);
 
     const timer = setTimeout(() => {
+      document.body.style.overflow = 'auto';
+      window.removeEventListener('scroll', disableScroll);
       setShowCardlist(false);
-    }, 3000);
+    }, 5000);
 
-    return () => clearTimeout(timer); 
+    return () => {
+      clearTimeout(timer);
+      document.body.style.overflow = 'auto';
+      window.removeEventListener('scroll', disableScroll);
+    };
   }, []);
 
   const fetchUserId = async () => {
@@ -164,7 +177,7 @@ const Fullcards = () => {
               <div className={styles.card}>
                 <div className={styles.cardImageContainer}>
                   <img
-                    src="https://i.ibb.co/k1LcxWK/Screenshot-1124-removebg-preview.png"
+                    src="/fon.svg"
                     className={styles.cardImage}
                   />
                   <div className={styles.cardDetailsOverlay}>

@@ -18,10 +18,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={roboto.className}>
+      <body className={styles.bd}>
         <Header />
         <div className={styles.psevdo}></div>
         <div style={{ display: 'flex' }}>
+          <Sidebar />
           <div className={styles.container}>{children}</div>
         </div>
       </body>

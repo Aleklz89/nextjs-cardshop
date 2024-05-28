@@ -109,79 +109,23 @@ const Header = () => {
           isVisible={isSidebarOpen}
         />
       )}
-        <div>
-        <Link href="/cabinet/cards" style={{ textDecoration: 'none' }} passHref>
-          <Image
-            src="https://i.ibb.co/FWQ7tRc/Screenshot-1043-removebg-preview.png"
-            alt="Logo"
-            height="45"
-            width="55"
-          />
-          <span className={styles.logoText}>
-            <span className={styles.logoTextCard}>CVV</span>
-            <span className={styles.logoTextShop}>888</span>
-          </span>
-        </Link>
-      </div>
-      <nav className={styles.nav}>
-            <a className={styles.menuItem} href="/cabinet/cards">
-                <Image
-                    src="https://i.ibb.co/9GnbbJz/free-icon-dollar-sign-2769269.png"
-                    alt="Cards"
-                    className={styles.icon}
-                    width={28}
-                    height={28}
-                />
-                {translations('Sidebar.cards')}
-            </a>
-            <a className={styles.menuItem} href="/cabinet/transactions">
-                <Image
-                    src="https://i.ibb.co/XtqQc1L/free-icon-time-and-calendar-8327630.png"
-                    alt="Transactions"
-                    className={styles.icon}
-                    width={28}
-                    height={28}
-                />
-                {translations('Sidebar.transactions')}
-            </a>
-            <a className={styles.menuItem} href="/cabinet/support">
-                <Image
-                    src="https://i.ibb.co/mSkBQM8/free-icon-question-mark-8426914.png"
-                    alt="Support"
-                    className={styles.icon}
-                    width={28}
-                    height={28}
-                />
-                {translations('Sidebar.support')}
-            </a>
-            <a className={styles.menuItem} href="/cabinet/settings">
-                <Image
-                    src="https://i.ibb.co/zX5ftLw/free-icon-setting-4945808.png"
-                    alt="Settings"
-                    className={styles.icon}
-                    width={28}
-                    height={28}
-                />
-                {translations('Sidebar.settings')}
-            </a>
-        </nav>
+        
       <div className={styles.controlGroup} ref={menuRef}>
-      <Switcher />
         <div className={styles.menuContainer}>
           <div onClick={toggleMenu} className={styles.iconContainer}>
             <div className={styles.controls}>
               <Image
-                src="https://i.ibb.co/x7vcf4Z/8801434.png"
+                src="/man.svg"
                 alt="Settings icon"
-                height="25"
-                width="25"
+                height="65"
+                width="65"
                 className={styles.hoverEffect}
               />
             </div>
             {menuOpen && (
               <div className={styles.dropdownMenu}>
                 <ul>
-                  <Link href="/" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
+                  <Link href="/en" className={styles.dropbutton} style={{ textDecoration: 'none' }} passHref>
                     <li>{translations('Header.logout')}</li>
                   </Link>
                 </ul>

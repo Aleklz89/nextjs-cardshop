@@ -20,8 +20,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en"  className={styles.html}>
       <body className={styles.body}>
-        <div style={{ display: 'flex' }}>
+        <div className={styles.full}>
+        <div style={{ display: 'flex' }}  className={styles.main}>
           <div className="container">{children}</div>
+        </div>
         </div>
       </body>
     </html>

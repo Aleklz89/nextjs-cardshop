@@ -1,15 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
 :root {
   --background-color: #ffffff;
-  --text-color: #292727;
+  --text-color: #374151;
 }
 
 html.dark {
-  --background-color: #292727;
+  --background-color: #0A0A1D;
   --text-color: #ffffff;
 }
 
+html {
+  position: fixed;
+  height: 100%;
+  overflow: hidden;
+}
 
-  body {
-    background-color: var(--background-color);
-    color: var(--text-color);
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  padding-left: 18%;
 }

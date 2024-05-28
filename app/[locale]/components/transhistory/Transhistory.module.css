@@ -49,7 +49,7 @@
   }
   
   .buyButton {
-    background-color: #399D6B;
+    background-color: #2A27A4;
     color: #fff;
     border: none;
     border-radius: 20px;
@@ -59,19 +59,19 @@
   }
   
   .buyButton:hover {
-    background-color: #399D6B;
+    background-color: #2A27A4;
   }
   
   .seeMoreButton {
     background: none;
     border: none;
-    color: #399D6B;
+    color: #2A27A4;
     cursor: pointer;
     transition: color 0.3s ease;
   }
   
   .seeMoreButton:hover {
-    color: #399D6B;
+    color: #2A27A4;
   }
 
 
@@ -85,7 +85,7 @@
   }
   
   .buyButton {
-    background-color: #399D6B;
+    background-color: #2A27A4;
     color: #fff;
     border: none;
     border-radius: 20px;
@@ -106,7 +106,7 @@
   .loader {
     border: 6px solid rgba(0,0,0,0.1);
     border-radius: 50%;
-    border-top: 6px solid green;
+    border-top: 6px solid #2A27A4;
     width: 50px;
     height: 50px;
     animation: spin 2s linear infinite;

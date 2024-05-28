@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
 :root {
   --background-color: #ffffff;
   --text-color: #292727;
 }
 
 html.dark {
-  --background-color: #292727;
+  --background-color: #0A0A1D;
   --text-color: #ffffff;
 }
 
@@ -12,5 +14,6 @@ html.dark {
   body {
     background-color: var(--background-color);
     color: var(--text-color);
+    font-family: 'Inter', sans-serif;
 }
 

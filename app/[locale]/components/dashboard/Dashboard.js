@@ -71,16 +71,7 @@ const Dashboard = () => {
           <Link href="/cabinet/buycard" style={{ textDecoration: 'none' }} passHref>
             <button className={styles.button}>{translations('Dashboard.order')}</button>
           </Link>
-          <Link href="/cabinet/topup" style={{ textDecoration: 'none' }} passHref>
-            <button className={styles.button}>{translations('Dashboard.topup')}</button>
-          </Link>
         </div>
-      </div>
-      <div className={styles.totalWorth}>
-        <span>{translations('Dashboard.balance')}</span>
-        <h2>
-          {isLoadingBalance ? `${translations('Cardlist.loading')}` : `$${balance}`}
-        </h2>
       </div>
     </div>
   );

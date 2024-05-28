@@ -95,7 +95,7 @@
 }
 
 .maxbutton:hover {
-  background-color: green;
+  background-color: #2A27A4;
   color: white;
   font-weight: bold;
 }
@@ -120,12 +120,12 @@
 
 .cancelbutton:hover,
 .issuebutton:hover {
-  border-color: green;
+  border-color: #2A27A4;
 }
 
 .cancelbutton {
-  border-color: green;
-  color: green;
+  border-color: #2A27A4;
+  color: #2A27A4;
 }
 
 .error {
@@ -133,7 +133,7 @@
 }
 
 .issuebutton {
-  background-color: green;
+  background-color: #2A27A4;
   color: white;
 }
 

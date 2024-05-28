@@ -1,17 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import styles from "./login.module.css";
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useTranslations } from "next-intl"
-import Switcher from "../components/switcher/Switcher";
-
-
+import { useTranslations } from "next-intl";
+import styles from "./login.module.css";
 
 export default function SignInUpForm() {
-  const translations = useTranslations()
+  const translations = useTranslations();
   const router = useRouter();
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
   const [email, setEmail] = useState("");
@@ -22,12 +19,23 @@ export default function SignInUpForm() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [telegram, setTelegram] = useState("");
 
+  const applyTheme = () => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
+
+  useEffect(() => {
+    applyTheme();
+  }, []);
+
   const handleSignUpClick = () => {
     setIsRightPanelActive(true);
     resetForm();
   };
-
-
 
   const handleSignInClick = () => {
     setIsRightPanelActive(false);
@@ -56,7 +64,7 @@ export default function SignInUpForm() {
       if (response.ok) {
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
-        router.push("/cabinet/cards");
+        window.location.href = "/cabinet/cards";
       } else {
         setMessage(translations('IndexPage.invalid'));
         setMessageStyle({ color: "red" });
@@ -76,7 +84,6 @@ export default function SignInUpForm() {
       setMessageStyle({ color: "red" });
       return;
     }
-
 
     let processedTelegram = telegram;
 
@@ -100,7 +107,7 @@ export default function SignInUpForm() {
 
       if (response.ok) {
         setMessage(translations('IndexPage.registration'));
-        setMessageStyle({ color: "green" });
+        setMessageStyle({ color: "#2A27A4" });
       } else if (data.error === "Email is already in use") {
         setMessage(translations('IndexPage.already'));
         setMessageStyle({ color: "red" });
@@ -123,28 +130,22 @@ export default function SignInUpForm() {
     }
   };
 
-
   return (
     <div className={styles.page}>
-      <Image
-        src="/ground.jpg"
-        fill={true}
-
-      />
-
       <Head>
         <title>Sign In/Up Form</title>
       </Head>
 
+      <div className={styles.blurred}></div>
+      <div className={styles.blurredtwo}></div>
       <div
-        className={`${styles.container} ${isRightPanelActive ? styles.rightPanelActive : ""
-          }`}
+        className={`${styles.container} ${isRightPanelActive ? styles.rightPanelActive : ""}`}
         id="container"
       >
-        <div className={`${styles.formContainer} ${styles.signUpContainer}`}>
+        <div className={`${styles.formContainer} ${styles.signUpContainer} ${!isRightPanelActive ? styles.hiddenForm : ''}`}>
           <form className={styles.form} onSubmit={handleSignupSubmit}>
-            <h1 className={styles.h1}>{translations('IndexPage.create')}</h1>
-            <span className={styles.span}>{translations('IndexPage.use')}</span>
+            <h1 className={styles.h1}>{translations('IndexPage.signin')}</h1>
+            <span className={styles.tostart}>{translations('IndexPage.tostart')}</span>
             <input
               className={styles.input}
               type="email"
@@ -178,8 +179,13 @@ export default function SignInUpForm() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
             />
-
             <button type="submit" className={styles.button}>{translations('IndexPage.request')}</button>
+            <div className={styles.swap}>
+              {translations('IndexPage.alreadyhave')}
+              <div className={styles.swaplink}  onClick={handleSignInClick}>
+                {translations('IndexPage.movein')}
+              </div>
+            </div>
             <div
               style={messageStyle}
               className={styles.message}
@@ -187,9 +193,10 @@ export default function SignInUpForm() {
             ></div>
           </form>
         </div>
-        <div className={`${styles.formContainer} ${styles.signInContainer}`}>
+        <div className={`${styles.formContainer} ${styles.signInContainer} ${isRightPanelActive ? styles.hiddenForm : ''}`}>
           <form className={styles.form} onSubmit={handleLoginSubmit}>
             <h1 className={styles.h1}>{translations('IndexPage.signin')}</h1>
+            <p className={styles.tostart}>{translations('IndexPage.tostart')}</p>
             <input
               className={styles.input}
               type="email"
@@ -206,7 +213,13 @@ export default function SignInUpForm() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <button type="submit" className={styles.button}>{translations('IndexPage.signin')}</button>
+            <button type="submit" className={styles.button}>{translations('IndexPage.movein')}</button>
+            <div className={styles.swap}>
+              {translations('IndexPage.noacc')}
+              <div className={styles.swaplink} onClick={handleSignUpClick}>
+                {translations('IndexPage.profile')}
+              </div>
+            </div>
             <div
               style={messageStyle}
               className={styles.message}
@@ -216,23 +229,89 @@ export default function SignInUpForm() {
         </div>
         <div className={styles.overlayContainer}>
           <div className={styles.overlay}>
-            <div
-              className={`${styles.overlayPanel} ${styles.overlayLeft}`}
-            >
-              <h1 className={styles.hello}>{translations('IndexPage.welcome')}</h1>
+            <div className={`${styles.overlayPanel} ${styles.overlayLeft}`}>
+              <h1 className={styles.hello}>{translations('IndexPage.hello')}</h1>
               <p className={styles.p}>{translations('IndexPage.stay')}</p>
-              <button className={styles.ghost} onClick={handleSignInClick}>
-                {translations('IndexPage.signin')}
-              </button>
+              <div className={styles.avatarbox}>
+                <Image
+                  src="/avatar.svg"
+                  alt="Settings icon"
+                  height="32"
+                  width="32"
+                  className={styles.avatar}
+                />
+                <Image
+                  src="/avatartwo.svg"
+                  alt="Settings icon"
+                  height="32"
+                  width="32"
+                  className={styles.avatartwo}
+                />
+                <Image
+                  src="/avatarthree.svg"
+                  alt="Settings icon"
+                  height="32"
+                  width="32"
+                  className={styles.avatartwo}
+                />
+                <Image
+                  src="/avatarfour.svg"
+                  alt="Settings icon"
+                  height="32"
+                  width="32"
+                  className={styles.avatartwo}
+                />
+                <Image
+                  src="/avatarfive.svg"
+                  alt="Settings icon"
+                  height="32"
+                  width="32"
+                  className={styles.avatartwo}
+                />
+                <p className={styles.txt}>{translations('IndexPage.users')}</p>
+              </div>
             </div>
-            <div
-              className={`${styles.overlayPanel} ${styles.overlayRight}`}
-            >
+            <div className={`${styles.overlayPanel} ${styles.overlayRight}`}>
               <h1 className={styles.hello}>{translations('IndexPage.hello')}</h1>
               <p className={styles.p}>{translations('IndexPage.provide')}</p>
-              <button className={styles.ghost} onClick={handleSignUpClick}>
-                {translations('IndexPage.signup')}
-              </button>
+              <div className={styles.avatarbox}>
+                <Image
+                  src="/avatar.svg"
+                  alt="Settings icon"
+                  height="32"
+                  width="32"
+                  className={styles.avatar}
+                />
+                <Image
+                  src="/avatartwo.svg"
+                  alt="Settings icon"
+                  height="32"
+                  width="32"
+                  className={styles.avatartwo}
+                />
+                <Image
+                  src="/avatarthree.svg"
+                  alt="Settings icon"
+                  height="32"
+                  width="32"
+                  className={styles.avatartwo}
+                />
+                <Image
+                  src="/avatarfour.svg"
+                  alt="Settings icon"
+                  height="32"
+                  width="32"
+                  className={styles.avatartwo}
+                />
+                <Image
+                  src="/avatarfive.svg"
+                  alt="Settings icon"
+                  height="32"
+                  width="32"
+                  className={styles.avatartwo}
+                />
+                <p className={styles.txt}>{translations('IndexPage.users')}</p>
+              </div>
             </div>
           </div>
         </div>

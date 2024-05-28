@@ -4,7 +4,7 @@
 }
 
 html.dark {
-  --background-color: #292727;
+  --background-color: #0A0A1D;
   --text-color: #ffffff;
 }
 
@@ -12,4 +12,6 @@ html.dark {
   body {
     background-color: var(--background-color);
     color: var(--text-color);
+    margin: 0;
+    padding: 0;
 }
