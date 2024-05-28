@@ -138,7 +138,16 @@
   
   .navItem:hover {
     background: #3b3647;
+    
   }
+
+  .navItem:hover a {
+    color: white;
+    
+  }
+
+
+  
 
   .active {
     padding: 10px;

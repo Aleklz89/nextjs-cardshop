@@ -21,7 +21,7 @@
     font-weight: 600;
     margin: 0;
     font-size: 20px;
-    color: white;
+    color: var(--text-color);
     width: 80%;
     margin-left: 10%;
     font-size: 48px;
@@ -58,7 +58,7 @@
     margin: 20px 0 30px;
     width: 70%;
     margin-left: 10%;
-    color: #d9d9d9;
+    color: var(--text-color);
     font-size: 18px;
     line-height: 28px;
   }
@@ -183,7 +183,7 @@
   
   .tostart {
     font-size: 14px;
-    color: #d9d9d9;
+    color: var(--text-color);
     margin-bottom: 30px;
     margin-top: 10px;
   }
@@ -203,7 +203,7 @@
   .txt {
     margin-left: 10px;
     margin-top: 8px;
-    color: #d9d9d9;
+    color: var(--text-color);
     font-size: 14px;
     font-weight: 400;
   }
