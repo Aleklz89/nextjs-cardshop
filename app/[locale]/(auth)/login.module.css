@@ -1,5 +1,7 @@
 /* Add this to your existing CSS */
-
+.page {
+    margin-top: 5%;
+}
 
 .hiddenForm {
     opacity: 0;
