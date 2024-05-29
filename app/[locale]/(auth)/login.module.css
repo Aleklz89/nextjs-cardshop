@@ -15,7 +15,12 @@
     display: flex;
   }
   
-
+  .html {
+    position: fixed !important;
+    height: 100%;
+    overflow: hidden !important;
+  }
+  
   
   .h1 {
     font-weight: bold;

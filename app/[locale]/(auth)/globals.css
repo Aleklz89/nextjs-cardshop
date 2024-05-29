@@ -10,12 +10,6 @@ html.dark {
   --text-color: #ffffff;
 }
 
-html {
-  position: fixed !important;
-  height: 100%;
-  overflow: hidden !important;
-}
-
 body {
   background-color: var(--background-color);
   color: var(--text-color);
