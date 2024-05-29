@@ -155,7 +155,7 @@
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
     position: relative;
     overflow: hidden;
-    width: 1312px;
+    width: 1212px;
     max-width: 100%;
     min-height: 600px;
     margin-top: -60px;
@@ -337,24 +337,56 @@
   }
   
   .blurredtwo {
-    width: 1000px;
-    height: 600px;
+    width: 300px;
+    height: 300px;
     background: radial-gradient(
       circle,
       rgba(42, 39, 164, 0.8) 0%,
-      rgba(42, 39, 164, 0) 70%
+      rgba(42, 39, 164, 0.6) 70%
     );
     border-radius: 50%;
-    filter: blur(20px);
+    filter: blur(50px);
     position: absolute;
-    top: 90%;
-    left: 90%;
+    top: 75%;
+    left: 85%;
     transform: translate(-50%, -50%);
   }
 
   
   
   @media (max-width: 767px) {
+
+    .blurred {
+      width: 200px;
+      height: 600px;
+      background: radial-gradient(
+        circle,
+        rgba(42, 39, 164, 0.8) 0%,
+        rgba(42, 39, 164, 0) 70%
+      );
+      border-radius: 50%;
+      filter: blur(20px);
+      position: absolute;
+      top: 5%;
+      left: 5%;
+      transform: translate(-50%, -50%);
+    }
+
+    .blurredtwo {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(
+        circle,
+        rgba(42, 39, 164, 0.8) 0%,
+        rgba(42, 39, 164, 0.6) 70%
+      );
+      border-radius: 50%;
+      filter: blur(50px);
+      position: absolute;
+      top: 75%;
+      left: 65%;
+      transform: translate(-50%, -50%);
+    }
 
     .overlayLeft {
       transform: translateX(-30%);
@@ -399,11 +431,13 @@
       width: 300px;
     }
     .page {
-      margin-left: 8%;
+      margin-left: 6%;
       margin-right: -8%;
+      width: 320px;
   }
     .container {
-      width: 350px;
+      width: 340px;
+      margin-left: -7%;
     }
   
     .h1 {
@@ -416,7 +450,7 @@
       width: 150px;
       line-height: 16px;
       margin-left: 50px;
-      text-align: justify;
+      text-align: left;
     }
   
     .input {
