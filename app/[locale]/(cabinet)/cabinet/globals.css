@@ -10,10 +10,15 @@ html.dark {
   --text-color: #ffffff;
 }
 
+html {
+  overflow: scroll;
+}
+
 
   body {
     background-color: var(--background-color);
     color: var(--text-color);
     font-family: 'Inter', sans-serif;
+    overflow: scroll;
 }
 
