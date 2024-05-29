@@ -131,6 +131,7 @@ export default function SignInUpForm() {
   };
 
   return (
+    <div className={styles.bigone}>
     <div className={styles.page}>
       <Head>
         <title>Sign In/Up Form</title>
@@ -233,7 +234,7 @@ export default function SignInUpForm() {
               <h1 className={styles.hello}>{translations('IndexPage.hello')}</h1>
               <p className={styles.p}>{translations('IndexPage.stay')}</p>
                 <div className={styles.avatarbox}>
-                <div className={styles.inneravatar}>
+                  <div className={styles.inneravatar}>
                   <Image
                     src="/avatar.svg"
                     alt="Settings icon"
@@ -320,6 +321,7 @@ export default function SignInUpForm() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
