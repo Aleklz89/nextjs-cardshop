@@ -26,7 +26,7 @@ const Fullcards = () => {
     window.addEventListener('scroll', disableScroll);
 
     const timer = setTimeout(() => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = 'scroll';
       window.removeEventListener('scroll', disableScroll);
       setShowCardlist(false);
     }, 5000);
