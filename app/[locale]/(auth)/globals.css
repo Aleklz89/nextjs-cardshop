@@ -11,9 +11,9 @@ html.dark {
 }
 
 html {
-  position: fixed;
+  position: fixed !important;
   height: 100%;
-  overflow: hidden;
+  overflow: hidden !important;
 }
 
 body {
