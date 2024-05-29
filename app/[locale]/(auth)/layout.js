@@ -13,7 +13,7 @@ const roboto = Roboto({
 export const metadata = {
   title: "CardShop",
   description: "Made with next",
-  icon: '/icon.png'
+  icon: '/icon.svg'
 };
 
 export default function RootLayout({ children }) {
