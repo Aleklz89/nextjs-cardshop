@@ -286,6 +286,7 @@
   
   .rightPanelActive .overlayLeft {
     transform: translateX(0);
+
   }
   
   .overlayRight {
@@ -295,6 +296,7 @@
   
   .rightPanelActive .overlayRight {
     transform: translateX(30%);
+    display: none;
   }
   
   .socialContainer {
