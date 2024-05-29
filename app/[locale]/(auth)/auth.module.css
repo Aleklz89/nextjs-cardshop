@@ -12,14 +12,10 @@
 }
 
 .body {
-  margin-top: 7%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url("/public/ground.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: repeat;
+  height: 100%;
   background-color: var(--primary-color);
   color: var(--text-color);
 }
