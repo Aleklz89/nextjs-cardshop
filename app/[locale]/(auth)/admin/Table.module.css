@@ -1,5 +1,5 @@
 .mainblock {
-    margin-top: 200px;
+    margin-top: 500px;
     max-height: 400px;
     width: 100%;
     border-collapse: collapse;
@@ -228,7 +228,6 @@ input:checked+.slider:before {
     margin: 5px;
     transition: background-color 0.3s;
     background-color: #f44336;
-    /* Красный цвет для кнопки отклонения */
 }
 
 .searchInput {
@@ -322,6 +321,11 @@ input:checked+.slider:before {
 }
 
 @media (max-width: 767px) {
+
+    .sum {
+        width: 100px;
+        margin-top: 12%;
+    }
     .total {
         margin-left: 15%;
         margin-top: 1300px;
@@ -363,9 +367,10 @@ input:checked+.slider:before {
     }
 
     .mainblock {
+        margin-top: 200px;
         max-height: 400px;
         width: 50%;
-        margin-left: 15%;
+        margin-left: -10%;
         border-collapse: collapse;
     }
 
@@ -373,7 +378,7 @@ input:checked+.slider:before {
         margin-top: 50px;
         max-height: 400px;
         width: 50%;
-        margin-left: 15%;
+        margin-left: -10%;
         border-collapse: collapse;
     }
 
@@ -399,7 +404,6 @@ input:checked+.slider:before {
         margin: 5px;
         transition: background-color 0.3s;
         background-color: #4CAF50;
-        /* Зеленый цвет для кнопки подтверждения */
     }
 
     .btnreject {
@@ -412,7 +416,6 @@ input:checked+.slider:before {
         margin: 5px;
         transition: background-color 0.3s;
         background-color: #f44336;
-        /* Красный цвет для кнопки отклонения */
     }
 
 }

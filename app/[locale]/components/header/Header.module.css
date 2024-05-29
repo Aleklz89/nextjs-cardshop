@@ -932,6 +932,11 @@ transform: rotate(360deg) translateY(0.8em);
     height: 100%;
     z-index: 1000;
   }
+
+  .outer {
+    margin-right: 30px;
+    margin-top: 0px;
+  }
 }
 
 

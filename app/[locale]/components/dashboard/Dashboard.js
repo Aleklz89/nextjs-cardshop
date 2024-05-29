@@ -10,8 +10,9 @@ import '../globals.css'
 const Dashboard = () => {
   const translations = useTranslations()
   const [balance, setBalance] = useState(null);
+  const [holdBalance, setHoldBalance] = useState(null);
   const [userId, setUserId] = useState(null);
-  const [isLoadingBalance, setIsLoadingBalance] = useState(true); 
+  const [isLoadingBalance, setIsLoadingBalance] = useState(true);
 
   const fetchUserId = async () => {
     try {
@@ -36,9 +37,92 @@ const Dashboard = () => {
       setBalance(data.user.balance);
     } catch (error) {
       console.error('Error fetching user balance:', error);
-      setBalance(null); 
-    } finally {
-      setIsLoadingBalance(false);
+      setBalance(null);
+    }
+  };
+
+  const fetchAllCards = async () => {
+    let allCards = [];
+    let currentPage = 1;
+    const perPage = 25;
+
+    try {
+      while (true) {
+        const response = await fetch(`https://api.epn.net/card?page=${currentPage}`, {
+          headers: {
+            accept: 'application/json',
+            Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+        const data = await response.json();
+        allCards = allCards.concat(data.data);
+
+        if (data.meta.current_page * perPage >= data.meta.total) {
+          break;
+        }
+        currentPage++;
+      }
+      return allCards;
+    } catch (error) {
+      console.error('Error fetching all cards:', error);
+    }
+  };
+
+  const fetchUserCards = async (userId) => {
+    try {
+      const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/cabinet?id=${userId}`);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data.user.cardsIds || [];
+    } catch (error) {
+      console.error('Error fetching user cards:', error);
+      return [];
+    }
+  };
+
+  const fetchCardTransactions = async (cardId) => {
+    let allTransactions = [];
+    let currentPage = 1;
+
+    try {
+      while (true) {
+        const response = await fetch(`https://api.epn.net/transaction`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+            'X-CSRF-TOKEN': '',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type: 'output,output_transfer',
+            account_uuid: cardId,
+            page: currentPage
+          })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Error: ${response.status}, ${errorText}`);
+        }
+
+        const data = await response.json();
+        allTransactions = allTransactions.concat(data.data);
+
+        if (!data.links.next) {
+          break;
+        }
+        currentPage++;
+      }
+
+
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
     }
   };
 
@@ -48,10 +132,28 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (userId !== null) {
-      fetchUserBalance(userId);
+      try {
+        fetchUserBalance(userId);
+        fetchUserCards(userId).then(async (userCards) => {
+          const allCards = await fetchAllCards();
+          const filteredCards = allCards.filter(card => userCards.includes(card.external_id));
+          let holdBalance = 0;
+          for (const card of filteredCards) {
+            const transactions = await fetchCardTransactions(card.account.uuid);
+            if (!transactions) {
+              continue;
+            }
+            const holdTransactions = transactions.filter(transaction => transaction.type_enum !== null);
+            holdBalance += holdTransactions.reduce((acc, transaction) => acc + transaction.amount, 0);
+          }
+          setHoldBalance(holdBalance);
+          setIsLoadingBalance(false);
+        });
+      } finally {
+        setIsLoadingBalance(false);
+      }
     }
   }, [userId]);
-
   const rootUrl = process.env.NEXT_PUBLIC_ROOT_URL;
   const shareUrl = `https://telegram.me/share/url?url=${encodeURIComponent(rootUrl)}/&text=CVV888`;
 

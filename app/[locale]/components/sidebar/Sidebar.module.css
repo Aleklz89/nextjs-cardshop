@@ -58,7 +58,7 @@
 }
 
 .numbox {
-  width: 290px;
+  width: 320px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -156,6 +156,10 @@
     background-color: #bbbaba;
     margin-left: 10px;
     margin-right: 10px;
+  }
+
+  .holdBalance {
+    color: #2488E3;
   }
 
 

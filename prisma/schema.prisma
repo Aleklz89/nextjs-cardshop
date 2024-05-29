@@ -41,6 +41,7 @@ model Transaction {
   description String   
   amount      Float    
   timestamp   DateTime @default(now())
+  isHold      Boolean  @default(false)
 }
 
 model CardTransaction {
