@@ -44,13 +44,15 @@ function Switcher() {
 
     return (
         <div className={styles.switcher}>
-            {options.map(option => (
-                <div
-                    key={option.value}
-                    className={`${styles.option} ${selectedOption.value === option.value ? styles.selected : ''}`}
-                    onClick={() => handleOptionClick(option)}
-                >
-                    <Image src={option.imgSrc} alt={option.label} width={20} height={20} />
+            {options.map((option, index) => (
+                <div key={option.value} className={styles.optionContainer}>
+                    <div
+                        className={`${styles.option} ${selectedOption.value === option.value ? styles.selected : ''}`}
+                        onClick={() => handleOptionClick(option)}
+                    >
+                        <Image src={option.imgSrc} alt={option.label} width={20} height={20} />
+                    </div>
+                    {index === 0 && <div className={styles.divider}></div>}
                 </div>
             ))}
         </div>

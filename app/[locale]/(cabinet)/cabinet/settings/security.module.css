@@ -291,7 +291,7 @@
   transition:
       background-color var(--transDur) ease-in-out,
       transform var(--transDur) ease-in-out;
-  transform: translateX(0); /* Начальная позиция слайдера */
+  transform: translateX(0); 
 }
 
 .themeToggle:focus {
@@ -305,7 +305,7 @@
 
 .themeToggle:checked:before,
 .themeToggle:checked ~ .themeIcon {
-  transform: translateX(3em); /* Позиция слайдера при checked */
+  transform: translateX(3em);
 }
 
 .themeToggle:checked:before {

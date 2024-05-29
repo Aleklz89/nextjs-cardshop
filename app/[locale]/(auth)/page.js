@@ -182,7 +182,7 @@ export default function SignInUpForm() {
             <button type="submit" className={styles.button}>{translations('IndexPage.request')}</button>
             <div className={styles.swap}>
               {translations('IndexPage.alreadyhave')}
-              <div className={styles.swaplink}  onClick={handleSignInClick}>
+              <div className={styles.swaplink} onClick={handleSignInClick}>
                 {translations('IndexPage.movein')}
               </div>
             </div>
@@ -232,42 +232,44 @@ export default function SignInUpForm() {
             <div className={`${styles.overlayPanel} ${styles.overlayLeft}`}>
               <h1 className={styles.hello}>{translations('IndexPage.hello')}</h1>
               <p className={styles.p}>{translations('IndexPage.stay')}</p>
-              <div className={styles.avatarbox}>
-                <Image
-                  src="/avatar.svg"
-                  alt="Settings icon"
-                  height="32"
-                  width="32"
-                  className={styles.avatar}
-                />
-                <Image
-                  src="/avatartwo.svg"
-                  alt="Settings icon"
-                  height="32"
-                  width="32"
-                  className={styles.avatartwo}
-                />
-                <Image
-                  src="/avatarthree.svg"
-                  alt="Settings icon"
-                  height="32"
-                  width="32"
-                  className={styles.avatartwo}
-                />
-                <Image
-                  src="/avatarfour.svg"
-                  alt="Settings icon"
-                  height="32"
-                  width="32"
-                  className={styles.avatartwo}
-                />
-                <Image
-                  src="/avatarfive.svg"
-                  alt="Settings icon"
-                  height="32"
-                  width="32"
-                  className={styles.avatartwo}
-                />
+                <div className={styles.avatarbox}>
+                <div className={styles.inneravatar}>
+                  <Image
+                    src="/avatar.svg"
+                    alt="Settings icon"
+                    height="32"
+                    width="32"
+                    className={styles.avatar}
+                  />
+                  <Image
+                    src="/avatartwo.svg"
+                    alt="Settings icon"
+                    height="32"
+                    width="32"
+                    className={styles.avatartwo}
+                  />
+                  <Image
+                    src="/avatarthree.svg"
+                    alt="Settings icon"
+                    height="32"
+                    width="32"
+                    className={styles.avatartwo}
+                  />
+                  <Image
+                    src="/avatarfour.svg"
+                    alt="Settings icon"
+                    height="32"
+                    width="32"
+                    className={styles.avatartwo}
+                  />
+                  <Image
+                    src="/avatarfive.svg"
+                    alt="Settings icon"
+                    height="32"
+                    width="32"
+                    className={styles.avatartwo}
+                  />
+                </div>
                 <p className={styles.txt}>{translations('IndexPage.users')}</p>
               </div>
             </div>
@@ -275,41 +277,43 @@ export default function SignInUpForm() {
               <h1 className={styles.hello}>{translations('IndexPage.hello')}</h1>
               <p className={styles.p}>{translations('IndexPage.provide')}</p>
               <div className={styles.avatarbox}>
-                <Image
-                  src="/avatar.svg"
-                  alt="Settings icon"
-                  height="32"
-                  width="32"
-                  className={styles.avatar}
-                />
-                <Image
-                  src="/avatartwo.svg"
-                  alt="Settings icon"
-                  height="32"
-                  width="32"
-                  className={styles.avatartwo}
-                />
-                <Image
-                  src="/avatarthree.svg"
-                  alt="Settings icon"
-                  height="32"
-                  width="32"
-                  className={styles.avatartwo}
-                />
-                <Image
-                  src="/avatarfour.svg"
-                  alt="Settings icon"
-                  height="32"
-                  width="32"
-                  className={styles.avatartwo}
-                />
-                <Image
-                  src="/avatarfive.svg"
-                  alt="Settings icon"
-                  height="32"
-                  width="32"
-                  className={styles.avatartwo}
-                />
+                <div className={styles.inneravatar}>
+                  <Image
+                    src="/avatar.svg"
+                    alt="Settings icon"
+                    height="32"
+                    width="32"
+                    className={styles.avatar}
+                  />
+                  <Image
+                    src="/avatartwo.svg"
+                    alt="Settings icon"
+                    height="32"
+                    width="32"
+                    className={styles.avatartwo}
+                  />
+                  <Image
+                    src="/avatarthree.svg"
+                    alt="Settings icon"
+                    height="32"
+                    width="32"
+                    className={styles.avatartwo}
+                  />
+                  <Image
+                    src="/avatarfour.svg"
+                    alt="Settings icon"
+                    height="32"
+                    width="32"
+                    className={styles.avatartwo}
+                  />
+                  <Image
+                    src="/avatarfive.svg"
+                    alt="Settings icon"
+                    height="32"
+                    width="32"
+                    className={styles.avatartwo}
+                  />
+                </div>
                 <p className={styles.txt}>{translations('IndexPage.users')}</p>
               </div>
             </div>

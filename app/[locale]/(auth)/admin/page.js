@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './Table.module.css';
-import '../globals.css';
+import './globals.css';
 import { useTheme } from 'next-themes';
 
 function Page() {

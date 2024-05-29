@@ -20,9 +20,9 @@
   margin: 0;
   margin-top: -65px;
   font-family: 'IBM Plex Mono', monospace;
-  height: 100vh; /* Высота блока равна высоте экрана */
+  height: 100vh;
   padding-top: 35px;
-  box-sizing: border-box; /* Учитываем padding в высоту */
+  box-sizing: border-box; 
 }
 
 
@@ -85,6 +85,10 @@
 
 
   @media (max-width: 850px) {
+    
+    .psevdo {
+      display: none;
+    }
     .sidebar {
       display: none;
       
@@ -144,6 +148,14 @@
   .navItem:hover a {
     color: white;
     
+  }
+
+  .divider {
+    height: 28px;
+    width: 1px;
+    background-color: #bbbaba;
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
 

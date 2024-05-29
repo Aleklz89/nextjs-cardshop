@@ -16,6 +16,11 @@
 
 }
 
+.outer {
+  margin-right: 30px;
+  margin-top: 40px;
+}
+
 
 
 .nav {
@@ -297,11 +302,8 @@
 
 .nav {
   display: flex;
-  /* делаем меню горизонтальным */
   align-items: center;
-  /* выравнивание элементов по центру по вертикали */
   padding: 10px 20px;
-  /* отступы внутри меню */
 }
 
 
@@ -363,27 +365,20 @@
 
 .icon {
   margin-right: 8px;
-  /* отступ справа от иконки */
 }
 
 .menuItem {
   display: flex;
   align-items: center;
   margin-right: 20px;
-  /* отступ между элементами меню */
   color: var(--text-color);
-  /* цвет текста элементов */
   font-size: 16px;
-  /* размер шрифта */
   text-decoration: none;
-  /* убрать подчеркивание текста */
   cursor: pointer;
-  /* курсор в виде указателя */
 }
 
 .menuItem:last-child {
   margin-right: 0;
-  /* убрать отступ у последнего элемента */
 }
 
 
@@ -479,6 +474,425 @@
   margin-right: 10px;
 }
 
+
+.authorizationSettings {
+  margin-top: 70px;
+  margin-left: 30%;
+  width: 500px;
+}
+
+
+.successMessage {
+color: #2A27A4;
+margin-top: 10px;
+}
+
+.errorMessage {
+color: red;
+margin-top: 10px;
+align-items: center;
+width: 150%;
+}
+
+.title {
+  margin-bottom: 20px;
+}
+
+.authSettingsContainer {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px;
+  width: 100%;
+}
+
+.authSettings {
+  margin-bottom: 15px;
+}
+
+.authSettings label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.authSettings input {
+  width: 90%;
+  padding: 10px;
+  margin-bottom: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.authSettings button {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.authSettingsActions button {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+  margin-right: 15px;
+}
+
+
+.backLink {
+  font-weight: 800;
+  color: var(--text-color);
+  text-decoration: none;
+  margin-right: 15px;
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.lastActivity {
+  max-width: 800px;
+  padding: 20px;
+  padding-bottom: 70px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
+  margin-left: 50px;
+  margin-top: 70px;
+  margin-bottom: 100px;
+  width: 50%;
+}
+
+.activityList {
+  border-top: 1px solid #ccc;
+  margin-top: 20px;
+}
+
+.activityItem {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.activityItem span {
+  flex: 1;
+  text-align: left;
+  padding-right: 10px;
+}
+
+.activityItem button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-color);
+  font-size: 18px;
+}
+
+.deleteButton {
+  background-color: #d9534f;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  float: right;
+  
+}
+
+
+.activityList:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+
+
+.themebox {
+  width: 500px;
+  height: 150px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+}
+
+
+
+
+/* ThemeSwitch.module.css */
+.themeblock {
+width: 550px;
+height: 300px;
+margin-left: 30%;
+margin-top: 40px;
+margin-bottom: 30px;
+}
+
+.themebox {
+position: relative;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+.theme {
+display: flex;
+align-items: center;
+-webkit-tap-highlight-color: transparent;
+}
+
+.themeFill,
+.themeIcon {
+transition: transform var(--transDur) ease-in-out;
+}
+
+.themeFill {
+background-color: var(--bg);
+display: block;
+mix-blend-mode: difference;
+position: fixed;
+inset: 0;
+height: 100%;
+transform: translateX(-100%);
+z-index: -1;
+}
+
+.themeIcon,
+.themeToggle {
+z-index: 1;
+cursor: pointer;
+}
+
+.themeIcon,
+.themeIconPart {
+position: absolute;
+}
+
+.themeIcon {
+display: block;
+top: 0.75em;
+left: 0.75em;
+width: 1.5em;
+height: 1.5em;
+}
+
+.themeIconPart {
+border-radius: 50%;
+box-shadow: 0.4em -0.4em 0 0.5em hsl(0,0%,100%) inset;
+top: calc(50% - 0.5em);
+left: calc(50% - 0.5em);
+width: 1em;
+height: 1em;
+transition:
+    box-shadow var(--transDur) ease-in-out,
+    opacity var(--transDur) ease-in-out,
+    transform var(--transDur) ease-in-out;
+transform: scale(0.5);
+}
+
+.themeIconPart ~ .themeIconPart {
+background-color: hsl(0,0%,100%);
+border-radius: 0.05em;
+box-shadow: none;
+top: 50%;
+left: calc(50% - 0.05em);
+transform: rotate(0deg) translateY(0.5em);
+transform-origin: 50% 0;
+width: 0.1em;
+height: 0.2em;
+}
+
+.themeIconPart:nth-child(3) {
+transform: rotate(45deg) translateY(0.5em);
+}
+
+.themeIconPart:nth-child(4) {
+transform: rotate(90deg) translateY(0.5em);
+}
+
+.themeIconPart:nth-child(5) {
+transform: rotate(135deg) translateY(0.5em);
+}
+
+.themeIconPart:nth-child(6) {
+transform: rotate(180deg) translateY(0.5em);
+}
+
+.themeIconPart:nth-child(7) {
+transform: rotate(225deg) translateY(0.5em);
+}
+
+.themeIconPart:nth-child(8) {
+transform: rotate(270deg) translateY(0.5em);
+}
+
+.themeIconPart:nth-child(9) {
+transform: rotate(315deg) translateY(0.5em);
+}
+
+.themeToggleWrap {
+position: relative;
+margin: 0 0.75em;
+}
+
+.themeToggle,
+.themeToggle:before {
+display: block;
+}
+
+.themeToggle {
+background-color: hsl(48,90%,85%);
+border-radius: 25% / 50%;
+box-shadow: 0 0 0 0.125em var(--primaryT);
+padding: 0.25em;
+width: 6em;
+height: 3em;
+-webkit-appearance: none;
+appearance: none;
+transition:
+    background-color var(--transDur) ease-in-out,
+    box-shadow 0.15s ease-in-out,
+    transform var(--transDur) ease-in-out;
+}
+
+.themeToggle:before {
+background-color: hsl(48,90%,55%);
+border-radius: 50%;
+content: "";
+width: 2.5em;
+height: 2.5em;
+transition:
+    background-color var(--transDur) ease-in-out,
+    transform var(--transDur) ease-in-out;
+transform: translateX(0); 
+}
+
+.themeToggle:focus {
+box-shadow: 0 0 0 0.125em var(--primary);
+outline: transparent;
+}
+
+.themeToggle:checked {
+background-color: hsl(198,90%,15%);
+}
+
+.themeToggle:checked:before,
+.themeToggle:checked ~ .themeIcon {
+transform: translateX(3em);
+}
+
+.themeToggle:checked:before {
+background-color: hsl(198,90%,55%);
+}
+
+.themeToggle:checked ~ .themeFill {
+transform: translateX(0);
+}
+
+.themeToggle:checked ~ .themeIcon .themeIconPart:nth-child(1) {
+box-shadow: 0.2em -0.2em 0 0.2em hsl(0,0%,100%) inset;
+transform: scale(1);
+}
+
+.themeToggle:checked ~ .themeIcon .themeIconPart ~ .themeIconPart {
+opacity: 0;
+}
+
+.themeToggle:checked ~ .themeIcon .themeIconPart:nth-child(2) {
+transform: rotate(45deg) translateY(0.8em);
+}
+
+.themeToggle:checked ~ .themeIcon .themeIconPart:nth-child(3) {
+transform: rotate(90deg) translateY(0.8em);
+}
+
+.themeToggle:checked ~ .themeIcon .themeIconPart:nth-child(4) {
+transform: rotate(135deg) translateY(0.8em);
+}
+
+.themeToggle:checked ~ .themeIcon .themeIconPart:nth-child(5) {
+transform: rotate(180deg) translateY(0.8em);
+}
+
+.themeToggle:checked ~ .themeIcon .themeIconPart:nth-child(6) {
+transform: rotate(225deg) translateY(0.8em);
+}
+
+.themeToggle:checked ~ .themeIcon .themeIconPart:nth-child(7) {
+transform: rotate(270deg) translateY(0.8em);
+}
+
+.themeToggle:checked ~ .themeIcon .themeIconPart:nth-child(8) {
+transform: rotate(315deg) translateY(0.8em);
+}
+
+.themeToggle:checked ~ .themeIcon .themeIconPart:nth-child(9) {
+transform: rotate(360deg) translateY(0.8em);
+}
+
+@supports selector(:focus-visible) {
+.themeToggle:focus {
+    box-shadow: 0 0 0 0.125em var(--primaryT);
+}
+.themeToggle:focus-visible {
+    box-shadow: 0 0 0 0.125em var(--primary);
+}
+}
+
+
+@media (max-width: 767px) {
+.refundSearch {
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  background-color: var(--background-color);
+  margin-top: 40px;
+  margin-left: 0;
+}
+
+.authorizationSettings {
+  margin-top: 50px;
+  margin-left: 20px;
+  width: 80%;
+  margin-right: 20px;
+}
+
+.lastActivity {
+  max-width: 800px;
+  padding: 20px;
+  padding-bottom: 70px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
+  margin-left: 0px;
+  margin-top: 70px;
+  margin-bottom: 100px;
+  width: 100%;
+}
+
+.browser {
+  display: none;
+}
+
+.themeblock {
+  width: 80%;
+  height: 300px;
+  margin-top: 40px;
+  margin-bottom: 30px;
+  margin-left: 4%;
+}
+
+.themebox {
+  width: 100%;
+  height: 150px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+}
+}
+
 @keyframes spring {
   15% {
     transform-origin: center center;
@@ -519,3 +933,15 @@
     z-index: 1000;
   }
 }
+
+
+@media (max-width: 1350px) {
+.hoverEffect {
+  width: 30px;
+  height: 30px;
+  margin-top: 0px;
+  margin-right: 5px;
+}
+
+}
+

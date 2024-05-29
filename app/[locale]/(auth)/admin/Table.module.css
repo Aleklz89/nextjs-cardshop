@@ -1,8 +1,9 @@
 .mainblock {
     margin-top: 200px;
     max-height: 400px;
-    width: 100%;
+    width: 110%;
     border-collapse: collapse;
+    margin-left: -10%;
 
 }
 
@@ -183,6 +184,7 @@ input:checked+.slider:before {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 300px;
+    margin-left: -10%;
 }
 
 .scrollabletable {
@@ -212,6 +214,7 @@ input:checked+.slider:before {
 .table th {
     background-color: var(--primary-color);
     color: var(--text-color);
+    width: 200px;
 }
 
 

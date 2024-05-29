@@ -51,7 +51,7 @@
         "market": "Market",
         "order": "Ordering a card",
         "account": "Account",
-        "loading":"Loading balance...",
+        "loading":"...",
         "personal": "Personal account",
         "name": "Name of the card",
         "deposit": "Deposit amount per card",
@@ -137,7 +137,7 @@
     },
 
     "Cardlist": {
-        "loading": "Loading...",
+        "loading": "...",
         "nothing": "Nothing so far 💸",
         "order": "Order a card to get started!",
         "card": "Order a card"
