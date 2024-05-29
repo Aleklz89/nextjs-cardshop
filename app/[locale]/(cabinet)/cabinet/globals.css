@@ -12,6 +12,7 @@ html.dark {
 
 html {
   overflow: auto;
+  position: relative;
 }
 
 
