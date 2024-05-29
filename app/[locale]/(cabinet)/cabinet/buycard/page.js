@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import styles from './buycard.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useTranslations } from "next-intl"
-import '../globals.css'
+import { useTranslations } from "next-intl";
+import '../globals.css';
 
 const Dashboard = () => {
   const translations = useTranslations();
@@ -70,7 +70,12 @@ const Dashboard = () => {
 
         const result = await response.json();
 
-        const filteredCards = result.data.filter(card => card.available_on_grade === 0);
+        const filteredCards = result.data.filter(card => {
+          const binString = String(card.bin);
+          return card.available_on_grade === 0 && 
+                 !binString.startsWith('537100') && 
+                 !binString.startsWith('489607');
+        });
 
         setCardsdata(filteredCards);
       } catch (error) {
