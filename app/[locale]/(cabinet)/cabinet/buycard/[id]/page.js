@@ -28,6 +28,7 @@ function Page() {
       const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/local");
       const data = await response.json();
       if (response.ok) {
+        console.log(data.value)
         setValue(data.value);
       } else {
         setErrortwo(data.error || "Error fetching value");

@@ -209,7 +209,7 @@ const Header = () => {
       )}
 
       <div className={styles.controlGroup} ref={menuRef}>
-        <div className={styles.outer}>
+        {/* <div className={styles.outer}>
           <label htmlFor="theme" className={styles.theme}>
             <span>Light</span>
             <span className={styles.themeToggleWrap}>
@@ -231,7 +231,7 @@ const Header = () => {
             </span>
             <span>Dark</span>
           </label>
-        </div>
+        </div> */}
         <div className={styles.menuContainer}>
 
           <div onClick={toggleMenu} className={styles.iconContainer}>

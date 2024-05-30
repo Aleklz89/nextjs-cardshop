@@ -121,12 +121,15 @@
 .cancelbutton:hover,
 .issuebutton:hover {
   border-color: #2A27A4;
+  background-color: #2A27A4;
 }
 
 .cancelbutton {
   border-color: #2A27A4;
-  color: #2A27A4;
+  color: white;
 }
+
+
 
 .error {
   color: red

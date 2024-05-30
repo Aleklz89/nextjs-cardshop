@@ -18,7 +18,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en"  className={styles.html}>
+    <html lang="en" className={styles.html}>
       <body className={styles.body}>
         <div className={styles.full}>
         <div style={{ display: 'flex' }}  className={styles.main}>

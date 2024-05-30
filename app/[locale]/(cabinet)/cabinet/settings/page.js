@@ -158,7 +158,7 @@ export default function Cards() {
         )}
       </div>
       <div className={styles.themeblock}>
-        <h2>Theme switch</h2>
+        {/* <h2>Theme switch</h2>
         <div className={styles.themebox}>
           <label htmlFor="theme" className={styles.theme}>
             <span>Light</span>
@@ -181,7 +181,7 @@ export default function Cards() {
             </span>
             <span>Dark</span>
           </label>
-        </div>
+        </div> */}
       </div>
     </div>
   );

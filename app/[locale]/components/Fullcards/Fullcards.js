@@ -159,6 +159,8 @@ const Fullcards = () => {
 
   const filteredCards = cardsData.filter((card) => userCards.includes(card.external_id));
 
+  console.log(filteredCards)
+
   return (
     <div className={styles.relativeContainer}>
       {showCardlist && <div className={styles.cover}><Cardslist  className={styles.coverblock}/></div>}
