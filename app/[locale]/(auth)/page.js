@@ -107,7 +107,7 @@ export default function SignInUpForm() {
 
       if (response.ok) {
         setMessage(translations('IndexPage.registration'));
-        setMessageStyle({ color: "#2A27A4" });
+        setMessageStyle({ color: "white" });
       } else if (data.error === "Email is already in use") {
         setMessage(translations('IndexPage.already'));
         setMessageStyle({ color: "red" });

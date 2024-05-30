@@ -21,7 +21,7 @@
         "invalid": "Invalid email or password",
         "error": "An unexpected error occurred. Please try again.",
         "match": "Passwords do not match",
-        "registration": "The registration request was successful. We will contact you by email.",
+        "registration": "Thank you for registering. We will contact you soon😌",
         "already": "Email is already registered.",
         "inuse": "Telegram username is already in use",
         "atleast": "The password must be at least 8 characters long and include at least one lowercase letter, number and a special character from the list (@, $, !, %, *, ?, &)."
