@@ -106,11 +106,6 @@ function Page() {
 
     let total = deposit * qty;
 
-    if (deposit < 100) {
-      total += 10 * qty;
-    }
-
-    const additionalPercentage = 0.05;
 
     const count = total - constant;
 
@@ -119,7 +114,7 @@ function Page() {
     if (count <= 0)  {
       total = 1;
     } else {
-      total += total * additionalPercentage - constant;
+      total -= constant;
     }
 
     return total.toFixed(2);
