@@ -112,9 +112,9 @@ function Page() {
 
     const additionalPercentage = 0.05;
 
-    const count = total + (total * additionalPercentage - constant);
+    const count = total - constant;
 
-    console.log(`${count} = ${total} + (${total} * ${additionalPercentage} - ${constant})`);
+    console.log(`${count} = ${total} - ${constant}`);
 
     if (count <= 0)  {
       total = 1;
