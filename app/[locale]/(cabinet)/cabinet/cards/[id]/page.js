@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -20,8 +20,11 @@ export default function CardPage() {
   const [userId, setUserId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [isRepPopupVisible, setIsRepPopupVisible] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [isEmpty, setIsEmpty] = useState(false);
+  const [replenishAmount, setReplenishAmount] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const fetchAllCards = async () => {
     let allCards = [];
@@ -154,12 +157,49 @@ export default function CardPage() {
 
   const handleCancel = () => {
     setIsPopupVisible(false);
+    setIsRepPopupVisible(false);
+  };
+
+  const handleRepClick = () => {
+    setIsRepPopupVisible(true);
+  };
+
+  const handleRepConfirmation = async () => {
+    if (!replenishAmount || isNaN(replenishAmount)) {
+      setErrorMessage(translations('Cards.enterAmount'));
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/replenish', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          toAccountUuid: selectedCard.account.uuid,
+          amount: Number(replenishAmount),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      setIsRepPopupVisible(false);
+      setErrorMessage("");
+      setReplenishAmount("");
+      // Update balance or any other necessary state
+    } catch (error) {
+      console.error('Error making transfer:', error);
+      setErrorMessage(translations('Cards.transferError'));
+    }
   };
 
   const fetchCardTransactions = async (cardId) => {
     let allTransactions = [];
     let currentPage = 1;
-  
+
     try {
       while (true) {
         const response = await fetch(`https://api.epn.net/transaction`, {
@@ -176,21 +216,21 @@ export default function CardPage() {
             page: currentPage
           })
         });
-  
+
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`Error: ${response.status}, ${errorText}`);
         }
-  
+
         const data = await response.json();
         allTransactions = allTransactions.concat(data.data);
-  
+
         if (!data.links.next) {
           break;
         }
         currentPage++;
       }
-  
+
       setTransactions(allTransactions);
       setIsEmpty(allTransactions.length === 0);
     } catch (error) {
@@ -198,8 +238,7 @@ export default function CardPage() {
       setIsEmpty(true);
     }
   };
-  
-  
+
   useEffect(() => {
     const match = pathname.match(/\/([a-f0-9-]+)$/i);
     if (match && match[1]) {
@@ -243,8 +282,6 @@ export default function CardPage() {
   if (!selectedCard) {
     return <p></p>;
   }
-
-  console.log(cardDetails)
 
   const rootUrl = process.env.NEXT_PUBLIC_ROOT_URL;
   const shareUrl = `https://telegram.me/share/url?url=${encodeURIComponent(rootUrl)}/&text=CVV888`;
@@ -303,7 +340,7 @@ export default function CardPage() {
           <button className={styles.buttonDelete} onClick={handleDeleteClick}>
             {isDeleting ? <div className={styles.loader}></div> : `${translations('Cards.block')}`}
           </button>
-          <button className={styles.buttonRep} onClick={handleDeleteClick}>
+          <button className={styles.buttonRep} onClick={handleRepClick}>
             {isDeleting ? <div className={styles.loader}></div> : `${translations('Cards.replenish')}`}
           </button>
         </div>
@@ -315,6 +352,25 @@ export default function CardPage() {
             <div className={styles.popupButtons}>
               <button className={styles.popupButton} onClick={handleDeleteConfirmation}>{translations('Cards.yes')}</button>
               <button className={styles.popupButton} onClick={handleCancel}>{translations('Cards.no')}</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {isRepPopupVisible && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popup}>
+            <h3>{translations('Cards.replenish')}</h3>
+            <input
+              type="text"
+              className={styles.popupInput}
+              value={replenishAmount}
+              onChange={(e) => setReplenishAmount(e.target.value)}
+              placeholder={translations('Cards.enterAmount')}
+            />
+            {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+            <div className={styles.popupButtons}>
+              <button className={styles.popupButton} onClick={handleRepConfirmation}>{translations('Cards.confirm')}</button>
+              <button className={styles.popupButton} onClick={handleCancel}>{translations('Cards.cancel')}</button>
             </div>
           </div>
         </div>
