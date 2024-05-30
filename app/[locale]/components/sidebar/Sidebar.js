@@ -76,7 +76,7 @@ function Sidebar() {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      setUserId(data.userId);
+      setUserId(3);
     } catch (error) {
       console.error('Error fetching user ID:', error);
     }
@@ -89,7 +89,7 @@ function Sidebar() {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      setBalance(data.user.balance);
+      setBalance(Math.floor(data.user.balance));
     } catch (error) {
       console.error('Error fetching user balance:', error);
       setBalance(null);
@@ -123,6 +123,7 @@ function Sidebar() {
       return allCards;
     } catch (error) {
       console.error('Error fetching all cards:', error);
+      return [];
     }
   };
 
@@ -157,8 +158,8 @@ function Sidebar() {
           body: JSON.stringify({
             type: 'output,output_transfer',
             account_uuid: cardId,
-            page: currentPage
-          })
+            page: currentPage,
+          }),
         });
 
         if (!response.ok) {
@@ -174,8 +175,10 @@ function Sidebar() {
         }
         currentPage++;
       }
+      return allTransactions;
     } catch (error) {
       console.error('Error fetching transactions:', error);
+      return [];
     }
   };
 
@@ -185,21 +188,20 @@ function Sidebar() {
 
   useEffect(() => {
     if (userId !== null) {
-      fetchUserBalance(userId);
-      fetchUserCards(userId).then(async (userCards) => {
-        const allCards = await fetchAllCards();
-        const filteredCards = allCards.filter(card => userCards.includes(card.external_id));
-        let holdBalance = 0;
-        for (const card of filteredCards) {
-          const transactions = await fetchCardTransactions(card.account.uuid);
-          if (!transactions) {
-            continue;
+      fetchUserBalance(userId).then(() => {
+        fetchUserCards(userId).then(async (userCards) => {
+          const allCards = await fetchAllCards();
+          const filteredCards = allCards.filter((card) => userCards.includes(card.external_id));
+          let holdBalance = 0;
+          for (const card of filteredCards) {
+            const transactions = await fetchCardTransactions(card.account.uuid);
+            if (!transactions) continue;
+            const holdTransactions = transactions.filter((transaction) => transaction.type_enum === 'Authorization');
+            holdBalance += holdTransactions.reduce((acc, transaction) => acc + Math.abs(parseInt(transaction.amount)), 0);
           }
-          const holdTransactions = transactions.filter(transaction => transaction.type_enum !== null);
-          holdBalance += holdTransactions.reduce((acc, transaction) => acc + transaction.amount, 0);
-        }
-        setHoldBalance(holdBalance);
-        setIsLoadingBalance(false);
+          setHoldBalance(Math.floor(holdBalance));
+          setIsLoadingBalance(false);
+        });
       });
     }
   }, [userId]);
@@ -225,9 +227,9 @@ function Sidebar() {
           <div className={styles.inner}>
             <div className={styles.totalWorth}>
               <h6>
-                <span>{isLoadingBalance ? `${translations('Cardlist.loading')}` : `$${balance - (holdBalance)}`}</span>
+                <span>{isLoadingBalance ? `${translations('Cardlist.loading')}` : `$${Math.floor(balance - holdBalance)}`}</span>
                 &nbsp;
-                <span className={styles.holdBalance}>{(isLoadingBalance || holdBalance === null) ? `${translations('Cardlist.loading')}` : `$${holdBalance}`}</span>
+                <span className={styles.holdBalance}>{isLoadingBalance || holdBalance === null ? `${translations('Cardlist.loading')}` : `$${holdBalance}`}</span>
               </h6>
             </div>
             <Link href="/cabinet/topup" style={{ textDecoration: 'none' }} passHref>
