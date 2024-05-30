@@ -115,7 +115,7 @@ function Page() {
     if (count <= 0)  {
       total = 1;
     } else {
-      total -= constant;
+      total += constant;
     }
 
     return total.toFixed(2);
