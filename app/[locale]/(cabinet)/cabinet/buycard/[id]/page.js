@@ -108,9 +108,9 @@ function Page() {
     let total = deposit * qty;
 
 
-    const count = total - constant;
+    const count = total + constant;
 
-    console.log(`${count} = ${total} - ${constant}`);
+    console.log(`${count} = ${total} + ${constant}`);
 
     if (count <= 0)  {
       total = 1;
