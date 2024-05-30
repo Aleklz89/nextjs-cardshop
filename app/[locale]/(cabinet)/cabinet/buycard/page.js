@@ -73,7 +73,10 @@ const Dashboard = () => {
         const filteredCards = result.data.filter(card => {
           const binString = String(card.bin);
           return card.available_on_grade === 0 && 
-                 !binString.startsWith('537100') && 
+                 !binString.startsWith('537100') &&
+                 !binString.startsWith('532942') &&
+                 !binString.startsWith('542093') &&
+                 !binString.startsWith('424605') &&
                  !binString.startsWith('489607');
         });
 
