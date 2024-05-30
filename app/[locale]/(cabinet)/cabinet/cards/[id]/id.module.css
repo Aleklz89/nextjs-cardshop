@@ -207,6 +207,43 @@
   .buttonDelete:hover {
     background-color: #c0392b;
   }
+
+
+  .buttonRep {
+    border: 1px solid #e0e0e0; 
+    border-radius: 10px; 
+    padding: 10px 20px; 
+    margin: 5px; 
+    font-size: 16px;
+    cursor: pointer; 
+    background-color: green;
+    display: inline-flex; 
+    align-items: center;
+    justify-content: center; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+    transition: all 0.3s; 
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    border: 0px solid #e0e0e0; 
+    border-radius: 10px; 
+    padding: 10px 20px; 
+    margin: 5px; 
+    font-size: 16px; 
+    cursor: pointer; 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+    transition: all 0.3s; 
+    color: white;
+    margin-top: 20px;
+}
+  
+  .buttonRep:hover {
+    background-color: #0d6301;
+  }
+  
   
   .loader {
     border: 4px solid #f3f3f3;

@@ -199,12 +199,7 @@ export default function CardPage() {
     }
   };
   
-  // Example usage:
-  // fetchCardTransactions('65bb3bfa-b695-46ca-93e9-f9c047932871');
   
-  
-  
-
   useEffect(() => {
     const match = pathname.match(/\/([a-f0-9-]+)$/i);
     if (match && match[1]) {
@@ -249,6 +244,8 @@ export default function CardPage() {
     return <p></p>;
   }
 
+  console.log(cardDetails)
+
   const rootUrl = process.env.NEXT_PUBLIC_ROOT_URL;
   const shareUrl = `https://telegram.me/share/url?url=${encodeURIComponent(rootUrl)}/&text=CVV888`;
 
@@ -271,7 +268,7 @@ export default function CardPage() {
       <div className={styles.cardblock}>
         <div className={styles.card}>
           <div className={styles.cardImageContainer}>
-            <img src="https://i.ibb.co/k1LcxWK/Screenshot-1124-removebg-preview.png" className={styles.cardImage} />
+            <img src="/fon.svg" className={styles.cardImage} />
             <div className={styles.cardDetailsOverlay}>
               <p className={styles.cardBalance}>${selectedCard.account.balance}</p>
             </div>
@@ -305,6 +302,9 @@ export default function CardPage() {
           </div>
           <button className={styles.buttonDelete} onClick={handleDeleteClick}>
             {isDeleting ? <div className={styles.loader}></div> : `${translations('Cards.block')}`}
+          </button>
+          <button className={styles.buttonRep} onClick={handleDeleteClick}>
+            {isDeleting ? <div className={styles.loader}></div> : `${translations('Cards.replenish')}`}
           </button>
         </div>
       </div>
