@@ -90,6 +90,7 @@ function Sidebar() {
       }
       const data = await response.json();
       setBalance(parseFloat(data.user.balance));
+      console.log(data.user.balance)
     } catch (error) {
       console.error('Error fetching user balance:', error);
       setBalance(null);
@@ -227,7 +228,7 @@ function Sidebar() {
           <div className={styles.inner}>
             <div className={styles.totalWorth}>
               <h6>
-                <span>{isLoadingBalance ? `${translations('Cardlist.loading')}` : `$${(balance - holdBalance).toFixed(2)}`}</span>
+                <span>{isLoadingBalance ? `${translations('Cardlist.loading')}` : `$${(balance).toFixed(2)}`}</span>
                 &nbsp;
                 <span className={styles.holdBalance}>{isLoadingBalance || holdBalance === null ? `${translations('Cardlist.loading')}` : `$${holdBalance.toFixed(2)}`}</span>
               </h6>

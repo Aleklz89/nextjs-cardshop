@@ -11,7 +11,7 @@ export default function Cards() {
   const [userId, setUserId] = useState(null);
   const [cardsCount, setCardsCount] = useState(0);
 
-  // Function to set the theme
+
   const applyTheme = () => {
     const savedTheme = localStorage.getItem('theme') || 'light';
     if (savedTheme === 'dark') {
@@ -21,7 +21,7 @@ export default function Cards() {
     }
   };
 
-  // Fetch User ID
+
   const fetchUserId = async () => {
     try {
       const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/token');
@@ -35,7 +35,7 @@ export default function Cards() {
     }
   };
 
-  // Fetch User Cards
+
   const fetchUserCards = async (userId) => {
     try {
       const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/cabinet?id=${userId}`);
