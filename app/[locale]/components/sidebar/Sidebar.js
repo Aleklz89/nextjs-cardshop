@@ -76,7 +76,7 @@ function Sidebar() {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      setUserId(3);
+      setUserId(data.userId);
     } catch (error) {
       console.error('Error fetching user ID:', error);
     }
@@ -89,7 +89,7 @@ function Sidebar() {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      setBalance(Math.floor(data.user.balance));
+      setBalance(parseFloat(data.user.balance));
     } catch (error) {
       console.error('Error fetching user balance:', error);
       setBalance(null);
@@ -197,9 +197,9 @@ function Sidebar() {
             const transactions = await fetchCardTransactions(card.account.uuid);
             if (!transactions) continue;
             const holdTransactions = transactions.filter((transaction) => transaction.type_enum === 'Authorization');
-            holdBalance += holdTransactions.reduce((acc, transaction) => acc + Math.abs(parseInt(transaction.amount)), 0);
+            holdBalance += holdTransactions.reduce((acc, transaction) => acc + Math.abs(parseFloat(transaction.amount)), 0);
           }
-          setHoldBalance(Math.floor(holdBalance));
+          setHoldBalance(parseFloat(holdBalance.toFixed(2)));
           setIsLoadingBalance(false);
         });
       });
@@ -227,9 +227,9 @@ function Sidebar() {
           <div className={styles.inner}>
             <div className={styles.totalWorth}>
               <h6>
-                <span>{isLoadingBalance ? `${translations('Cardlist.loading')}` : `$${Math.floor(balance - holdBalance)}`}</span>
+                <span>{isLoadingBalance ? `${translations('Cardlist.loading')}` : `$${(balance - holdBalance).toFixed(2)}`}</span>
                 &nbsp;
-                <span className={styles.holdBalance}>{isLoadingBalance || holdBalance === null ? `${translations('Cardlist.loading')}` : `$${holdBalance}`}</span>
+                <span className={styles.holdBalance}>{isLoadingBalance || holdBalance === null ? `${translations('Cardlist.loading')}` : `$${holdBalance.toFixed(2)}`}</span>
               </h6>
             </div>
             <Link href="/cabinet/topup" style={{ textDecoration: 'none' }} passHref>
