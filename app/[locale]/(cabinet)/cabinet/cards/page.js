@@ -51,10 +51,8 @@ export default function Cards() {
   };
 
   useEffect(() => {
-    // Apply the theme before rendering the component
     applyTheme();
 
-    // Fetch user data
     const fetchData = async () => {
       await fetchUserId();
     };
