@@ -92,7 +92,7 @@
 .fullHistory {
     margin-top: 60px;
     margin-left: 50px;
-    width: 90%;
+    width: 95%;
     max-height: 500px;
     overflow-y: auto;
 }
