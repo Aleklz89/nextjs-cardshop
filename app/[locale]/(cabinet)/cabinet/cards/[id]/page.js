@@ -382,11 +382,11 @@ export default function CardPage() {
               <p className={styles.maintext}>{selectedCard.holder_address}</p>
             </div>
           </div>
+          <button className={styles.buttonRep} onClick={handleRepClick}>
+            {isRepLoading ? <div className={styles.loader}></div> : `${translations('Cards.replenish')}`}
+          </button>
           <button className={styles.buttonDelete} onClick={handleDeleteClick}>
             {isDeleting ? <div className={styles.loader}></div> : `${translations('Cards.block')}`}
-          </button>
-          <button className={styles.buttonRep} onClick={handleRepClick}>
-            {isDeleting ? <div className={styles.loader}></div> : `${translations('Cards.replenish')}`}
           </button>
         </div>
       </div>
