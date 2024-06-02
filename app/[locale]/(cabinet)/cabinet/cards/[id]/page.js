@@ -18,6 +18,7 @@ export default function CardPage() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [cardDetails, setCardDetails] = useState({ number: '', cvx2: '', exp_month: '', exp_year: '' });
   const [userId, setUserId] = useState(null);
+  const [balance, setBalance] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [isRepPopupVisible, setIsRepPopupVisible] = useState(false);
@@ -25,6 +26,7 @@ export default function CardPage() {
   const [isEmpty, setIsEmpty] = useState(false);
   const [replenishAmount, setReplenishAmount] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isRepLoading, setIsRepLoading] = useState(false);
 
   const fetchAllCards = async () => {
     let allCards = [];
@@ -78,6 +80,21 @@ export default function CardPage() {
       });
     } catch (error) {
       console.error('Error fetching card details:', error);
+    }
+  };
+
+  const fetchUserBalance = async (userId) => {
+    try {
+      const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/cabinet?id=${userId}`);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      setBalance(parseFloat(data.user.balance));
+      console.log(data.user.balance);
+    } catch (error) {
+      console.error('Error fetching user balance:', error);
+      setBalance(null);
     }
   };
 
@@ -170,6 +187,8 @@ export default function CardPage() {
       return;
     }
 
+    setIsRepLoading(true);
+
     try {
       const response = await fetch('/api/replenish', {
         method: 'POST',
@@ -186,13 +205,32 @@ export default function CardPage() {
         throw new Error(`Error: ${response.status}`);
       }
 
-      setIsRepPopupVisible(false);
-      setErrorMessage("");
-      setReplenishAmount("");
-      // Update balance or any other necessary state
+      const updatedBalance = parseFloat(balance) - parseFloat(replenishAmount);
+      const updateBalanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/min", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, balance: updatedBalance.toFixed(2) }),
+      });
+
+      if (!updateBalanceResponse.ok) {
+        throw new Error(`Error: ${updateBalanceResponse.status}`);
+      }
+
+      await fetchUserBalance(userId);
+
+      setTimeout(() => {
+        setIsRepLoading(false);
+        setIsRepPopupVisible(false);
+        setErrorMessage("");
+        setReplenishAmount("");
+        window.location.href = `/cabinet/cards/${uuid}`;
+      }, 20000);
     } catch (error) {
       console.error('Error making transfer:', error);
       setErrorMessage(translations('Cards.transferError'));
+      setIsRepLoading(false);
     }
   };
 
@@ -211,7 +249,6 @@ export default function CardPage() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            type: 'output,output_transfer',
             account_uuid: cardId,
             page: currentPage
           })
@@ -223,6 +260,7 @@ export default function CardPage() {
         }
 
         const data = await response.json();
+        console.log(data)
         allTransactions = allTransactions.concat(data.data);
 
         if (!data.links.next) {
@@ -230,6 +268,7 @@ export default function CardPage() {
         }
         currentPage++;
       }
+
 
       setTransactions(allTransactions);
       setIsEmpty(allTransactions.length === 0);
@@ -266,6 +305,12 @@ export default function CardPage() {
 
     fetchUserId();
   }, []);
+
+  useEffect(() => {
+    if (userId) {
+      fetchUserBalance(userId);
+    }
+  }, [userId]);
 
   useEffect(() => {
     if (uuid !== null && cardsData.length > 0) {
@@ -369,7 +414,9 @@ export default function CardPage() {
             />
             {errorMessage && <p className={styles.error}>{errorMessage}</p>}
             <div className={styles.popupButtons}>
-              <button className={styles.popupButton} onClick={handleRepConfirmation}>{translations('Cards.confirm')}</button>
+              <button className={styles.popupButton} onClick={handleRepConfirmation}>
+                {isRepLoading ? <div className={styles.loader}></div> : translations('Cards.confirm')}
+              </button>
               <button className={styles.popupButton} onClick={handleCancel}>{translations('Cards.cancel')}</button>
             </div>
           </div>

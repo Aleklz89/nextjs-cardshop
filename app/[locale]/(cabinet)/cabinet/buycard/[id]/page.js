@@ -228,6 +228,9 @@ function Page() {
         },
         body: JSON.stringify(postData),
       });
+
+      const errorData = await buyResponse.json();
+      console.error(`Success: ${buyResponse.status} - ${buyResponse.statusText}`, errorData);
   
       if (!buyResponse.ok) {
         const errorData = await buyResponse.json();
@@ -305,7 +308,7 @@ function Page() {
   
       setTimeout(() => {
         setIsIssuing(false);
-        router.push("/cabinet/cards");
+        window.location.href = "/cabinet/cards";
       }, 10000);
     } catch (error) {
       setIsIssuing(false);

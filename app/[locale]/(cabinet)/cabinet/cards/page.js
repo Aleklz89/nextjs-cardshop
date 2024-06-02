@@ -55,6 +55,7 @@ export default function Cards() {
 
     const fetchData = async () => {
       await fetchUserId();
+
     };
 
     fetchData();

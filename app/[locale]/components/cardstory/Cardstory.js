@@ -44,7 +44,7 @@ const CardTransactionHistory = ({ transactions }) => {
                 <div className={styles.transactionTime}>{transaction.time}</div>
                 <div className={styles.transactionType}>{transaction.type}</div>
                 <div className={styles.transactionDescription}>{transaction.description}</div>
-                <div className={styles.transactionAmount} style={{ color: transaction.amount >= 0 ? '#2A27A4' : 'red' }}>
+                <div className={styles.transactionAmount} style={{ color: transaction.amount >= 0 ? 'green' : 'red' }}>
                   <p className={styles.number}>
                     {transaction.amount >= 0 ? `+${transaction.amount.toFixed(2)}` : transaction.amount.toFixed(2)}
                   </p>

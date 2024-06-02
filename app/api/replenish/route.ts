@@ -13,11 +13,14 @@ export async function POST(request: Request) {
             );
         }
 
+        // Проверяем, является ли toAccountUuid массивом строк
+        const toAccountUuids = Array.isArray(toAccountUuid) ? toAccountUuid : [toAccountUuid];
+
         const response = await axios.post(
             'https://api.epn.net/transfer/transfer',
             {
                 from_account_uuid: "dd89adb8-3710-4f25-aefd-d7116eb66b6b",
-                to_account_uuid: toAccountUuid,
+                to_account_uuids: toAccountUuids,
                 amount: amount,
             },
             {

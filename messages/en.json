@@ -70,6 +70,7 @@
     "Cards": {
         "cards": "Cards",
         "share": "Share",
+        "enterAmoount": "Enter amount",
         "requisites": "Card requisites",
         "number": "Card number",
         "date": "Card expiry date",
@@ -80,7 +81,9 @@
         "block": "Block and delete the card",
         "replenish": "Top up the card",
         "yes": "yes",
-        "no": "no"
+        "no": "no",
+        "confirm": "Confirm",
+        "cancel": "Cancel"
     },
 
     "FAQ": {
@@ -165,7 +168,13 @@
     "Fullcards": {
         "cards": "Cards:",
         "copyData": "Copy card details",
-        "detailedInfo": "Open details page"
+        "detailedInfo": "Open details page",
+        "replenish": "Top up cards",
+        "choose": "Select the cards",
+        "sum": "Enter the top-up amount",
+        "topup": "Top up",
+        "success": "Replenishment completed successfully",
+        "error": "Something went wrong"
     },
 
     "Header": {

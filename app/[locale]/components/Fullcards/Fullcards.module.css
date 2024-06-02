@@ -25,6 +25,17 @@
 
 .cardContainer {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.cardContainer.selected {
+  border-color: #00f0ff;
 }
 
 .menu {
@@ -38,8 +49,8 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
   width: 240px;
-  opacity: 1; /* Сделать видимым по умолчанию */
-  transform: translateY(0); /* Убрать смещение по умолчанию */
+  opacity: 1;
+  transform: translateY(0);
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
@@ -67,7 +78,6 @@
 
 .card {
   background-color: var(--background-color);
-  border: 1px solid #e1e1e1;
   border-radius: 8px;
   overflow: hidden;
   display: flex;
@@ -136,27 +146,6 @@
   margin-top: -50px;
 }
 
-@media (max-width: 767px) {
-  .assetsContainer {
-    margin-left: 25px;
-    margin-bottom: 50px;
-  }
-  .menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: var(--background-color);
-    color: var(--text-color);
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 10;
-    width: 285px;
-    opacity: 1; /* Сделать видимым по умолчанию */
-    transform: translateY(0); /* Убрать смещение по умолчанию */
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-}
 
 .amount {
   margin: 25px;
@@ -200,7 +189,6 @@
 .card {
   position: relative;
   width: fit-content;
-  margin-right: 10px;
 }
 
 .cardImage {
@@ -233,7 +221,6 @@
   display: block;
 }
 
-
 .cardNumber,
 .cardBalance,
 .cardHolder {
@@ -255,4 +242,146 @@
 .cardHolder {
   font-size: 0.9em;
   align-self: flex-end;
+}
+
+.relativeContainer {
+  position: relative;
+}
+
+.assetsContainer {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.replenishButton {
+  padding: 10px 20px;
+  background-color: #2488E3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.replenishInput {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+  height: 20px;
+  width: 175px;
+}
+
+.replenishConfirmButton {
+  padding: 10px 20px;
+  background-color: #2488E3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  height: 42px;
+}
+
+.cardContainer {
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border: 2px solid rgb(201, 197, 197);
+  width: 90%;
+}
+
+.cardContainer.selected {
+  border-color: #00f0ff; 
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cardImageContainer {
+  position: relative;
+}
+
+.cardImage {
+  width: 100%;
+}
+
+.cardTitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.loader {
+  border: 4px solid #f3f3f3; 
+  border-top: 4px solid #3498db; 
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.replenishContainer {
+  width: auto;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error {
+  width: 200px;
+}
+
+
+@media (max-width: 767px) {
+  .assetsContainer {
+    margin-left: 25px;
+    margin-bottom: 50px;
+  }
+  .menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--background-color);
+    color: var(--text-color);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    width: 285px;
+    opacity: 1; 
+    transform: translateY(0); 
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .amount {
+    font-size: 17px;
+    width: 100px;
+  }
+
+  .replenishButton {
+    padding: 10px 20px;
+    background-color: #2488E3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    height: 50px;
+    margin-bottom: 20px;
+  }
 }

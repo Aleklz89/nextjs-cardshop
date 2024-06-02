@@ -15,6 +15,11 @@ const Fullcards = () => {
   const [cardDetails, setCardDetails] = useState(null);
   const [copiedCardId, setCopiedCardId] = useState(null);
   const [showCardlist, setShowCardlist] = useState(true);
+  const [selectedCards, setSelectedCards] = useState([]);
+  const [showSelectMessage, setShowSelectMessage] = useState(false);
+  const [replenishAmount, setReplenishAmount] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const disableScroll = (e) => {
@@ -68,8 +73,8 @@ const Fullcards = () => {
   const fetchAllCards = async () => {
     let allCards = [];
     let currentPage = 1;
-    const perPage = 25; 
-  
+    const perPage = 25;
+
     try {
       while (true) {
         const response = await fetch(`https://api.epn.net/card?page=${currentPage}`, {
@@ -83,13 +88,13 @@ const Fullcards = () => {
         }
         const data = await response.json();
         allCards = allCards.concat(data.data);
-  
+
         if (data.meta.current_page * perPage >= data.meta.total) {
           break;
         }
         currentPage++;
       }
-  
+
       setCardsData(allCards);
     } catch (error) {
       console.error('Error fetching all cards:', error);
@@ -159,22 +164,137 @@ const Fullcards = () => {
 
   const filteredCards = cardsData.filter((card) => userCards.includes(card.external_id));
 
-  console.log(filteredCards)
+  const handleCardClick = (card) => {
+    if (!showSelectMessage) return;
+    const cardUuid = card.account.uuid;
+    if (selectedCards.includes(cardUuid)) {
+      setSelectedCards(selectedCards.filter((id) => id !== cardUuid));
+    } else {
+      setSelectedCards([...selectedCards, cardUuid]);
+    }
+  };
+
+  const handleReplenishClick = () => {
+    if (showSelectMessage) {
+      setSelectedCards([]);
+      setReplenishAmount("");
+      setErrorMessage("");
+    }
+    setShowSelectMessage(!showSelectMessage);
+  };
+
+  const handleReplenishConfirm = async () => {
+    if (!replenishAmount) {
+      setErrorMessage('Введите сумму');
+      return;
+    }
+    if (isNaN(replenishAmount)) {
+      setErrorMessage('Проверьте корректность введенных данных');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/replenish', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          toAccountUuid: selectedCards,
+          amount: Number(replenishAmount),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const fetchUserBalance = async (id) => {
+        try {
+          const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/cabinet?id=${id}`);
+          if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+          }
+          const data = await response.json();
+          return parseFloat(data.user.balance);
+        } catch (error) {
+          console.error('Error fetching user balance:', error);
+          return null;
+        }
+      };
+
+      const balance = await fetchUserBalance(userId);
+      if (balance !== null) {
+        const totalCost = Number(replenishAmount) * selectedCards.length;
+        const updatedBalance = balance - totalCost;
+        const updateBalanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/min", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId, balance: updatedBalance.toFixed(2) }),
+        });
+
+        if (!updateBalanceResponse.ok) {
+          throw new Error(`Error: ${updateBalanceResponse.status}`);
+        }
+      }
+
+      setTimeout(() => {
+        setIsLoading(false);
+        alert(translations('Fullcards.success'));
+        window.location.href = "/cabinet/cards";
+      }, 10000);
+    } catch (error) {
+      console.error('Error during replenish:', error);
+      setErrorMessage(translations('Fullcards.error'));
+      setIsLoading(false);
+      setTimeout(() => {
+        window.location.href = "/cabinet/cards";
+      }, 10000);
+    }
+  };
 
   return (
     <div className={styles.relativeContainer}>
-      {showCardlist && <div className={styles.cover}><Cardslist  className={styles.coverblock}/></div>}
+      {showCardlist && <div className={styles.cover}><Cardslist className={styles.coverblock} /></div>}
       <div className={styles.assetsContainer}>
         <div className={styles.header}>
           <h2 className={styles.amount}>{translations('Fullcards.cards')} {filteredCards.length}</h2>
+          <button className={styles.replenishButton} onClick={handleReplenishClick}>
+          {translations('Fullcards.replenish')}
+          </button>
         </div>
+        {showSelectMessage && (
+          <div className={styles.replenishContainer}>
+            {selectedCards.length === 0 ? (
+              <p>{translations('Fullcards.choose')}</p>
+            ) : (
+              <>
+                <input
+                  type="text"
+                  value={replenishAmount}
+                  onChange={(e) => setReplenishAmount(e.target.value)}
+                  placeholder={translations('Fullcards.sum')}
+                  className={styles.replenishInput}
+                />
+                <button className={styles.replenishConfirmButton} onClick={handleReplenishConfirm} disabled={isLoading}>
+                  {isLoading ? <span className={styles.loader}></span> : translations('Fullcards.topup')}
+                </button>
+                {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+              </>
+            )}
+          </div>
+        )}
         <div className={styles.cardsContainer}>
           {filteredCards.map((card) => (
             <div
               key={card.uuid}
-              className={styles.cardContainer}
+              className={`${styles.cardContainer} ${selectedCards.includes(card.account.uuid) ? styles.selected : ''}`}
               onMouseEnter={() => handleMouseEnter(card.uuid)}
               onMouseLeave={handleMouseLeave}
+              onClick={() => handleCardClick(card)}
             >
               <div className={styles.card}>
                 <div className={styles.cardImageContainer}>
