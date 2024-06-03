@@ -162,7 +162,7 @@ const Fullcards = () => {
     window.location.href = `/cabinet/cards/${uuid}`;
   };
 
-  const filteredCards = cardsData.filter((card) => userCards.includes(card.external_id));
+  const filteredCards = cardsData.filter((card) => userCards.includes(card.external_id) && card.blocked_at === null);
 
   const handleCardClick = (card) => {
     if (!showSelectMessage) return;
@@ -263,7 +263,7 @@ const Fullcards = () => {
         <div className={styles.header}>
           <h2 className={styles.amount}>{translations('Fullcards.cards')} {filteredCards.length}</h2>
           <button className={styles.replenishButton} onClick={handleReplenishClick}>
-          {translations('Fullcards.replenish')}
+            {translations('Fullcards.replenish')}
           </button>
         </div>
         {showSelectMessage && (
