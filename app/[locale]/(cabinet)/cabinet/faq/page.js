@@ -45,10 +45,6 @@ const faqData = [
         answer: `${translations('FAQ.section')}`,
     },
     {
-        question: `${translations('FAQ.turnon')}`,
-        answer: `${translations('FAQ.issue')}`,
-    },
-    {
         question: `${translations('FAQ.forget')}`,
         answer: `${translations('FAQ.case')}`,
     },
