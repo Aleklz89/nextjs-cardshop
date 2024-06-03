@@ -12,16 +12,6 @@ export default function Cards() {
   const [cardsCount, setCardsCount] = useState(0);
 
 
-  const applyTheme = () => {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    if (savedTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  };
-
-
   const fetchUserId = async () => {
     try {
       const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/token');
@@ -51,7 +41,6 @@ export default function Cards() {
   };
 
   useEffect(() => {
-    applyTheme();
 
     const fetchData = async () => {
       await fetchUserId();

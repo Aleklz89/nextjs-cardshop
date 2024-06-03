@@ -240,7 +240,7 @@ function Sidebar() {
         </div>
         <ul className={styles.navList}>
           <li className={isActive('/cabinet/cards') ? styles.active : styles.navItem}>
-            <Link href="/cabinet/cards" passHref className={styles.txt}>
+            <Link href="/cabinet/cards" passHref>
               <span className={styles.icon}></span>
               <span className={styles.icon}>
                 <Image

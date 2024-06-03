@@ -53,10 +53,6 @@ const faqData = [
         answer: `${translations('FAQ.case')}`,
     },
     {
-        question: `${translations('FAQ.cost')}`,
-        answer: `${translations('FAQ.fee')}`,
-    },
-    {
         question: `${translations('FAQ.time')}`,
         answer: `${translations('FAQ.when')}`,
     },
