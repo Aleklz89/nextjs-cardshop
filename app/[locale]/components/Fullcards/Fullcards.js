@@ -6,11 +6,10 @@ import { useTranslations } from "next-intl";
 import '../globals.css';
 import Cardslist from '../cardlist/Cardslist';
 
-const Fullcards = () => {
+const Fullcards = ({ cards }) => {
   const translations = useTranslations();
   const [userId, setUserId] = useState(null);
-  const [userCards, setUserCards] = useState([]);
-  const [cardsData, setCardsData] = useState([]);
+  const [userCards, setUserCards] = useState(cards);
   const [hoveredCardId, setHoveredCardId] = useState(null);
   const [cardDetails, setCardDetails] = useState(null);
   const [copiedCardId, setCopiedCardId] = useState(null);
@@ -55,65 +54,6 @@ const Fullcards = () => {
       console.error('Error fetching user ID:', error);
     }
   };
-
-  const fetchUserCards = async (userId) => {
-    try {
-      const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/cabinet?id=${userId}`);
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
-      return data.user.cardsIds || [];
-    } catch (error) {
-      console.error('Error fetching user cards:', error);
-      return [];
-    }
-  };
-
-  const fetchAllCards = async () => {
-    let allCards = [];
-    let currentPage = 1;
-    const perPage = 25;
-
-    try {
-      while (true) {
-        const response = await fetch(`https://api.epn.net/card?page=${currentPage}`, {
-          headers: {
-            accept: 'application/json',
-            Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
-          },
-        });
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-        const data = await response.json();
-        allCards = allCards.concat(data.data);
-
-        if (data.meta.current_page * perPage >= data.meta.total) {
-          break;
-        }
-        currentPage++;
-      }
-
-      setCardsData(allCards);
-    } catch (error) {
-      console.error('Error fetching all cards:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserId();
-  }, []);
-
-  useEffect(() => {
-    if (userId !== null) {
-      fetchUserCards(userId).then(setUserCards);
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    fetchAllCards();
-  }, []);
 
   const fetchCardDetails = async (uuid) => {
     try {
@@ -161,8 +101,6 @@ const Fullcards = () => {
   const handleDetailedInfoClick = (uuid) => {
     window.location.href = `/cabinet/cards/${uuid}`;
   };
-
-  const filteredCards = cardsData.filter((card) => userCards.includes(card.external_id) && card.blocked_at === null);
 
   const handleCardClick = (card) => {
     if (!showSelectMessage) return;
@@ -261,7 +199,7 @@ const Fullcards = () => {
       {showCardlist && <div className={styles.cover}><Cardslist className={styles.coverblock} /></div>}
       <div className={styles.assetsContainer}>
         <div className={styles.header}>
-          <h2 className={styles.amount}>{translations('Fullcards.cards')} {filteredCards.length}</h2>
+          <h2 className={styles.amount}>{translations('Fullcards.cards')} {userCards.length}</h2>
           <button className={styles.replenishButton} onClick={handleReplenishClick}>
             {translations('Fullcards.replenish')}
           </button>
@@ -288,7 +226,7 @@ const Fullcards = () => {
           </div>
         )}
         <div className={styles.cardsContainer}>
-          {filteredCards.map((card) => (
+          {userCards.map((card) => (
             <div
               key={card.uuid}
               className={`${styles.cardContainer} ${selectedCards.includes(card.account.uuid) ? styles.selected : ''}`}
