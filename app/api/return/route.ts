@@ -4,23 +4,20 @@ import axios from 'axios';
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { toAccountUuid, amount } = body;
+        const { fromAccountUuid, amount } = body;
 
-        if (!toAccountUuid || !amount) {
+        if (!fromAccountUuid || !amount) {
             return NextResponse.json(
-                { error: "toAccountUuid and amount are required" },
+                { error: "fromAccountUuid and amount are required" },
                 { status: 400 }
             );
         }
 
-
-        const toAccountUuids = Array.isArray(toAccountUuid) ? toAccountUuid : [toAccountUuid];
-
         const response = await axios.post(
             'https://api.epn.net/transfer/transfer',
             {
-                from_account_uuid: "dd89adb8-3710-4f25-aefd-d7116eb66b6b",
-                to_account_uuids: toAccountUuids,
+                from_account_uuid: fromAccountUuid,
+                to_account_uuid: "dd89adb8-3710-4f25-aefd-d7116eb66b6b",
                 amount: amount,
             },
             {
