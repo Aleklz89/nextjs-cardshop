@@ -155,7 +155,7 @@ export default function CardPage() {
 
       setTimeout(() => {
         setIsDeleting(false);
-        router.push('/cabinet/cards');
+        window.location.href = "/cabinet/cards";
       }, 10000);
     } catch (error) {
       console.error('Error deleting card:', error);
