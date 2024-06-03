@@ -12,7 +12,7 @@ const Dashboard = () => {
   const [balance, setBalance] = useState(null);
   const [userId, setUserId] = useState(null);
   const [cardsdata, setCardsdata] = useState([]);
-  const [isLoadingBalance, setIsLoadingBalance] = useState(true); 
+  const [isLoadingBalance, setIsLoadingBalance] = useState(true);
 
   const fetchUserId = async () => {
     try {
@@ -37,9 +37,9 @@ const Dashboard = () => {
       setBalance(data.user.balance);
     } catch (error) {
       console.error('Error fetching user balance:', error);
-      setBalance(null); 
+      setBalance(null);
     } finally {
-      setIsLoadingBalance(false); 
+      setIsLoadingBalance(false);
     }
   };
 
@@ -72,12 +72,12 @@ const Dashboard = () => {
 
         const filteredCards = result.data.filter(card => {
           const binString = String(card.bin);
-          return card.available_on_grade === 0 && 
-                 !binString.startsWith('537100') &&
-                 !binString.startsWith('532942') &&
-                 !binString.startsWith('542093') &&
-                 !binString.startsWith('424605') &&
-                 !binString.startsWith('489607');
+          return card.available_on_grade === 0 &&
+            !binString.startsWith('537100') &&
+            !binString.startsWith('532942') &&
+            !binString.startsWith('542093') &&
+            !binString.startsWith('424605') &&
+            !binString.startsWith('489607');
         });
 
         setCardsdata(filteredCards);
@@ -142,24 +142,26 @@ const Dashboard = () => {
 
         <div className={styles.cardscontainer}>
           {cardsdata.map((card) => (
-            <div className={styles.visa} key={card.id}>
-              <div className={styles.cardblock}>
-                <h3>{String(card.bin).startsWith('5') ? 'Master' : 'Visa'}</h3>
-                <p className={styles.cardnumber}>{String(card.bin).slice(0, 6)}</p>
-                <Link href={`/cabinet/buycard/${card.id}`} style={{ textDecoration: 'none' }} passHref key={card.id}>
-                  <button className={styles.buybutton}>{translations('BuyCard.buy')}</button>
-                </Link>
+            <Link href={`/cabinet/buycard/${card.id}`} style={{ textDecoration: 'none' }} passHref key={card.id}>
+              <div className={styles.visa} key={card.id}>
+                <div className={styles.overlay}>
+                  {translations('BuyCard.buy')}
+                </div>
+                <div className={styles.imgblock}>
+                  <Image
+                    src="/lot.svg"
+                    alt="Visa Card"
+                    height="100"
+                    width="150"
+                    className={styles.image}
+                  />
+                </div>
+                <div className={styles.cardblock}>
+                  <h3 className={styles.h3} >{String(card.bin).startsWith('5') ? 'Master' : 'Visa'}</h3>
+                  <p className={styles.cardnumber}>{String(card.bin).slice(0, 6)}</p>
+                </div>
               </div>
-              <div className={styles.imgblock}>
-                <Image
-                  src="https://i.ibb.co/k1LcxWK/Screenshot-1124-removebg-preview.png"
-                  alt="Visa Card"
-                  height="100"
-                  width="150"
-                  className={styles.image}
-                />
-              </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
