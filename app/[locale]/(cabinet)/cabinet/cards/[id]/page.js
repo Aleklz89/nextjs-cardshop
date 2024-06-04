@@ -22,11 +22,15 @@ export default function CardPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [isRepPopupVisible, setIsRepPopupVisible] = useState(false);
+  const [isReturnPopupVisible, setIsReturnPopupVisible] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [isEmpty, setIsEmpty] = useState(false);
   const [replenishAmount, setReplenishAmount] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [returnAmount, setReturnAmount] = useState("");
+  const [repErrorMessage, setRepErrorMessage] = useState("");
+  const [returnErrorMessage, setReturnErrorMessage] = useState("");
   const [isRepLoading, setIsRepLoading] = useState(false);
+  const [isReturnLoading, setIsReturnLoading] = useState(false);
 
   const fetchAllCards = async () => {
     let allCards = [];
@@ -153,6 +157,26 @@ export default function CardPage() {
         throw new Error(`Error updating user balance: ${updateResponse.status}`);
       }
 
+ 
+      const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          type: 'card close',
+          description: 'Card close and balance transfer',
+          amount: selectedCard.account.balance
+        }),
+      });
+
+      if (!transactionResponse.ok) {
+        const errorData = await transactionResponse.json();
+        console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
+        throw new Error(`Error logging transaction: ${transactionResponse.status}`);
+      }
+
       setTimeout(() => {
         setIsDeleting(false);
         window.location.href = "/cabinet/cards";
@@ -175,6 +199,7 @@ export default function CardPage() {
   const handleCancel = () => {
     setIsPopupVisible(false);
     setIsRepPopupVisible(false);
+    setIsReturnPopupVisible(false);
   };
 
   const handleRepClick = () => {
@@ -182,8 +207,16 @@ export default function CardPage() {
   };
 
   const handleRepConfirmation = async () => {
-    if (!replenishAmount || isNaN(replenishAmount)) {
-      setErrorMessage(translations('Cards.enterAmount'));
+    if (!replenishAmount) {
+      setRepErrorMessage(translations('Cards.enterAmount'));
+      return;
+    }
+    if (isNaN(replenishAmount)) {
+      setRepErrorMessage(translations('Cards.invalidAmount'));
+      return;
+    }
+    if (parseFloat(replenishAmount) > balance) {
+      setRepErrorMessage(translations('Cards.insufficientBalance'));
       return;
     }
 
@@ -218,19 +251,125 @@ export default function CardPage() {
         throw new Error(`Error: ${updateBalanceResponse.status}`);
       }
 
+    
+      const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          type: 'replenishment',
+          description: 'Card replenish',
+          amount: -parseFloat(replenishAmount)
+        }),
+      });
+
+      if (!transactionResponse.ok) {
+        const errorData = await transactionResponse.json();
+        console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
+        throw new Error(`Error logging transaction: ${transactionResponse.status}`);
+      }
+
       await fetchUserBalance(userId);
 
       setTimeout(() => {
         setIsRepLoading(false);
         setIsRepPopupVisible(false);
-        setErrorMessage("");
+        setRepErrorMessage("");
         setReplenishAmount("");
         window.location.href = `/cabinet/cards/${uuid}`;
       }, 20000);
     } catch (error) {
       console.error('Error making transfer:', error);
-      setErrorMessage(translations('Cards.transferError'));
+      setRepErrorMessage(translations('Cards.transferError'));
       setIsRepLoading(false);
+    }
+  };
+
+  const handleReturnClick = () => {
+    setIsReturnPopupVisible(true);
+  };
+
+  const handleReturnConfirmation = async () => {
+    if (!returnAmount) {
+      setReturnErrorMessage(translations('Cards.enterAmount'));
+      return;
+    }
+    if (isNaN(returnAmount)) {
+      setReturnErrorMessage(translations('Cards.invalidAmount'));
+      return;
+    }
+    if (parseFloat(returnAmount) > selectedCard.account.balance) {
+      setReturnErrorMessage(translations('Cards.exceedsBalance'));
+      return;
+    }
+
+    setIsReturnLoading(true);
+
+    try {
+      const response = await fetch('/api/return', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fromAccountUuid: selectedCard.account.uuid,
+          amount: Number(returnAmount),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const newBalance = parseFloat(balance) + parseFloat(returnAmount);
+      const updateResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: userId,
+          balance: newBalance.toFixed(2),
+        }),
+      });
+
+      if (!updateResponse.ok) {
+        throw new Error(`Error: ${updateResponse.status}`);
+      }
+
+      
+      const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          type: 'transfer',
+          description: 'Transfer from card',
+          amount: parseFloat(returnAmount)
+        }),
+      });
+
+      if (!transactionResponse.ok) {
+        const errorData = await transactionResponse.json();
+        console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
+        throw new Error(`Error logging transaction: ${transactionResponse.status}`);
+      }
+
+      setTimeout(() => {
+        setIsReturnLoading(false);
+        setIsReturnPopupVisible(false);
+        setReturnErrorMessage("");
+        setReturnAmount("");
+        window.location.href = `/cabinet/cards/${uuid}`;
+      }, 10000);
+    } catch (error) {
+      console.error('Error during return:', error);
+      setReturnErrorMessage(translations('Cards.transferError'));
+      setIsReturnLoading(false);
     }
   };
 
@@ -268,7 +407,6 @@ export default function CardPage() {
         }
         currentPage++;
       }
-
 
       setTransactions(allTransactions);
       setIsEmpty(allTransactions.length === 0);
@@ -385,6 +523,9 @@ export default function CardPage() {
           <button className={styles.buttonRep} onClick={handleRepClick}>
             {isRepLoading ? <div className={styles.loader}></div> : `${translations('Cards.replenish')}`}
           </button>
+          <button className={styles.buttonReturn} onClick={handleReturnClick}>
+            {isReturnLoading ? <div className={styles.loader}></div> : `${translations('Cards.return')}`}
+          </button>
           <button className={styles.buttonDelete} onClick={handleDeleteClick}>
             {isDeleting ? <div className={styles.loader}></div> : `${translations('Cards.block')}`}
           </button>
@@ -410,12 +551,33 @@ export default function CardPage() {
               className={styles.popupInput}
               value={replenishAmount}
               onChange={(e) => setReplenishAmount(e.target.value)}
-              placeholder={translations('Cards.enterAmount')}
+              placeholder={translations('Cards.amount')}
             />
-            {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+            {repErrorMessage && <p className={styles.error}>{repErrorMessage}</p>}
             <div className={styles.popupButtons}>
               <button className={styles.popupButton} onClick={handleRepConfirmation}>
                 {isRepLoading ? <div className={styles.loader}></div> : translations('Cards.confirm')}
+              </button>
+              <button className={styles.popupButton} onClick={handleCancel}>{translations('Cards.cancel')}</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {isReturnPopupVisible && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popup}>
+            <h3>{translations('Cards.return')}</h3>
+            <input
+              type="text"
+              className={styles.popupInput}
+              value={returnAmount}
+              onChange={(e) => setReturnAmount(e.target.value)}
+              placeholder={translations('Cards.amount')}
+            />
+            {returnErrorMessage && <p className={styles.error}>{returnErrorMessage}</p>}
+            <div className={styles.popupButtons}>
+              <button className={styles.popupButton} onClick={handleReturnConfirmation}>
+                {isReturnLoading ? <div className={styles.loader}></div> : translations('Cards.confirm')}
               </button>
               <button className={styles.popupButton} onClick={handleCancel}>{translations('Cards.cancel')}</button>
             </div>

@@ -33,7 +33,7 @@ export default function Cards() {
       }
       const data = await response.json();
       const cardsIds = data.user.cardsIds || [];
-      console.log("User Cards IDs:", cardsIds);  // Log user cards IDs
+      console.log("User Cards IDs:", cardsIds);
       return cardsIds;
     } catch (error) {
       console.error('Error fetching user cards:', error);

@@ -83,7 +83,11 @@
         "yes": "yes",
         "no": "no",
         "confirm": "Confirm",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "return": "Transfer to the main balance",
+        "amount": "Enter amount",
+        "exceeds": "Not enough balance",
+        "transfererr": "Transfer error"
     },
 
     "FAQ": {

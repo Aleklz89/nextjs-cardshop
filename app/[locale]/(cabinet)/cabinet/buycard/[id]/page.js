@@ -274,8 +274,8 @@ function Page() {
         },
         body: JSON.stringify({
           userId,
-          type: 'purchase', 
-          description: 'Card purchase',
+          type: 'replenishment', 
+          description: 'Card replenishment',
           amount: -parseFloat(totalCost) 
         }),
       });

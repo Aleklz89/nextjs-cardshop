@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { userId, oldPassword, newPassword } = body;
 
-        // Проверка наличия необходимых данных
+ 
         if (!userId || !oldPassword || !newPassword) {
             return new Response(
                 JSON.stringify({ error: "Missing userId, oldPassword, or newPassword" }),
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Получение пользователя из базы данных
+
         const user = await prisma.user.findUnique({
             where: { id: parseInt(userId, 10) },
         });
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Проверка правильности старого пароля
+
         const isPasswordCorrect = bcrypt.compareSync(oldPassword, user.password);
         if (!isPasswordCorrect) {
             return new Response(
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Валидация нового пароля
+
         if (!validatePassword(newPassword)) {
             return new Response(
                 JSON.stringify({ error: "Invalid password format" }),
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Хеширование нового пароля и обновление базы данных
+
         const newPasswordHash = bcrypt.hashSync(newPassword, SALT_ROUNDS);
         await prisma.user.update({
             where: { id: parseInt(userId, 10) },

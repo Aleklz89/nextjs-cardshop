@@ -42,6 +42,10 @@ const Fullcards = ({ cards }) => {
     };
   }, []);
 
+  useEffect(() => {
+    fetchUserId();
+  }, []);
+
   const fetchUserId = async () => {
     try {
       const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/token');
@@ -176,6 +180,26 @@ const Fullcards = ({ cards }) => {
 
         if (!updateBalanceResponse.ok) {
           throw new Error(`Error: ${updateBalanceResponse.status}`);
+        }
+
+     
+        const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId,
+            type: 'bulk replenishment',
+            description: 'Bulk replenish of cards',
+            amount: -totalCost
+          }),
+        });
+
+        if (!transactionResponse.ok) {
+          const errorData = await transactionResponse.json();
+          console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
+          throw new Error(`Error logging transaction: ${transactionResponse.status}`);
         }
       }
 
