@@ -6,38 +6,20 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import "../../globals.css";
+import { ethers } from "ethers";
 
 function Page() {
   const translations = useTranslations();
   const router = useRouter();
   const [balance, setBalance] = useState(null); 
   const [userId, setUserId] = useState(null);
-  const [value, setValue] = useState(null);
-  const [constant, setConstant] = useState(null);
   const [errortwo, setErrortwo] = useState("");
   const [isIssuing, setIsIssuing] = useState(false);
   const [isLoadingBalance, setIsLoadingBalance] = useState(true); 
-
   const [depositAmount, setDepositAmount] = useState("");
   const [totalCost, setTotalCost] = useState("");
+  const [constant, setConstant] = useState(null);
   const [description, setDescription] = useState("");
-
-
-  const fetchValue = async () => {
-    try {
-      const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/local");
-      const data = await response.json();
-      if (response.ok) {
-        console.log(data.value)
-        setValue(data.value);
-      } else {
-        setErrortwo(data.error || "Error fetching value");
-      }
-    } catch (error) {
-      console.error("Error fetching value:", error);
-      setErrortwo("Error fetching value");
-    }
-  };
 
   const fetchConstant = async (id) => {
     try {
@@ -61,7 +43,7 @@ function Page() {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      setUserId(data.userId);
+      setUserId(21);
     } catch (error) {
       console.error("Error fetching user ID:", error);
     }
@@ -88,15 +70,16 @@ function Page() {
   }, []);
 
   useEffect(() => {
-    fetchValue();
-  }, []);
-
-  useEffect(() => {
     if (userId !== null) {
       fetchUserBalance(userId);
       fetchConstant(userId);
     }
   }, [userId]);
+
+  const generateEthereumAddress = () => {
+    const wallet = ethers.Wallet.createRandom();
+    return wallet.address;
+  };
 
   const calculateTotalCost = (depositAmount) => {
     let deposit = parseFloat(depositAmount);
@@ -106,8 +89,6 @@ function Page() {
     }
 
     let total = deposit * qty;
-
-
     const count = total + constant;
 
     console.log(`${count} = ${total} + ${constant}`);
@@ -147,8 +128,7 @@ function Page() {
       const response = await fetch("https://api.epn.net/card-bins", {
         headers: {
           accept: "application/json",
-          Authorization:
-            "Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ",
+          Authorization: "Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ",
         },
       });
       const data = await response.json();
@@ -160,63 +140,41 @@ function Page() {
     }
   };
 
-  const updateExternalId = async (newValue) => {
-    try {
-      const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/local", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ value: newValue }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error(`Error updating value: ${response.status}`, errorData);
-        throw new Error(`Error updating value: ${response.status}`);
-      }
-
-      setValue(newValue);
-    } catch (error) {
-      console.error("Error updating value:", error);
-      setErrortwo("Error updating external value");
-    }
-  };
-
   const handleIssueCard = async () => {
     setIsIssuing(true);
-  
+
     const urlSegments = window.location.pathname.split("/");
     const binId = urlSegments[urlSegments.length - 1];
-  
+    const generatedAddress = generateEthereumAddress();
+
     if (!depositAmount || !description) {
       setErrortwo(translations('BuyCardId.fill'));
       setIsIssuing(false);
       return;
     }
-  
+
     if (parseFloat(totalCost) > parseFloat(balance)) {
       setErrortwo(translations('BuyCardId.funds'));
       setIsIssuing(false);
       return;
     }
-  
+
     const bin = await fetchBinById(binId);
     if (!bin) {
       setErrortwo("Unable to fetch BIN");
       setIsIssuing(false);
       return;
     }
-  
+
     const postData = {
       account_uuid: "dd89adb8-3710-4f25-aefd-d7116eb66b6b",
       start_balance: parseFloat(depositAmount),
       description: description,
       bin: bin,
       cards_count: 1,
-      external_id: value.toString(),
+      external_id: generatedAddress,
     };
-  
+
     try {
       const buyResponse = await fetch("https://api.epn.net/card/buy", {
         method: "POST",
@@ -231,7 +189,7 @@ function Page() {
 
       const errorData = await buyResponse.json();
       console.error(`Success: ${buyResponse.status} - ${buyResponse.statusText}`, errorData);
-  
+
       if (!buyResponse.ok) {
         const errorData = await buyResponse.json();
         console.error(`Error buying card: ${buyResponse.status} - ${buyResponse.statusText}`, errorData);
@@ -243,15 +201,15 @@ function Page() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId, cardUuid: value.toString() }),
+        body: JSON.stringify({ userId, cardUuid: generatedAddress }),
       });
-  
+
       if (!updateUserResponse.ok) {
         const errorData = await updateUserResponse.json();
         console.error(`Error updating user: ${updateUserResponse.status} - ${updateUserResponse.statusText}`, errorData);
         throw new Error(`Error updating user: ${updateUserResponse.status}`);
       }
-  
+
       const updatedBalance = parseFloat(balance) - parseFloat(totalCost);
       const updateBalanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/min", {
         method: "POST",
@@ -260,13 +218,13 @@ function Page() {
         },
         body: JSON.stringify({ userId, balance: updatedBalance.toFixed(2) }),
       });
-  
+
       if (!updateBalanceResponse.ok) {
         const errorData = await updateBalanceResponse.json();
         console.error(`Error updating balance: ${updateBalanceResponse.status} - ${updateBalanceResponse.statusText}`, errorData);
         throw new Error(`Error updating balance: ${updateBalanceResponse.status}`);
       }
-  
+
       const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
         method: 'POST',
         headers: {
@@ -279,33 +237,30 @@ function Page() {
           amount: -parseFloat(totalCost) 
         }),
       });
-  
+
       if (!transactionResponse.ok) {
         const errorData = await transactionResponse.json();
         console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
         throw new Error(`Error logging transaction: ${transactionResponse.status}`);
       }
 
-     
       const cardTransactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/cardtrans', {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          cardId: value.toString(),
+          cardId: generatedAddress,
           amount: parseFloat(depositAmount)
         }),
       });
-  
+
       if (!cardTransactionResponse.ok) {
         const errorData = await cardTransactionResponse.json();
         console.error(`Error logging card transaction: ${cardTransactionResponse.status}`, errorData);
         throw new Error(`Error logging card transaction: ${cardTransactionResponse.status}`);
       }
 
-      await updateExternalId(value + 1);
-  
       setTimeout(() => {
         setIsIssuing(false);
         window.location.href = "/cabinet/cards";
@@ -316,7 +271,7 @@ function Page() {
       setErrortwo(translations('BuyCardId.error'));
     }
   };
-  
+
   const accountText = translations('BuyCardId.loading');
   const balanceText = translations('BuyCardId.personal');
 

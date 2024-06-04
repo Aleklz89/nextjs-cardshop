@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const userId = url.searchParams.get('id'); // Предполагается, что id передается через query параметры
+  const userId = url.searchParams.get('id');
 
   if (!userId) {
     return new NextResponse(
