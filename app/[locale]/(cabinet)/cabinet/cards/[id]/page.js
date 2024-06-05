@@ -123,17 +123,17 @@ export default function CardPage() {
         throw new Error(`Error: ${response.status}`);
       }
 
-      const removeResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/del', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId, cardId: selectedCard.external_id }),
-      });
+      // const removeResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/del', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({ userId, cardId: selectedCard.external_id }),
+      // });
 
-      if (!removeResponse.ok) {
-        throw new Error(`Error removing card ID: ${removeResponse.status}`);
-      }
+      // if (!removeResponse.ok) {
+      //   throw new Error(`Error removing card ID: ${removeResponse.status}`);
+      // }
 
       const balanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/user`);
       if (!balanceResponse.ok) {

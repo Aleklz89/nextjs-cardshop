@@ -158,7 +158,7 @@ const Dashboard = () => {
                 </div>
                 <div className={styles.cardblock}>
                   <h3 className={styles.h3} >{String(card.bin).startsWith('5') ? 'Master' : 'Visa'}</h3>
-                  <p className={styles.cardnumber}>{String(card.bin).slice(0, 6)}</p>
+                  <p className={styles.cardnumber}>{card.bin}</p>
                 </div>
               </div>
             </Link>

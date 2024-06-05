@@ -11,13 +11,14 @@ import { ethers } from "ethers";
 function Page() {
   const translations = useTranslations();
   const router = useRouter();
-  const [balance, setBalance] = useState(null); 
+  const [balance, setBalance] = useState(null);
   const [userId, setUserId] = useState(null);
   const [errortwo, setErrortwo] = useState("");
   const [isIssuing, setIsIssuing] = useState(false);
-  const [isLoadingBalance, setIsLoadingBalance] = useState(true); 
+  const [isLoadingBalance, setIsLoadingBalance] = useState(true);
   const [depositAmount, setDepositAmount] = useState("");
   const [totalCost, setTotalCost] = useState("");
+  const [cardsCount, setCardsCount] = useState(1); // Новый стейт для количества карт
   const [constant, setConstant] = useState(null);
   const [description, setDescription] = useState("");
 
@@ -61,7 +62,7 @@ function Page() {
       console.error("Error fetching user balance:", error);
       setBalance(null);
     } finally {
-      setIsLoadingBalance(false); 
+      setIsLoadingBalance(false);
     }
   };
 
@@ -81,23 +82,15 @@ function Page() {
     return wallet.address;
   };
 
-  const calculateTotalCost = (depositAmount) => {
+  const calculateTotalCost = (depositAmount, cardsCount) => {
     let deposit = parseFloat(depositAmount);
-    let qty = 1;
-    if (isNaN(deposit) || deposit <= 0) {
+    let qty = parseInt(cardsCount, 10);
+    if (isNaN(deposit) || deposit <= 0 || isNaN(qty) || qty <= 0) {
       return "";
     }
 
     let total = deposit * qty;
-    const count = total + constant;
-
-    console.log(`${count} = ${total} + ${constant}`);
-
-    if (count <= 0)  {
-      total = 1;
-    } else {
-      total += constant;
-    }
+    total += constant * qty;
 
     return total.toFixed(2);
   };
@@ -105,7 +98,14 @@ function Page() {
   const handleDepositAmountChange = (e) => {
     let value = e.target.value.replace(/[^0-9.]/g, "");
     setDepositAmount(value);
-    const total = calculateTotalCost(value);
+    const total = calculateTotalCost(value, cardsCount);
+    setTotalCost(total);
+  };
+
+  const handleCardsCountChange = (e) => {
+    let value = e.target.value.replace(/[^0-9]/g, "");
+    setCardsCount(value);
+    const total = calculateTotalCost(depositAmount, value);
     setTotalCost(total);
   };
 
@@ -119,7 +119,7 @@ function Page() {
       maxAmount = Math.max(0, balance);
     }
     setDepositAmount(maxAmount.toFixed(2));
-    const total = calculateTotalCost(maxAmount);
+    const total = calculateTotalCost(maxAmount, cardsCount);
     setTotalCost(total);
   };
 
@@ -147,14 +147,14 @@ function Page() {
     const binId = urlSegments[urlSegments.length - 1];
     const generatedAddress = generateEthereumAddress();
 
-    if (!depositAmount || !description) {
-      setErrortwo(translations('BuyCardId.fill'));
+    if (!depositAmount || !description || !cardsCount) {
+      setErrortwo(translations("BuyCardId.fill"));
       setIsIssuing(false);
       return;
     }
 
     if (parseFloat(totalCost) > parseFloat(balance)) {
-      setErrortwo(translations('BuyCardId.funds'));
+      setErrortwo(translations("BuyCardId.funds"));
       setIsIssuing(false);
       return;
     }
@@ -171,7 +171,7 @@ function Page() {
       start_balance: parseFloat(depositAmount),
       description: description,
       bin: bin,
-      cards_count: 1,
+      cards_count: parseInt(cardsCount, 10),
       external_id: generatedAddress,
     };
 
@@ -225,16 +225,16 @@ function Page() {
         throw new Error(`Error updating balance: ${updateBalanceResponse.status}`);
       }
 
-      const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
-        method: 'POST',
+      const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/newtrans", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           userId,
-          type: 'replenishment', 
-          description: 'Card replenishment',
-          amount: -parseFloat(totalCost) 
+          type: "replenishment",
+          description: "Card replenishment",
+          amount: -parseFloat(totalCost),
         }),
       });
 
@@ -244,14 +244,14 @@ function Page() {
         throw new Error(`Error logging transaction: ${transactionResponse.status}`);
       }
 
-      const cardTransactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/cardtrans', {
-        method: 'POST',
+      const cardTransactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/cardtrans", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           cardId: generatedAddress,
-          amount: parseFloat(depositAmount)
+          amount: parseFloat(depositAmount),
         }),
       });
 
@@ -268,34 +268,32 @@ function Page() {
     } catch (error) {
       setIsIssuing(false);
       console.error("Error issuing card:", error);
-      setErrortwo(translations('BuyCardId.error'));
+      setErrortwo(translations("BuyCardId.error"));
     }
   };
 
-  const accountText = translations('BuyCardId.loading');
-  const balanceText = translations('BuyCardId.personal');
+  const accountText = translations("BuyCardId.loading");
+  const balanceText = translations("BuyCardId.personal");
 
   return (
     <div className={styles.main}>
       <Link href="/cabinet/buycard" style={{ textDecoration: "none" }}>
-        <div className={styles.backLink}>‹ {translations('BuyCardId.market')}</div>
+        <div className={styles.backLink}>‹ {translations("BuyCardId.market")}</div>
       </Link>
 
-      <h3>{translations('BuyCardId.order')}</h3>
+      <h3>{translations("BuyCardId.order")}</h3>
       <div className={styles.parentblock}>
         <div className={styles.innerblock}>
-          <p className={styles.basetext}>{translations('BuyCardId.account')}</p>
+          <p className={styles.basetext}>{translations("BuyCardId.account")}</p>
           <div className={styles.dropdown}>
             <select className={styles.dropdown__select}>
               <option value="confirmed">
-                {isLoadingBalance
-                  ? `${accountText}`
-                  : `${balanceText} - ${balance}$`}
+                {isLoadingBalance ? `${accountText}` : `${balanceText} - ${balance}$`}
               </option>
             </select>
           </div>
           <div className={styles.inputcontainer}>
-            <p className={styles.basetext}>{translations('BuyCardId.name')}</p>
+            <p className={styles.basetext}>{translations("BuyCardId.name")}</p>
             <input
               className={styles.input}
               type="text"
@@ -306,7 +304,16 @@ function Page() {
             />
             <div className={styles.dropdowncontainer}>
               <div className={styles.amountcontainer}>
-                <p className={styles.basetext}>{translations('BuyCardId.deposit')}</p>
+                <p className={styles.basetext}>{translations("BuyCardId.quantity")}</p>
+                <input
+                  type="text"
+                  id="cardsCount"
+                  name="cardsCount"
+                  placeholder="1"
+                  value={cardsCount}
+                  onChange={handleCardsCountChange}
+                />
+                <p className={styles.basetext}>{translations("BuyCardId.deposit")}</p>
                 <input
                   type="text"
                   id="depositAmount"
@@ -315,40 +322,21 @@ function Page() {
                   value={depositAmount}
                   onChange={handleDepositAmountChange}
                 />
-                <button
-                  type="button"
-                  className={styles.maxbutton}
-                  onClick={handleMaxButtonClick}
-                >
-                  {translations('BuyCardId.max')}
+                <button type="button" className={styles.maxbutton} onClick={handleMaxButtonClick}>
+                  {translations("BuyCardId.max")}
                 </button>
-                
-                <label htmlFor="totalCost">{translations('BuyCardId.total')}</label>
+
+                <label htmlFor="totalCost">{translations("BuyCardId.total")}</label>
                 <div className={styles.dropdown}>
-                  <input
-                    className={styles.input}
-                    type="text"
-                    id="totalCost"
-                    name="totalCost"
-                    value={totalCost}
-                    readOnly
-                  />
+                  <input className={styles.input} type="text" id="totalCost" name="totalCost" value={totalCost} readOnly />
                 </div>
               </div>
               <div className={styles.buttoncontainer}>
                 <Link href="/cabinet/cards" style={{ textDecoration: "none" }}>
-                  <button className={styles.cancelbutton}>{translations('BuyCardId.cancel')}</button>
+                  <button className={styles.cancelbutton}>{translations("BuyCardId.cancel")}</button>
                 </Link>
-                <button
-                  className={styles.issuebutton}
-                  onClick={handleIssueCard}
-                  disabled={isIssuing}
-                >
-                  {isIssuing ? (
-                    <div className={styles.loader}></div>
-                  ) : (
-                    `${translations('BuyCardId.issue')}`
-                  )}
+                <button className={styles.issuebutton} onClick={handleIssueCard} disabled={isIssuing}>
+                  {isIssuing ? <div className={styles.loader}></div> : `${translations("BuyCardId.issue")}`}
                 </button>
               </div>
               {errortwo && <p className={styles.error}>{errortwo}</p>}
