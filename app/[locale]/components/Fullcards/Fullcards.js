@@ -86,7 +86,7 @@ const Fullcards = ({ cards }) => {
 
   const handleCopyData = async (uuid) => {
     const details = await fetchCardDetails(uuid);
-    const dataToCopy = `${details.number} ${details.cvx2} ${details.exp_month}/${details.exp_year}`;
+    const dataToCopy = `${details.number};${details.exp_month};${details.exp_year};${details.cvx2}`;
     navigator.clipboard.writeText(dataToCopy).then(() => {
       setCopiedCardId(uuid); 
     }).catch(err => console.error('Failed to copy text: ', err));
