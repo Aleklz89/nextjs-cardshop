@@ -1,25 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../lib/prisma";
+import Decimal from "decimal.js";
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId, balance } = await request.json();
+    const { userId, balanceChange } = await request.json();
 
     // Ensure the necessary data is present
-    if (!userId || balance === undefined) {
+    if (!userId || balanceChange === undefined) {
       return NextResponse.json(
-        { error: "Missing userId or balance" },
+        { error: "Missing userId or balanceChange" },
         { status: 400 }
       );
     }
 
-    // Update the user's balance
-    const user = await prisma.user.update({
-      where: { id: userId },
-      data: { balance: parseFloat(balance) },
+    const balanceChangeDecimal = new Decimal(balanceChange);
+
+    const result = await prisma.$transaction(async (prisma) => {
+      // Fetch the current balance
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { balance: true }
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const updatedBalance = user.balance.plus(balanceChangeDecimal);
+
+      // Update the user's balance
+      const updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: { balance: updatedBalance }
+      });
+
+      return updatedUser;
     });
 
-    return NextResponse.json({ success: true, user });
+    return NextResponse.json({ success: true, user: result });
   } catch (error) {
     console.error("Error updating balance:", error);
     return NextResponse.json(

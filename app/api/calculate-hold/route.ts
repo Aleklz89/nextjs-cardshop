@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../lib/prisma";
 import Decimal from "decimal.js";
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   try {
     const { userId } = await request.json();
 

@@ -210,42 +210,45 @@ export default function CardPage() {
     }
   
     setIsRepLoading(true);
-    const updatedBalance = parseFloat(balance) - parseFloat(replenishAmount);
+    let originalBalance = balance;
+    let replenishAmountFloat = parseFloat(replenishAmount);
   
     try {
-      const updateBalanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/min", {
-        method: "POST",
+      // Update the user's balance before making the transfer
+      const minResponse = await fetch('/api/min', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId, balance: updatedBalance.toFixed(2) }),
+        body: JSON.stringify({ userId, balanceChange: -replenishAmountFloat }),
       });
   
-      if (!updateBalanceResponse.ok) {
-        throw new Error(`Error: ${updateBalanceResponse.status}`);
+      if (!minResponse.ok) {
+        throw new Error(`Error: ${minResponse.status}`);
       }
   
-
+      // Perform the transfer
       const response = await fetch('/api/replenish', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          userId,
           toAccountUuid: selectedCard.account.uuid,
-          amount: Number(replenishAmount),
+          amount: replenishAmountFloat,
         }),
       });
   
       if (!response.ok) {
-        await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/min", {
-          method: "POST",
+        // Revert the balance update if transfer fails
+        await fetch('/api/min', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ userId, balance: parseFloat(balance).toFixed(2) }),
+          body: JSON.stringify({ userId, balanceChange: replenishAmountFloat }),
         });
-  
         throw new Error(`Error: ${response.status}`);
       }
   
@@ -264,6 +267,7 @@ export default function CardPage() {
       setIsRepLoading(false);
     }
   };
+  
   
 
   const handleReturnClick = () => {
