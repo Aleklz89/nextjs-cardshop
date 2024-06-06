@@ -176,6 +176,20 @@ function Page() {
     };
 
     try {
+      // Update user's balance first
+      const minResponse = await fetch('/api/min', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, balanceChange: -parseFloat(totalCost) }),
+      });
+
+      if (!minResponse.ok) {
+        throw new Error(`Error: ${minResponse.status}`);
+      }
+
+      // Proceed with card issuance
       const buyResponse = await fetch("https://api.epn.net/card/buy", {
         method: "POST",
         headers: {
@@ -187,13 +201,8 @@ function Page() {
         body: JSON.stringify(postData),
       });
 
-      const errorData = await buyResponse.json();
-      console.error(`Success: ${buyResponse.status} - ${buyResponse.statusText}`, errorData);
-
       if (!buyResponse.ok) {
-        const errorData = await buyResponse.json();
-        console.error(`Error buying card: ${buyResponse.status} - ${buyResponse.statusText}`, errorData);
-        throw new Error(`Error buying card: ${buyResponse.status}`);
+        throw new Error(`Error: ${buyResponse.status}`);
       }
 
       const updateUserResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/add", {
@@ -208,21 +217,6 @@ function Page() {
         const errorData = await updateUserResponse.json();
         console.error(`Error updating user: ${updateUserResponse.status} - ${updateUserResponse.statusText}`, errorData);
         throw new Error(`Error updating user: ${updateUserResponse.status}`);
-      }
-
-      const updatedBalance = parseFloat(balance) - parseFloat(totalCost);
-      const updateBalanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/min", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId, balance: updatedBalance.toFixed(2) }),
-      });
-
-      if (!updateBalanceResponse.ok) {
-        const errorData = await updateBalanceResponse.json();
-        console.error(`Error updating balance: ${updateBalanceResponse.status} - ${updateBalanceResponse.statusText}`, errorData);
-        throw new Error(`Error updating balance: ${updateBalanceResponse.status}`);
       }
 
       const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/newtrans", {
@@ -266,6 +260,15 @@ function Page() {
         window.location.href = "/cabinet/cards";
       }, 10000);
     } catch (error) {
+      // Revert balance update if error occurs during card issuance
+      await fetch('/api/min', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, balanceChange: parseFloat(totalCost) }),
+      });
+
       setIsIssuing(false);
       console.error("Error issuing card:", error);
       setErrortwo(translations("BuyCardId.error"));

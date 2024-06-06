@@ -241,7 +241,6 @@ export default function CardPage() {
       });
   
       if (!response.ok) {
-        // Revert the balance update if transfer fails
         await fetch('/api/min', {
           method: 'POST',
           headers: {
