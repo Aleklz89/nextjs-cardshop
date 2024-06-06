@@ -208,10 +208,24 @@ export default function CardPage() {
       setRepErrorMessage(translations('Cards.insufficientBalance'));
       return;
     }
-
+  
     setIsRepLoading(true);
-
+    const updatedBalance = parseFloat(balance) - parseFloat(replenishAmount);
+  
     try {
+      const updateBalanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/min", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, balance: updatedBalance.toFixed(2) }),
+      });
+  
+      if (!updateBalanceResponse.ok) {
+        throw new Error(`Error: ${updateBalanceResponse.status}`);
+      }
+  
+
       const response = await fetch('/api/replenish', {
         method: 'POST',
         headers: {
@@ -222,46 +236,21 @@ export default function CardPage() {
           amount: Number(replenishAmount),
         }),
       });
-
+  
       if (!response.ok) {
+        await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/min", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId, balance: parseFloat(balance).toFixed(2) }),
+        });
+  
         throw new Error(`Error: ${response.status}`);
       }
-
-      const updatedBalance = parseFloat(balance) - parseFloat(replenishAmount);
-      const updateBalanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/min", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId, balance: updatedBalance.toFixed(2) }),
-      });
-
-      if (!updateBalanceResponse.ok) {
-        throw new Error(`Error: ${updateBalanceResponse.status}`);
-      }
-
-    
-      const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          type: 'replenishment',
-          description: 'Card replenish',
-          amount: -parseFloat(replenishAmount)
-        }),
-      });
-
-      if (!transactionResponse.ok) {
-        const errorData = await transactionResponse.json();
-        console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
-        throw new Error(`Error logging transaction: ${transactionResponse.status}`);
-      }
-
+  
       await fetchUserBalance(userId);
-
+  
       setTimeout(() => {
         setIsRepLoading(false);
         setIsRepPopupVisible(false);
@@ -275,6 +264,7 @@ export default function CardPage() {
       setIsRepLoading(false);
     }
   };
+  
 
   const handleReturnClick = () => {
     setIsReturnPopupVisible(true);
@@ -357,7 +347,7 @@ export default function CardPage() {
       }, 10000);
     } catch (error) {
       console.error('Error during return:', error);
-      setReturnErrorMessage(translations('Cards.transferError'));
+      setReturnErrorMessage(translations('Cards.transfererr'));
       setIsReturnLoading(false);
     }
   };

@@ -18,7 +18,7 @@ function Page() {
   const [isLoadingBalance, setIsLoadingBalance] = useState(true);
   const [depositAmount, setDepositAmount] = useState("");
   const [totalCost, setTotalCost] = useState("");
-  const [cardsCount, setCardsCount] = useState(1); // Новый стейт для количества карт
+  const [cardsCount, setCardsCount] = useState(1); 
   const [constant, setConstant] = useState(null);
   const [description, setDescription] = useState("");
 

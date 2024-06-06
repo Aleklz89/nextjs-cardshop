@@ -181,10 +181,10 @@ input:checked+.slider:before {
 .mainblocktwo {
     margin-top: 200px;
     max-height: 400px;
-    width: 100%;
+    width: 110%;
     border-collapse: collapse;
     margin-bottom: 300px;
-    margin-left: -10%;
+    margin-left: -15%;
 }
 
 .scrollabletable {
