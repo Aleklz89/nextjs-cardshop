@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import '../../globals.css';
 import Transhistory from '../../../../components/transhistory/Transhistory';
 import Cardstory from '../../../../components/cardstory/Cardstory';
+import Decimal from "decimal.js";
 
 export default function CardPage() {
   const translations = useTranslations();
@@ -104,8 +105,36 @@ export default function CardPage() {
 
   const deleteCard = async (uuid) => {
     setIsDeleting(true);
-
+  
     try {
+      // Проверка, если карта уже была удалена
+      const checkResponse = await fetch('/api/check-card-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cardUuid: uuid }),
+      });
+  
+      const checkData = await checkResponse.json();
+      if (!checkResponse.ok || checkData.isLocked) {
+        throw new Error(`Card has already been deleted`);
+      }
+  
+      // Установка статуса карты как заблокированной
+      const updateStatusResponse = await fetch('/api/update-card-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ cardUuid: uuid, isLocked: true }),
+      });
+  
+      if (!updateStatusResponse.ok) {
+        throw new Error(`Error updating card status: ${updateStatusResponse.status}`);
+      }
+  
+      // Удаление карты с EPN
       const response = await fetch('https://api.epn.net/card', {
         method: 'DELETE',
         headers: {
@@ -118,36 +147,25 @@ export default function CardPage() {
           card_uuids: [uuid],
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-
-
-      const balanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/user`);
-      if (!balanceResponse.ok) {
-        throw new Error(`Error fetching user balance: ${balanceResponse.status}`);
-      }
-      const usersData = await balanceResponse.json();
-      const user = usersData.users.find((item) => item.id === userId);
-      const currentBalance = Number(user.balance);
-
-      const newBalance = currentBalance + selectedCard.account.balance;
-
-      const updateResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/update`, {
+  
+      // Обновление баланса
+      const minResponse = await fetch('/api/min', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id: userId, balance: newBalance }),
+        body: JSON.stringify({ userId, balanceChange: selectedCard.account.balance }),
       });
-
-      if (!updateResponse.ok) {
-        throw new Error(`Error updating user balance: ${updateResponse.status}`);
+  
+      if (!minResponse.ok) {
+        throw new Error(`Error updating user balance: ${minResponse.status}`);
       }
-
- 
-      const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
+  
+      const transactionResponse = await fetch('/api/newtrans', {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",
@@ -159,13 +177,13 @@ export default function CardPage() {
           amount: selectedCard.account.balance
         }),
       });
-
+  
       if (!transactionResponse.ok) {
         const errorData = await transactionResponse.json();
         console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
         throw new Error(`Error logging transaction: ${transactionResponse.status}`);
       }
-
+  
       setTimeout(() => {
         setIsDeleting(false);
         window.location.href = "/cabinet/cards";
@@ -175,6 +193,11 @@ export default function CardPage() {
       setIsDeleting(false);
     }
   };
+  
+  
+  
+  
+  
 
   const handleDeleteConfirmation = () => {
     setIsPopupVisible(false);
@@ -214,7 +237,6 @@ export default function CardPage() {
     let replenishAmountFloat = parseFloat(replenishAmount);
   
     try {
-      // Update the user's balance before making the transfer
       const minResponse = await fetch('/api/min', {
         method: 'POST',
         headers: {
@@ -227,7 +249,6 @@ export default function CardPage() {
         throw new Error(`Error: ${minResponse.status}`);
       }
   
-      // Perform the transfer
       const response = await fetch('/api/replenish', {
         method: 'POST',
         headers: {

@@ -15,7 +15,6 @@ export async function POST(request: NextRequest) {
 
     const balanceChangeDecimal = new Decimal(balanceChange);
 
-    // Используем транзакцию Prisma
     const updatedUser = await prisma.$transaction(async (transaction) => {
       const user = await transaction.user.findUnique({
         where: { id: userId },
