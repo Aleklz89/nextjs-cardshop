@@ -6,7 +6,6 @@ export async function POST(request: NextRequest) {
   try {
     const { userId, balanceChange } = await request.json();
 
-    // Ensure the necessary data is present
     if (!userId || balanceChange === undefined) {
       return NextResponse.json(
         { error: "Missing userId or balanceChange" },
@@ -16,29 +15,30 @@ export async function POST(request: NextRequest) {
 
     const balanceChangeDecimal = new Decimal(balanceChange);
 
-    const result = await prisma.$transaction(async (prisma) => {
-      // Fetch the current balance
-      const user = await prisma.user.findUnique({
+    // Используем транзакцию Prisma
+    const updatedUser = await prisma.$transaction(async (transaction) => {
+      const user = await transaction.user.findUnique({
         where: { id: userId },
-        select: { balance: true }
+        select: { balance: true },
       });
 
       if (!user) {
         throw new Error("User not found");
       }
 
-      const updatedBalance = user.balance.plus(balanceChangeDecimal);
+      const newBalance = new Decimal(user.balance).plus(balanceChangeDecimal);
 
-      // Update the user's balance
-      const updatedUser = await prisma.user.update({
+      if (newBalance.lt(0)) {
+        throw new Error("Insufficient balance");
+      }
+
+      return await transaction.user.update({
         where: { id: userId },
-        data: { balance: updatedBalance }
+        data: { balance: newBalance },
       });
-
-      return updatedUser;
     });
 
-    return NextResponse.json({ success: true, user: result });
+    return NextResponse.json({ success: true, user: updatedUser });
   } catch (error) {
     console.error("Error updating balance:", error);
     return NextResponse.json(

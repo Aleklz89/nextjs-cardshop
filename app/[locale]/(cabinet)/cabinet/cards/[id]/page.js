@@ -262,10 +262,11 @@ export default function CardPage() {
       }, 20000);
     } catch (error) {
       console.error('Error making transfer:', error);
-      setRepErrorMessage(translations('Cards.transferError'));
+      setRepErrorMessage(translations('Cards.transfererr'));
       setIsRepLoading(false);
     }
   };
+  
   
   
 
@@ -283,7 +284,7 @@ export default function CardPage() {
       return;
     }
     if (parseFloat(returnAmount) > selectedCard.account.balance) {
-      setReturnErrorMessage(translations('Cards.exceedsBalance'));
+      setReturnErrorMessage(translations('Cards.exceeds'));
       return;
     }
 

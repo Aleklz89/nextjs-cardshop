@@ -27,7 +27,7 @@ const Transactions = () => {
         }
         const data = await response.json();
         setUserId(data.userId);
-        console.log('Fetched user ID:', data.userId); // Log userId
+        console.log('Fetched user ID:', data.userId);
       } catch (error) {
         console.error('Error fetching user ID:', error);
       }
