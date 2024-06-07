@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import styles from './Fullcards.module.css';
 import { useTranslations } from "next-intl";
 import '../globals.css';
-import Cardslist from '../cardlist/Cardslist';
 
 const Fullcards = ({ cards }) => {
   const translations = useTranslations();
@@ -21,6 +20,7 @@ const Fullcards = ({ cards }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    console.time('DisableScroll');
     const disableScroll = (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -33,6 +33,7 @@ const Fullcards = ({ cards }) => {
       document.body.style.overflow = 'scroll';
       window.removeEventListener('scroll', disableScroll);
       setShowCardlist(false);
+      console.timeEnd('DisableScroll');
     }, 5000);
 
     return () => {
@@ -43,6 +44,7 @@ const Fullcards = ({ cards }) => {
   }, []);
 
   useEffect(() => {
+    console.time('FetchUserId');
     fetchUserId();
   }, []);
 
@@ -54,12 +56,14 @@ const Fullcards = ({ cards }) => {
       }
       const data = await response.json();
       setUserId(data.userId);
+      console.timeEnd('FetchUserId');
     } catch (error) {
       console.error('Error fetching user ID:', error);
     }
   };
 
   const fetchCardDetails = async (uuid) => {
+    console.time(`FetchCardDetails-${uuid}`);
     try {
       const response = await fetch(`https://api.epn.net/card/${uuid}/showpan`, {
         headers: {
@@ -78,6 +82,7 @@ const Fullcards = ({ cards }) => {
         exp_month: data.data.exp_month,
         exp_year: data.data.exp_year,
       });
+      console.timeEnd(`FetchCardDetails-${uuid}`);
       return data.data;
     } catch (error) {
       console.error('Error fetching card details:', error);
@@ -85,11 +90,42 @@ const Fullcards = ({ cards }) => {
   };
 
   const handleCopyData = async (uuid) => {
+    console.time(`HandleCopyData-${uuid}`);
     const details = await fetchCardDetails(uuid);
     const dataToCopy = `${details.number};${details.exp_month};${details.exp_year};${details.cvx2}`;
-    navigator.clipboard.writeText(dataToCopy).then(() => {
-      setCopiedCardId(uuid); 
-    }).catch(err => console.error('Failed to copy text: ', err));
+    
+    if (navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(dataToCopy);
+        setCopiedCardId(uuid);
+        console.timeEnd(`HandleCopyData-${uuid}`);
+      } catch (err) {
+        console.warn('Clipboard API failed, falling back to textarea method:', err);
+        fallbackCopyTextToClipboard(dataToCopy);
+      }
+    } else {
+      fallbackCopyTextToClipboard(dataToCopy);
+    }
+  };
+
+  const fallbackCopyTextToClipboard = (text) => {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';  // Prevent scrolling to bottom of page in MS Edge.
+    textArea.style.left = '-9999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+      document.execCommand('copy');
+      setCopiedCardId(text);
+    } catch (err) {
+      console.error('Fallback method also failed:', err);
+    }
+    
+    document.body.removeChild(textArea);
+    console.timeEnd(`HandleCopyData-${text}`);
   };
 
   const handleMouseEnter = (cardUuid) => {
@@ -136,6 +172,7 @@ const Fullcards = ({ cards }) => {
     }
 
     setIsLoading(true);
+    console.time('ReplenishConfirm');
     try {
       const response = await fetch('/api/replenish', {
         method: 'POST',
@@ -182,7 +219,6 @@ const Fullcards = ({ cards }) => {
           throw new Error(`Error: ${updateBalanceResponse.status}`);
         }
 
-     
         const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
           method: 'POST',
           headers: {
@@ -207,6 +243,7 @@ const Fullcards = ({ cards }) => {
         setIsLoading(false);
         alert(translations('Fullcards.success'));
         window.location.href = "/cabinet/cards";
+        console.timeEnd('ReplenishConfirm');
       }, 10000);
     } catch (error) {
       console.error('Error during replenish:', error);
@@ -214,13 +251,23 @@ const Fullcards = ({ cards }) => {
       setIsLoading(false);
       setTimeout(() => {
         window.location.href = "/cabinet/cards";
+        console.timeEnd('ReplenishConfirm');
       }, 10000);
     }
   };
 
+  useEffect(() => {
+    console.time('RenderCards');
+  }, []);
+
+  useEffect(() => {
+    if (userCards.length > 0) {
+      console.timeEnd('RenderCards');
+    }
+  }, [userCards]);
+
   return (
     <div className={styles.relativeContainer}>
-      {showCardlist && <div className={styles.cover}><Cardslist className={styles.coverblock} /></div>}
       <div className={styles.assetsContainer}>
         <div className={styles.header}>
           <h2 className={styles.amount}>{translations('Fullcards.cards')} {userCards.length}</h2>

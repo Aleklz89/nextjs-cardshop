@@ -56,7 +56,6 @@ const DateRangeComp = ({ setDateRange }) => {
         setRange([ranges.selection]);
         setDateRange(formattedSelection);
     
-        console.log(`DateRange selected: ${formattedStartDate} to ${formattedEndDate}`);
     };
 
     return (

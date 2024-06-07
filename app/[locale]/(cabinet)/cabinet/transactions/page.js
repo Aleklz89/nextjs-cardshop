@@ -27,7 +27,6 @@ const Transactions = () => {
         }
         const data = await response.json();
         setUserId(data.userId);
-        console.log('Fetched user ID:', data.userId);
       } catch (error) {
         console.error('Error fetching user ID:', error);
       }
@@ -43,7 +42,6 @@ const Transactions = () => {
           throw new Error(`Error: ${response.status}`);
         }
         const data = await response.json();
-        console.log('Fetched transactions:', data); // Log transactions data
         setTransactions(data);
       } catch (error) {
         console.error('Error fetching transactions:', error);
@@ -57,7 +55,6 @@ const Transactions = () => {
   }, [userId]);
 
   useEffect(() => {
-    console.log('Transactions before filtering:', transactions);
 
     const lowerCaseSearchQuery = searchQuery.toLowerCase();
     const isMatch = (transaction) => {
@@ -80,7 +77,6 @@ const Transactions = () => {
           break;
       }
 
-      console.log(`Transaction ${transaction.id}: typeMatch=${typeMatch}, descriptionMatch=${descriptionMatch}, dateMatch=${dateMatch}, filterMatch=${filterMatch}`);
       return (typeMatch || descriptionMatch) && filterMatch && dateMatch;
     };
 
@@ -98,13 +94,11 @@ const Transactions = () => {
       return acc;
     }, {});
 
-    console.log('Filtered transactions:', newFilteredTransactions);
 
     setFilteredTransactions(newFilteredTransactions);
     setIsEmpty(Object.keys(newFilteredTransactions).length === 0);
   }, [searchQuery, filterType, dateRange, transactions]);
 
-  console.log(filteredTransactions)
 
   return (
     <main>

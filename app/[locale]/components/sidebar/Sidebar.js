@@ -90,7 +90,6 @@ function Sidebar() {
       }
       const data = await response.json();
       setBalance(parseFloat(data.user.balance));
-      console.log(data.user.balance)
     } catch (error) {
       console.error('Error fetching user balance:', error);
       setBalance(null);

@@ -4,7 +4,6 @@ import styles from './Fullhistory.module.css';
 import '../../globals.css'
 
 const Fullhistory = ({ transactions }) => {
-  console.log(transactions)
   return (
     <div className={styles.fullHistory}>
       {Object.entries(transactions).map(([date, dailyTransactions], index) => (

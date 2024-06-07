@@ -126,7 +126,6 @@ function Page() {
   };
 
   const fetchData = async () => {
-    console.log("Fetching data at:", new Date().toLocaleTimeString());
     const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/request");
     if (response.ok) {
       const applications = await response.json();
@@ -313,7 +312,6 @@ function Page() {
   };
 
   const handleAcceptBalanceChange = async (id) => {
-    console.log(id)
     setLoadingAcceptBalance(id);
     const newBalance = Number(editableBalances[id]);
     const newMarkup = Number(editableMarkups[id]);

@@ -12,12 +12,10 @@ import '../globals.css'
 const Filters = ({ setSearchQuery, setFilterType, setDateRange }) => {
     const translations = useTranslations()
     const handleSearchChange = (e) => {
-        console.log("Filters: setSearchQuery called with", e.target.value);
         setSearchQuery(e.target.value);
     };
 
     const handleFilterChange = (e) => {
-        console.log("Filters: setFilterType called with", e.target.value);
         setFilterType(e.target.value);
     };
 

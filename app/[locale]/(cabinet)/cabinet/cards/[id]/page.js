@@ -96,7 +96,6 @@ export default function CardPage() {
       }
       const data = await response.json();
       setBalance(parseFloat(data.user.balance));
-      console.log(data.user.balance);
     } catch (error) {
       console.error('Error fetching user balance:', error);
       setBalance(null);
@@ -403,7 +402,6 @@ export default function CardPage() {
         }
 
         const data = await response.json();
-        console.log(data)
         allTransactions = allTransactions.concat(data.data);
 
         if (!data.links.next) {
