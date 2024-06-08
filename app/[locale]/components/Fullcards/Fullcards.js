@@ -111,7 +111,7 @@ const Fullcards = ({ cards }) => {
   const fallbackCopyTextToClipboard = (text) => {
     const textArea = document.createElement('textarea');
     textArea.value = text;
-    textArea.style.position = 'fixed';  // Prevent scrolling to bottom of page in MS Edge.
+    textArea.style.position = 'fixed'; 
     textArea.style.left = '-9999px';
     document.body.appendChild(textArea);
     textArea.focus();

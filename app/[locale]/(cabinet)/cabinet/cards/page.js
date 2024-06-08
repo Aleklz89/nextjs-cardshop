@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import Dashboard from "../../../components/dashboard/Dashboard";
-import Cardslist from "../../../components/cardlist/Cardslist";
 import Fullcards from "../../../components/Fullcards/Fullcards";
+import Cardslist from "../../../components/cardlist/Cardslist";
 import styles from './cards.css';
 import '../globals.css';
 
@@ -15,12 +15,14 @@ export default function Cards() {
   const fetchUserId = async () => {
     console.time('FetchUserId');
     try {
+      console.log('Fetching user ID...');
       const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/token');
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
       setUserId(data.userId);
+      console.log('User ID fetched:', data.userId);
     } catch (error) {
       console.error('Error fetching user ID:', error);
     }
@@ -30,12 +32,14 @@ export default function Cards() {
   const fetchUserCards = async (userId) => {
     console.time('FetchUserCards');
     try {
+      console.log('Fetching user cards...');
       const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/cabinet?id=${userId}`);
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
       const cardsIds = data.user.cardsIds || [];
+      console.log('User cards fetched:', cardsIds);
       console.timeEnd('FetchUserCards');
       return cardsIds;
     } catch (error) {
@@ -45,42 +49,43 @@ export default function Cards() {
     }
   };
 
-  const fetchAllCards = async () => {
-    console.time('FetchAllCards');
+  const fetchCardById = async (cardId) => {
+    console.log(`Fetching card with ID: ${cardId}`);
+    try {
+      const response = await fetch(`https://api.epn.net/card?external_id=${cardId}`, {
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+          'X-CSRF-TOKEN': '',
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log(`Card fetched:`, data.data);
+      return data.data;
+    } catch (error) {
+      console.error(`Error fetching card with ID ${cardId}:`, error);
+      return null;
+    }
+  };
+
+  const fetchAllCardsByIds = async (cardIds) => {
+    console.time('FetchAllCardsByIds');
     let allCards = [];
-    let currentPage = 1;
-    const perPage = 25;
 
     try {
-      while (true) {
-        console.time(`FetchPage ${currentPage}`);
-        const response = await fetch(`https://api.epn.net/card?page=${currentPage}`, {
-          headers: {
-            accept: 'application/json',
-            Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
-          },
-        });
-        console.timeEnd(`FetchPage ${currentPage}`);
-        
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-        console.time(`ParsePage ${currentPage}`);
-        const data = await response.json();
-        console.timeEnd(`ParsePage ${currentPage}`);
-        
-        allCards = allCards.concat(data.data);
+      const cardFetchPromises = cardIds.map(cardId => fetchCardById(cardId));
+      const cardsData = await Promise.all(cardFetchPromises);
+      allCards = cardsData.flat().filter(card => card !== null);
 
-        if (data.meta.current_page * perPage >= data.meta.total) {
-          break;
-        }
-        currentPage++;
-      }
-      console.timeEnd('FetchAllCards');
+      console.log('All cards fetched by IDs:', allCards);
+      console.timeEnd('FetchAllCardsByIds');
       return allCards;
     } catch (error) {
-      console.error('Error fetching all cards:', error);
-      console.timeEnd('FetchAllCards');
+      console.error('Error fetching all cards by IDs:', error);
+      console.timeEnd('FetchAllCardsByIds');
       return [];
     }
   };
@@ -101,19 +106,17 @@ export default function Cards() {
         console.time('FetchCards');
         console.time('FetchUserCardsAndAllCards');
         const cardsIds = await fetchUserCards(userId);
-        const allCards = await fetchAllCards();
+        const allCards = await fetchAllCardsByIds(cardsIds);
         console.timeEnd('FetchUserCardsAndAllCards');
 
-        console.time('FilterUserCards');
-        const userCards = allCards.filter(card => cardsIds.includes(card.external_id));
-        console.timeEnd('FilterUserCards');
-
         console.time('FilterActiveCards');
-        const activeCards = userCards.filter(card => card.blocked_at === null);
+        const activeCards = allCards.filter(card => card.blocked_at === null);
+        console.log('Filtered active cards:', activeCards);
         console.timeEnd('FilterActiveCards');
 
         setCards(activeCards);
         setCardsCount(activeCards.length);
+        console.log('Active cards set:', activeCards);
         console.timeEnd('FetchCards');
       }
     };
@@ -123,8 +126,8 @@ export default function Cards() {
 
   return (
     <main className={styles.mainContainer}>
-      <Dashboard />
-      {cardsCount > 0 ? <Fullcards cards={cards} /> : <Cardslist />}
-    </main>
+    <Dashboard />
+    {cardsCount > 0 ? <Fullcards cards={cards} /> : <Cardslist />}
+  </main>
   );
 }
