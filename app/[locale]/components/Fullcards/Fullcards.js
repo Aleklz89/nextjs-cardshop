@@ -8,7 +8,7 @@ import '../globals.css';
 const Fullcards = ({ cards }) => {
   const translations = useTranslations();
   const [userId, setUserId] = useState(null);
-  const [userCards, setUserCards] = useState(cards);
+  const [userCards, setUserCards] = useState([]);
   const [hoveredCardId, setHoveredCardId] = useState(null);
   const [cardDetails, setCardDetails] = useState(null);
   const [copiedCardId, setCopiedCardId] = useState(null);
@@ -61,6 +61,12 @@ const Fullcards = ({ cards }) => {
       console.error('Error fetching user ID:', error);
     }
   };
+
+  useEffect(() => {
+    const reversedCards = [...cards].reverse();
+    setUserCards(reversedCards);
+    console.log('Reversed cards:', reversedCards);
+  }, [cards]);
 
   const fetchCardDetails = async (uuid) => {
     console.time(`FetchCardDetails-${uuid}`);

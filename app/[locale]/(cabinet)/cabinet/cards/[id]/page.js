@@ -77,6 +77,7 @@ export default function CardPage() {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
+      console.log(data)
       setCardDetails({
         number: data.data.number,
         cvx2: data.data.cvx2,
@@ -106,7 +107,7 @@ export default function CardPage() {
     setIsDeleting(true);
   
     try {
-      // Проверка, если карта уже была удалена
+ 
       const checkResponse = await fetch('/api/check-card-status', {
         method: 'POST',
         headers: {
@@ -120,7 +121,7 @@ export default function CardPage() {
         throw new Error(`Card has already been deleted`);
       }
   
-      // Установка статуса карты как заблокированной
+
       const updateStatusResponse = await fetch('/api/update-card-status', {
         method: 'POST',
         headers: {
@@ -151,7 +152,7 @@ export default function CardPage() {
         throw new Error(`Error: ${response.status}`);
       }
   
-      // Обновление баланса
+
       const minResponse = await fetch('/api/min', {
         method: 'POST',
         headers: {
@@ -458,6 +459,8 @@ export default function CardPage() {
       setSelectedCard(card || null);
 
       if (card && card.uuid) {
+        console.log(card.uuid)
+        console.log(card)
         fetchCardDetails(card.uuid);
         fetchCardTransactions(card.account.uuid);
       }
