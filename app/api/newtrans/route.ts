@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '../../lib/prisma';
+import Decimal from 'decimal.js';
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,13 +10,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    const amountDecimal = new Decimal(amount);
 
     const transaction = await prisma.transaction.create({
       data: {
         userId,
         type,
         description,
-        amount
+        amount: amountDecimal.toNumber(),
       }
     });
 

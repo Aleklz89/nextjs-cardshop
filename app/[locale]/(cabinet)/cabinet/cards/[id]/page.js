@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -8,7 +8,6 @@ import { useTranslations } from "next-intl";
 import '../../globals.css';
 import Transhistory from '../../../../components/transhistory/Transhistory';
 import Cardstory from '../../../../components/cardstory/Cardstory';
-import Decimal from "decimal.js";
 
 export default function CardPage() {
   const translations = useTranslations();
@@ -107,7 +106,6 @@ export default function CardPage() {
     setIsDeleting(true);
   
     try {
- 
       const checkResponse = await fetch('/api/check-card-status', {
         method: 'POST',
         headers: {
@@ -121,7 +119,6 @@ export default function CardPage() {
         throw new Error(`Card has already been deleted`);
       }
   
-
       const updateStatusResponse = await fetch('/api/update-card-status', {
         method: 'POST',
         headers: {
@@ -134,7 +131,6 @@ export default function CardPage() {
         throw new Error(`Error updating card status: ${updateStatusResponse.status}`);
       }
   
-      // Удаление карты с EPN
       const response = await fetch('https://api.epn.net/card', {
         method: 'DELETE',
         headers: {
@@ -152,7 +148,6 @@ export default function CardPage() {
         throw new Error(`Error: ${response.status}`);
       }
   
-
       const minResponse = await fetch('/api/min', {
         method: 'POST',
         headers: {
@@ -193,11 +188,6 @@ export default function CardPage() {
       setIsDeleting(false);
     }
   };
-  
-  
-  
-  
-  
 
   const handleDeleteConfirmation = () => {
     setIsPopupVisible(false);
@@ -287,9 +277,6 @@ export default function CardPage() {
       setIsRepLoading(false);
     }
   };
-  
-  
-  
 
   const handleReturnClick = () => {
     setIsReturnPopupVisible(true);
@@ -308,9 +295,9 @@ export default function CardPage() {
       setReturnErrorMessage(translations('Cards.exceeds'));
       return;
     }
-
+  
     setIsReturnLoading(true);
-
+  
     try {
       const response = await fetch('/api/return', {
         method: 'POST',
@@ -319,31 +306,21 @@ export default function CardPage() {
         },
         body: JSON.stringify({
           fromAccountUuid: selectedCard.account.uuid,
+          userId,
           amount: Number(returnAmount),
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-
-      const newBalance = parseFloat(balance) + parseFloat(returnAmount);
-      const updateResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/update', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: userId,
-          balance: newBalance.toFixed(2),
-        }),
-      });
-
-      if (!updateResponse.ok) {
-        throw new Error(`Error: ${updateResponse.status}`);
-      }
-
-      
+  
+      const result = await response.json();
+      const newBalance = result.newBalance;
+  
+      // Optionally update the balance in the UI
+      setBalance(parseFloat(newBalance));
+  
       const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
         method: 'POST',
         headers: {
@@ -356,13 +333,13 @@ export default function CardPage() {
           amount: parseFloat(returnAmount)
         }),
       });
-
+  
       if (!transactionResponse.ok) {
         const errorData = await transactionResponse.json();
         console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
         throw new Error(`Error logging transaction: ${transactionResponse.status}`);
       }
-
+  
       setTimeout(() => {
         setIsReturnLoading(false);
         setIsReturnPopupVisible(false);
@@ -376,7 +353,7 @@ export default function CardPage() {
       setIsReturnLoading(false);
     }
   };
-
+  
   const fetchCardTransactions = async (cardId) => {
     let allTransactions = [];
     let currentPage = 1;
