@@ -91,30 +91,42 @@ export async function POST(request: NextRequest) {
 
     const currentTime = new Date();
     let holdBalance = 0;
+    let totalTransferredAmount = new Decimal(0);
 
-    const updatePromises = holds.map(async hold => {
-      if (currentTime >= new Date(hold.reverseTime)) {
-        const user = await prisma.user.findUnique({ where: { id: userId } });
-        const updatedBalance = new Decimal(user.balance).plus(hold.amount).toFixed(2);
+    const holdsToUpdate = [];
 
-        await prisma.user.update({
-          where: { id: userId },
-          data: { balance: updatedBalance },
-        });
-
-        await prisma.hold.update({
-          where: { id: hold.id },
-          data: { isTransferred: true },
-        });
-
-        console.log(`Updated balance and hold status for transaction ${hold.transactionId}`);
+    for (const hold of holds) {
+      const holdReverseTime = new Date(hold.reverseTime);
+      if (currentTime >= holdReverseTime) {
+        totalTransferredAmount = totalTransferredAmount.plus(hold.amount);
+        holdsToUpdate.push(hold.id);
+        console.log(`Hold ready for transfer for transaction ${hold.transactionId}:`, hold.amount);
       } else {
         holdBalance += hold.amount;
+        const remainingTime = holdReverseTime.getTime() - currentTime.getTime();
+        const remainingMinutes = Math.ceil(remainingTime / 60000); // Конвертация миллисекунд в минуты
         console.log(`Hold balance not yet transferred for transaction ${hold.transactionId}:`, hold.amount);
+        console.log(`Hold will be transferred in ${remainingMinutes} minutes`);
       }
-    });
+    }
 
-    await Promise.all(updatePromises);
+    if (totalTransferredAmount.greaterThan(0)) {
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      const updatedBalance = new Decimal(user.balance).plus(totalTransferredAmount).toFixed(2);
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: { balance: updatedBalance },
+      });
+
+      await prisma.hold.updateMany({
+        where: { id: { in: holdsToUpdate } },
+        data: { isTransferred: true },
+      });
+
+      console.log(`Updated balance for user ${userId} by ${totalTransferredAmount.toFixed(2)}`);
+      console.log(`Marked ${holdsToUpdate.length} holds as transferred`);
+    }
 
     console.log('Final hold balance:', holdBalance);
     return NextResponse.json({ holdBalance });
@@ -126,4 +138,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

@@ -78,7 +78,7 @@ function Sidebar() {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      setUserId(data.userId);
+      setUserId(26);
     } catch (error) {
       console.error('Error fetching user ID:', error);
     }
@@ -174,7 +174,7 @@ function Sidebar() {
   }, []);
 
   useEffect(() => {
-    const fetchCards = async () => {
+    const fetchCardsAndBalances = async () => {
       if (userId) {
         const cardsIds = await fetchUserCards(userId);
         console.log("Id карт:", cardsIds);
@@ -183,28 +183,17 @@ function Sidebar() {
 
         setCards(activeCards);
         setCardsCount(activeCards.length);
+
+        const cardUuids = activeCards.map((card) => card.account.uuid);
+        const holdBalance = await fetchHoldBalance(userId, cardUuids);
+        setHoldBalance(parseFloat(holdBalance.toFixed(2)));
+
+        await fetchUserBalance(userId); // Загрузка основного баланса после загрузки холда
+        setIsLoadingBalance(false);
       }
     };
 
-    fetchCards();
-  }, [userId]);
-
-  useEffect(() => {
-    if (userId !== null) {
-      fetchUserBalance(userId).then(() => {
-        fetchUserCards(userId).then(async (userCards) => {
-          const allCards = await fetchAllCardsByIds(userCards);
-          const filteredCards = allCards.filter((card) => userCards.includes(card.external_id));
-          const cardUuids = filteredCards.map((card) => card.account.uuid);
-
-          if (cardUuids.length > 0) {
-            const holdBalance = await fetchHoldBalance(userId, cardUuids);
-            setHoldBalance(parseFloat(holdBalance.toFixed(2)));
-          }
-          setIsLoadingBalance(false);
-        });
-      });
-    }
+    fetchCardsAndBalances();
   }, [userId]);
 
   const isActive = (path) => {
