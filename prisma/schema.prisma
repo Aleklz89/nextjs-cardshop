@@ -60,11 +60,12 @@ model CardBalance {
 }
 
 model Hold {
-  id              Int      @id @default(autoincrement())
-  transactionId   Int      @unique
-  userId          Int
-  reverseTime     DateTime
-  amount          Float
+  id            Int      @id @default(autoincrement())
+  transactionId Int      @unique
+  userId        Int
+  reverseTime   DateTime
+  amount        Float
+  isTransferred Boolean  @default(false)
 }
 
 model CardLock {

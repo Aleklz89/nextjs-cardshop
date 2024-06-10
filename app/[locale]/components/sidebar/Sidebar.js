@@ -78,7 +78,7 @@ function Sidebar() {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      setUserId(data.userId);
+      setUserId(17);
     } catch (error) {
       console.error('Error fetching user ID:', error);
     }
@@ -105,8 +105,7 @@ function Sidebar() {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      console.log("Текущие карты юзера:")
-      console.log(data)
+      console.log("Текущие карты юзера:", data);
       return data.user.cardsIds || [];
     } catch (error) {
       console.error('Error fetching user cards:', error);
@@ -148,44 +147,25 @@ function Sidebar() {
     }
   };
 
-  const fetchCardTransactions = async (cardUuids) => {
-    const baseUrl = 'https://api.epn.net/transaction';
-  
-    const fetchTransactionsForUuid = async (uuid) => {
-      const params = new URLSearchParams();
-      params.append('account_uuid', uuid);
-  
-      try {
-        const response = await fetch(`${baseUrl}?${params.toString()}`, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Authorization': 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
-            'X-CSRF-TOKEN': '',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({}),
-        });
-  
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Error: ${response.status}, ${errorText}`);
-        }
-  
-        const data = await response.json();
-        return data.data;
-      } catch (error) {
-        console.error(`Error fetching transactions for uuid ${uuid}:`, error);
-        return [];
-      }
-    };
-  
+  const fetchHoldBalance = async (userId, cardUuids) => {
     try {
-      const transactions = await Promise.all(cardUuids.map(fetchTransactionsForUuid));
-      return transactions.flat();
+      const response = await fetch('/api/transactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId, cardUuids }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.holdBalance;
     } catch (error) {
-      console.error('Error fetching card transactions:', error);
-      return [];
+      console.error('Error fetching hold balance:', error);
+      return 0;
     }
   };
 
@@ -197,8 +177,7 @@ function Sidebar() {
     const fetchCards = async () => {
       if (userId) {
         const cardsIds = await fetchUserCards(userId);
-        console.log("Id карт:")
-        console.log(cardsIds)
+        console.log("Id карт:", cardsIds);
         const allCards = await fetchAllCardsByIds(cardsIds);
         const activeCards = allCards.filter(card => card.blocked_at === null);
 
@@ -219,14 +198,7 @@ function Sidebar() {
           const cardUuids = filteredCards.map((card) => card.account.uuid);
 
           if (cardUuids.length > 0) {
-            const transactions = await fetchCardTransactions(cardUuids);
-            let holdBalance = 0;
-
-            if (transactions.length > 0) {
-              const holdTransactions = transactions.filter((transaction) => transaction.type_enum === 'Authorization');
-              holdBalance = holdTransactions.reduce((acc, transaction) => acc + Math.abs(parseFloat(transaction.amount)), 0);
-            }
-
+            const holdBalance = await fetchHoldBalance(userId, cardUuids);
             setHoldBalance(parseFloat(holdBalance.toFixed(2)));
           }
           setIsLoadingBalance(false);
