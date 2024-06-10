@@ -114,25 +114,29 @@ export default function CardPage() {
         },
         body: JSON.stringify({ cardUuid: uuid, userId, cardBalance: selectedCard.account.balance }),
       });
-
+  
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-
+  
       const data = await response.json();
       if (data.error) {
         throw new Error(data.error);
       }
-
+  
       setTimeout(() => {
         setIsDeleting(false);
         window.location.href = "/cabinet/cards";
       }, 10000);
     } catch (error) {
       console.error('Error deleting card:', error);
-      setIsDeleting(false);
+      setTimeout(() => {
+        setIsDeleting(false);
+        window.location.href = "/cabinet/cards";
+      }, 10000);
     }
   };
+  
 
   const handleDeleteConfirmation = () => {
     setIsPopupVisible(false);

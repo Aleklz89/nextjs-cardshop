@@ -21,7 +21,7 @@ export default function Cards() {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      setUserId(data.userId);
+      setUserId(17);
       console.log('User ID fetched:', data.userId);
     } catch (error) {
       console.error('Error fetching user ID:', error);
