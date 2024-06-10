@@ -103,82 +103,27 @@ export default function CardPage() {
   };
 
   const deleteCard = async (uuid) => {
+    console.log("Айди которое передаем:", uuid);
     setIsDeleting(true);
   
     try {
-      const checkResponse = await fetch('/api/check-card-status', {
+      const response = await fetch('/api/check-card-status', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ cardUuid: uuid }),
+        body: JSON.stringify({ cardUuid: uuid, userId, cardBalance: selectedCard.account.balance }),
       });
-  
-      const checkData = await checkResponse.json();
-      if (!checkResponse.ok || checkData.isLocked) {
-        throw new Error(`Card has already been deleted`);
-      }
-  
-      const updateStatusResponse = await fetch('/api/update-card-status', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ cardUuid: uuid, isLocked: true }),
-      });
-  
-      if (!updateStatusResponse.ok) {
-        throw new Error(`Error updating card status: ${updateStatusResponse.status}`);
-      }
-  
-      const response = await fetch('https://api.epn.net/card', {
-        method: 'DELETE',
-        headers: {
-          accept: 'application/json',
-          Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': '',
-        },
-        body: JSON.stringify({
-          card_uuids: [uuid],
-        }),
-      });
-  
+
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-  
-      const minResponse = await fetch('/api/min', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId, balanceChange: selectedCard.account.balance }),
-      });
-  
-      if (!minResponse.ok) {
-        throw new Error(`Error updating user balance: ${minResponse.status}`);
+
+      const data = await response.json();
+      if (data.error) {
+        throw new Error(data.error);
       }
-  
-      const transactionResponse = await fetch('/api/newtrans', {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          type: 'card close',
-          description: 'Card close and balance transfer',
-          amount: selectedCard.account.balance
-        }),
-      });
-  
-      if (!transactionResponse.ok) {
-        const errorData = await transactionResponse.json();
-        console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
-        throw new Error(`Error logging transaction: ${transactionResponse.status}`);
-      }
-  
+
       setTimeout(() => {
         setIsDeleting(false);
         window.location.href = "/cabinet/cards";
@@ -191,6 +136,7 @@ export default function CardPage() {
 
   const handleDeleteConfirmation = () => {
     setIsPopupVisible(false);
+    console.log("Выбранная карта:");
     deleteCard(selectedCard.uuid);
   };
 

@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest) {
   console.log(isAdminPath);
   console.log(isCabinetPath);
 
-  // Avoid redirect loop if already on the /en page
+
   if (!jwt && request.nextUrl.pathname === '/en') {
     return intlResponse instanceof NextResponse ? intlResponse : NextResponse.next();
   }

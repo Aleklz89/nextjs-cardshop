@@ -113,7 +113,7 @@ export default function Cards() {
     getEmail();
   }, [userId]);
 
-  if (!mounted) return null; 
+  if (!mounted) return null; // Ensure the theme has mounted
 
   return (
     <div>
