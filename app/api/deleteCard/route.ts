@@ -1,42 +1,76 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from "../../lib/prisma";
 import axios from 'axios';
 import Decimal from 'decimal.js';
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   try {
-    const { userId, cardUuid, balanceChange } = await request.json();
+    const { userId, cardUuidsWithBalances } = await request.json();
 
-    if (!userId || !cardUuid || balanceChange === undefined) {
+    if (!userId || !cardUuidsWithBalances || cardUuidsWithBalances.length === 0) {
       return NextResponse.json(
-        { error: "Missing userId, cardUuid, or balanceChange" },
+        { error: "Missing userId or cardUuidsWithBalances" },
         { status: 400 }
       );
     }
 
-    const balanceChangeDecimal = new Decimal(balanceChange);
+    const cardUuids = cardUuidsWithBalances.map(item => item.cardUuid);
+    const totalBalance = cardUuidsWithBalances.reduce((acc, item) => acc.plus(item.balance), new Decimal(0));
 
-    // Check if the card is already locked
-    const cardLock = await prisma.cardLock.findUnique({
-      where: { cardUuid },
+    // Check if any card is already locked
+    const cardLocks = await prisma.cardLock.findMany({
+      where: { cardUuid: { in: cardUuids } },
     });
 
-    if (cardLock && cardLock.isLocked) {
+    const lockedCards = cardLocks.filter(lock => lock.isLocked);
+    if (lockedCards.length > 0) {
       return NextResponse.json(
-        { error: "Card is already being processed" },
+        { error: "Some cards are already being processed" },
         { status: 400 }
       );
     }
 
-    // Lock the card
-    await prisma.cardLock.upsert({
-      where: { cardUuid },
-      update: { isLocked: true },
-      create: { cardUuid, isLocked: true },
+    // Lock the cards
+    await prisma.cardLock.updateMany({
+      where: { cardUuid: { in: cardUuids } },
+      data: { isLocked: true },
     });
 
     try {
-      // Delete card from EPN
+      // Validate cards by fetching their details first
+      const invalidCards = [];
+      for (const cardUuid of cardUuids) {
+        try {
+          const response = await axios.get(`https://api.epn.net/card/${cardUuid}/showpan`, {
+            headers: {
+              accept: 'application/json',
+              Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+              'X-CSRF-TOKEN': '',
+            },
+          });
+          if (response.status !== 200) {
+            invalidCards.push(cardUuid);
+          }
+        } catch (error) {
+          invalidCards.push(cardUuid);
+        }
+      }
+
+      if (invalidCards.length > 0) {
+        // Unlock the valid cards
+        const validCardUuids = cardUuids.filter(cardUuid => !invalidCards.includes(cardUuid));
+        await prisma.cardLock.updateMany({
+          where: { cardUuid: { in: validCardUuids } },
+          data: { isLocked: false },
+        });
+
+        return NextResponse.json(
+          { error: "Some cards are invalid", invalidCards },
+          { status: 422 }
+        );
+      }
+
+      // Delete cards from EPN
       const response = await axios.delete('https://api.epn.net/card', {
         headers: {
           accept: 'application/json',
@@ -44,11 +78,11 @@ export async function POST(request) {
           'Content-Type': 'application/json',
           'X-CSRF-TOKEN': '',
         },
-        data: { card_uuids: [cardUuid] },
+        data: { card_uuids: cardUuids },
       });
 
       if (response.status !== 200) {
-        throw new Error(`Error: ${response.status}`);
+        throw new Error(`Error: ${response.status}, ${response.data}`);
       }
 
       // Update user balance
@@ -62,7 +96,7 @@ export async function POST(request) {
           throw new Error("User not found");
         }
 
-        const newBalance = new Decimal(user.balance).plus(balanceChangeDecimal);
+        const newBalance = new Decimal(user.balance).plus(totalBalance);
 
         return await transaction.user.update({
           where: { id: userId },
@@ -70,30 +104,31 @@ export async function POST(request) {
         });
       });
 
-      // Log the transaction
+      // Log the single transaction
       await prisma.transaction.create({
         data: {
           userId,
           type: 'card close',
-          description: 'Card close and balance transfer',
-          amount: balanceChangeDecimal.toNumber(),
+          description: `Card close and balance transfer`,
+          amount: totalBalance.toNumber(),
         },
       });
 
-      // Unlock the card
-      await prisma.cardLock.update({
-        where: { cardUuid },
+      // Unlock the cards
+      await prisma.cardLock.updateMany({
+        where: { cardUuid: { in: cardUuids } },
         data: { isLocked: false },
       });
 
       return NextResponse.json({ success: true, user: updatedUser });
     } catch (error) {
-      // Unlock the card in case of error
-      await prisma.cardLock.update({
-        where: { cardUuid },
+      // Unlock the cards in case of error
+      await prisma.cardLock.updateMany({
+        where: { cardUuid: { in: cardUuids } },
         data: { isLocked: false },
       });
 
+      console.error("Error during card deletion and balance update:", error);
       throw error;
     }
   } catch (error) {

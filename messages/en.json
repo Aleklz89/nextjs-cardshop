@@ -178,7 +178,12 @@
         "sum": "Enter the top-up amount",
         "topup": "Top up",
         "success": "Replenishment completed successfully",
-        "error": "Something went wrong"
+        "error": "Something went wrong",
+        "delete": "Delete cards",
+        "chooseToDelete": "Choose cards",
+        "confirmDelete": "Confirm delete",
+        "sucdel": "The deletion was successful"
+
     },
 
     "Header": {

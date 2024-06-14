@@ -144,6 +144,10 @@ export default function CardPage() {
     deleteCard(selectedCard.uuid);
   };
 
+  const handleReturnClick = () => {
+    setIsReturnPopupVisible(true);
+  };
+
   const handleDeleteClick = () => {
     setIsPopupVisible(true);
   };
@@ -173,7 +177,6 @@ export default function CardPage() {
     }
   
     setIsRepLoading(true);
-    let originalBalance = balance;
     let replenishAmountFloat = parseFloat(replenishAmount);
   
     try {
@@ -214,63 +217,7 @@ export default function CardPage() {
   
       await fetchUserBalance(userId);
   
-      setTimeout(() => {
-        setIsRepLoading(false);
-        setIsRepPopupVisible(false);
-        setRepErrorMessage("");
-        setReplenishAmount("");
-        window.location.href = `/cabinet/cards/${uuid}`;
-      }, 20000);
-    } catch (error) {
-      console.error('Error making transfer:', error);
-      setRepErrorMessage(translations('Cards.transfererr'));
-      setIsRepLoading(false);
-    }
-  };
-
-  const handleReturnClick = () => {
-    setIsReturnPopupVisible(true);
-  };
-
-  const handleReturnConfirmation = async () => {
-    if (!returnAmount) {
-      setReturnErrorMessage(translations('Cards.enterAmount'));
-      return;
-    }
-    if (isNaN(returnAmount)) {
-      setReturnErrorMessage(translations('Cards.invalidAmount'));
-      return;
-    }
-    if (parseFloat(returnAmount) > selectedCard.account.balance) {
-      setReturnErrorMessage(translations('Cards.exceeds'));
-      return;
-    }
-  
-    setIsReturnLoading(true);
-  
-    try {
-      const response = await fetch('/api/return', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fromAccountUuid: selectedCard.account.uuid,
-          userId,
-          amount: Number(returnAmount),
-        }),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-  
-      const result = await response.json();
-      const newBalance = result.newBalance;
-  
-
-      setBalance(parseFloat(newBalance));
-  
+      // Добавляем новую транзакцию после успешного пополнения
       const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
         method: 'POST',
         headers: {
@@ -278,9 +225,9 @@ export default function CardPage() {
         },
         body: JSON.stringify({
           userId,
-          type: 'transfer',
-          description: 'Transfer from card',
-          amount: parseFloat(returnAmount)
+          type: 'replenishment',
+          description: `Replenishment to card`,
+          amount: -replenishAmountFloat
         }),
       });
   
@@ -291,18 +238,19 @@ export default function CardPage() {
       }
   
       setTimeout(() => {
-        setIsReturnLoading(false);
-        setIsReturnPopupVisible(false);
-        setReturnErrorMessage("");
-        setReturnAmount("");
+        setIsRepLoading(false);
+        setIsRepPopupVisible(false);
+        setRepErrorMessage("");
+        setReplenishAmount("");
         window.location.href = `/cabinet/cards/${uuid}`;
       }, 10000);
     } catch (error) {
-      console.error('Error during return:', error);
-      setReturnErrorMessage(translations('Cards.transfererr'));
-      setIsReturnLoading(false);
+      console.error('Error making transfer:', error);
+      setRepErrorMessage(translations('Cards.transfererr'));
+      setIsRepLoading(false);
     }
   };
+  
   
   const fetchCardTransactions = async (cardId) => {
     let allTransactions = [];

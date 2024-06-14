@@ -14,10 +14,13 @@ const Fullcards = ({ cards }) => {
   const [copiedCardId, setCopiedCardId] = useState(null);
   const [showCardlist, setShowCardlist] = useState(true);
   const [selectedCards, setSelectedCards] = useState([]);
+  const [selectedDeleteCards, setSelectedDeleteCards] = useState([]);
   const [showSelectMessage, setShowSelectMessage] = useState(false);
+  const [showDeleteMessage, setShowDeleteMessage] = useState(false);
   const [replenishAmount, setReplenishAmount] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     console.time('DisableScroll');
@@ -99,7 +102,7 @@ const Fullcards = ({ cards }) => {
     console.time(`HandleCopyData-${uuid}`);
     const details = await fetchCardDetails(uuid);
     const dataToCopy = `${details.number};${details.exp_month};${details.exp_year};${details.cvx2}`;
-    
+
     if (navigator.clipboard) {
       try {
         await navigator.clipboard.writeText(dataToCopy);
@@ -117,31 +120,31 @@ const Fullcards = ({ cards }) => {
   const fallbackCopyTextToClipboard = (text) => {
     const textArea = document.createElement('textarea');
     textArea.value = text;
-    textArea.style.position = 'fixed'; 
+    textArea.style.position = 'fixed';
     textArea.style.left = '-9999px';
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
-    
+
     try {
       document.execCommand('copy');
       setCopiedCardId(text);
     } catch (err) {
       console.error('Fallback method also failed:', err);
     }
-    
+
     document.body.removeChild(textArea);
     console.timeEnd(`HandleCopyData-${text}`);
   };
 
   const handleMouseEnter = (cardUuid) => {
     setHoveredCardId(cardUuid);
-    setCopiedCardId(null); 
+    setCopiedCardId(null);
   };
 
   const handleMouseLeave = () => {
     setHoveredCardId(null);
-    setCopiedCardId(null); 
+    setCopiedCardId(null);
   };
 
   const handleDetailedInfoClick = (uuid) => {
@@ -149,12 +152,22 @@ const Fullcards = ({ cards }) => {
   };
 
   const handleCardClick = (card) => {
-    if (!showSelectMessage) return;
+    if (!showSelectMessage && !showDeleteMessage) return;
     const cardUuid = card.account.uuid;
     if (selectedCards.includes(cardUuid)) {
       setSelectedCards(selectedCards.filter((id) => id !== cardUuid));
     } else {
       setSelectedCards([...selectedCards, cardUuid]);
+    }
+  };
+
+  const handleDeleteCardClick = (card) => {
+    if (!showDeleteMessage) return;
+    const cardUuid = card.uuid;
+    if (selectedDeleteCards.includes(cardUuid)) {
+      setSelectedDeleteCards(selectedDeleteCards.filter((id) => id !== cardUuid));
+    } else {
+      setSelectedDeleteCards([...selectedDeleteCards, cardUuid]);
     }
   };
 
@@ -167,6 +180,13 @@ const Fullcards = ({ cards }) => {
     setShowSelectMessage(!showSelectMessage);
   };
 
+  const handleDeleteClick = () => {
+    if (showDeleteMessage) {
+      setSelectedDeleteCards([]);
+    }
+    setShowDeleteMessage(!showDeleteMessage);
+  };
+
   const handleReplenishConfirm = async () => {
     if (!replenishAmount) {
       setErrorMessage('Введите сумму');
@@ -176,7 +196,7 @@ const Fullcards = ({ cards }) => {
       setErrorMessage('Проверьте корректность введенных данных');
       return;
     }
-  
+
     setIsLoading(true);
     console.time('ReplenishConfirm');
     try {
@@ -190,11 +210,11 @@ const Fullcards = ({ cards }) => {
           amount: Number(replenishAmount),
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-  
+
       const fetchUserBalance = async (id) => {
         try {
           const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/cabinet?id=${id}`);
@@ -208,12 +228,12 @@ const Fullcards = ({ cards }) => {
           return null;
         }
       };
-  
+
       const balance = await fetchUserBalance(userId);
       if (balance !== null) {
         const totalCost = Number(replenishAmount) * selectedCards.length;
         const balanceChange = -totalCost;
-  
+
         const updateBalanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/min", {
           method: "POST",
           headers: {
@@ -221,11 +241,11 @@ const Fullcards = ({ cards }) => {
           },
           body: JSON.stringify({ userId, balanceChange }),
         });
-  
+
         if (!updateBalanceResponse.ok) {
           throw new Error(`Error: ${updateBalanceResponse.status}`);
         }
-  
+
         const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
           method: 'POST',
           headers: {
@@ -238,14 +258,14 @@ const Fullcards = ({ cards }) => {
             amount: -totalCost
           }),
         });
-  
+
         if (!transactionResponse.ok) {
           const errorData = await transactionResponse.json();
           console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
           throw new Error(`Error logging transaction: ${transactionResponse.status}`);
         }
       }
-  
+
       setTimeout(() => {
         setIsLoading(false);
         alert(translations('Fullcards.success'));
@@ -262,7 +282,51 @@ const Fullcards = ({ cards }) => {
       }, 10000);
     }
   };
-  
+
+  const handleDeleteConfirm = async () => {
+    if (selectedDeleteCards.length === 0) {
+      setErrorMessage('Выберите хотя бы одну карту для удаления');
+      return;
+    }
+
+    setIsDeleting(true);
+    console.time('DeleteConfirm');
+    try {
+      const selectedDeleteCardsWithBalances = selectedDeleteCards.map((cardUuid) => {
+        const card = userCards.find((c) => c.uuid === cardUuid);
+        return {
+          cardUuid,
+          balance: card ? card.account.balance : 0,
+        };
+      });
+
+      const response = await fetch('/api/deleteCard', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          cardUuidsWithBalances: selectedDeleteCardsWithBalances,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      setTimeout(() => {
+        setIsDeleting(false);
+        alert(translations('Fullcards.sucdel'));
+        window.location.href = "/cabinet/cards";
+        console.timeEnd('DeleteConfirm');
+      }, 10000);
+    } catch (error) {
+      console.error('Error during delete:', error);
+      setErrorMessage('Error');
+      setIsDeleting(false);
+    }
+  };
 
   useEffect(() => {
     console.time('RenderCards');
@@ -279,9 +343,14 @@ const Fullcards = ({ cards }) => {
       <div className={styles.assetsContainer}>
         <div className={styles.header}>
           <h2 className={styles.amount}>{translations('Fullcards.cards')} {userCards.length}</h2>
-          <button className={styles.replenishButton} onClick={handleReplenishClick}>
-            {translations('Fullcards.replenish')}
-          </button>
+          <div>
+            <button className={styles.replenishButton} onClick={handleReplenishClick}>
+              {translations('Fullcards.replenish')}
+            </button>
+            <button className={styles.replenishButton} onClick={handleDeleteClick}>
+              {translations('Fullcards.delete')}
+            </button>
+          </div>
         </div>
         {showSelectMessage && (
           <div className={styles.replenishContainer}>
@@ -304,14 +373,35 @@ const Fullcards = ({ cards }) => {
             )}
           </div>
         )}
+        {showDeleteMessage && (
+          <div className={styles.deleteContainer}>
+            {selectedDeleteCards.length === 0 ? (
+              <p>{translations('Fullcards.chooseToDelete')}</p>
+            ) : (
+              <>
+                <button className={styles.deleteConfirmButton} onClick={handleDeleteConfirm} disabled={isDeleting}>
+                  {isDeleting ? <span className={styles.loader}></span> : translations('Fullcards.confirmDelete')}
+                </button>
+                {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+              </>
+            )}
+          </div>
+        )}
         <div className={styles.cardsContainer}>
           {userCards.map((card) => (
             <div
               key={card.uuid}
-              className={`${styles.cardContainer} ${selectedCards.includes(card.account.uuid) ? styles.selected : ''}`}
+              className={`${styles.cardContainer} ${selectedCards.includes(card.account.uuid) ? styles.selected : ''} ${selectedDeleteCards.includes(card.uuid) ? styles.selected : ''}`}
               onMouseEnter={() => handleMouseEnter(card.uuid)}
               onMouseLeave={handleMouseLeave}
-              onClick={() => handleCardClick(card)}
+              onClick={() => {
+                if (showSelectMessage) {
+                  handleCardClick(card);
+                }
+                if (showDeleteMessage) {
+                  handleDeleteCardClick(card);
+                }
+              }}
             >
               <div className={styles.card}>
                 <div className={styles.cardImageContainer}>
