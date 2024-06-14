@@ -268,7 +268,7 @@ export default function CardPage() {
       const result = await response.json();
       const newBalance = result.newBalance;
   
-      // Optionally update the balance in the UI
+
       setBalance(parseFloat(newBalance));
   
       const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {

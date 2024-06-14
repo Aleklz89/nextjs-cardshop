@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
       return await transaction.user.update({
         where: { id: userId },
-        data: { balance: newBalance },
+        data: { balance: newBalance.toFixed(2) },
       });
     });
 

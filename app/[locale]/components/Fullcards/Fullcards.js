@@ -176,7 +176,7 @@ const Fullcards = ({ cards }) => {
       setErrorMessage('Проверьте корректность введенных данных');
       return;
     }
-
+  
     setIsLoading(true);
     console.time('ReplenishConfirm');
     try {
@@ -190,11 +190,11 @@ const Fullcards = ({ cards }) => {
           amount: Number(replenishAmount),
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-
+  
       const fetchUserBalance = async (id) => {
         try {
           const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/cabinet?id=${id}`);
@@ -208,23 +208,24 @@ const Fullcards = ({ cards }) => {
           return null;
         }
       };
-
+  
       const balance = await fetchUserBalance(userId);
       if (balance !== null) {
         const totalCost = Number(replenishAmount) * selectedCards.length;
-        const updatedBalance = balance - totalCost;
+        const balanceChange = -totalCost;
+  
         const updateBalanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/min", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ userId, balance: updatedBalance.toFixed(2) }),
+          body: JSON.stringify({ userId, balanceChange }),
         });
-
+  
         if (!updateBalanceResponse.ok) {
           throw new Error(`Error: ${updateBalanceResponse.status}`);
         }
-
+  
         const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
           method: 'POST',
           headers: {
@@ -237,14 +238,14 @@ const Fullcards = ({ cards }) => {
             amount: -totalCost
           }),
         });
-
+  
         if (!transactionResponse.ok) {
           const errorData = await transactionResponse.json();
           console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
           throw new Error(`Error logging transaction: ${transactionResponse.status}`);
         }
       }
-
+  
       setTimeout(() => {
         setIsLoading(false);
         alert(translations('Fullcards.success'));
@@ -261,6 +262,7 @@ const Fullcards = ({ cards }) => {
       }, 10000);
     }
   };
+  
 
   useEffect(() => {
     console.time('RenderCards');
