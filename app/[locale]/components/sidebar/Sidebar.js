@@ -188,7 +188,7 @@ function Sidebar() {
         const holdBalance = await fetchHoldBalance(userId, cardUuids);
         setHoldBalance(parseFloat(holdBalance.toFixed(2)));
 
-        await fetchUserBalance(userId); // Загрузка основного баланса после загрузки холда
+        await fetchUserBalance(userId);
         setIsLoadingBalance(false);
       }
     };

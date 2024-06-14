@@ -8,17 +8,17 @@ const SALT_ROUNDS = 10;
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { userId, oldPassword, newPassword } = body;
+        const { userId, newPassword } = body;
 
- 
-        if (!userId || !oldPassword || !newPassword) {
+        // Проверяем, что все необходимые данные присутствуют
+        if (!userId || !newPassword) {
             return new Response(
-                JSON.stringify({ error: "Missing userId, oldPassword, or newPassword" }),
+                JSON.stringify({ error: "Missing userId or newPassword" }),
                 { status: 400, headers: { "Content-Type": "application/json" } }
             );
         }
 
-
+        // Проверяем существование пользователя
         const user = await prisma.user.findUnique({
             where: { id: parseInt(userId, 10) },
         });
@@ -30,16 +30,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-
-        const isPasswordCorrect = bcrypt.compareSync(oldPassword, user.password);
-        if (!isPasswordCorrect) {
-            return new Response(
-                JSON.stringify({ error: "Incorrect old password" }),
-                { status: 401, headers: { "Content-Type": "application/json" } }
-            );
-        }
-
-
+        // Проверяем формат нового пароля
         if (!validatePassword(newPassword)) {
             return new Response(
                 JSON.stringify({ error: "Invalid password format" }),
@@ -47,7 +38,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-
+        // Хэшируем новый пароль
         const newPasswordHash = bcrypt.hashSync(newPassword, SALT_ROUNDS);
         await prisma.user.update({
             where: { id: parseInt(userId, 10) },
