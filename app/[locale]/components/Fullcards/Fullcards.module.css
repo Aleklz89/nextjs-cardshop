@@ -35,7 +35,7 @@
 }
 
 .cardContainer.selected {
-  border-color: #00f0ff;
+  border: 3px solid red;
 }
 
 .menu {
@@ -307,7 +307,7 @@
 }
 
 .cardContainer.selected {
-  border-color: #00f0ff; 
+  border: 3px solid red;
 }
 
 .card {
