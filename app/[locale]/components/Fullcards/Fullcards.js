@@ -196,76 +196,35 @@ const Fullcards = ({ cards }) => {
       setErrorMessage('Проверьте корректность введенных данных');
       return;
     }
-
+  
     setIsLoading(true);
     console.time('ReplenishConfirm');
     try {
+      const totalAmount = Number(replenishAmount) * selectedCards.length;
       const response = await fetch('/api/replenish', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          toAccountUuid: selectedCards,
-          amount: Number(replenishAmount),
+          userId,
+          toAccountUuids: selectedCards,
+          amountPerCard: Number(replenishAmount),
         }),
       });
-
+  
+      const result = await response.json();
+  
       if (!response.ok) {
+        console.log(result.error === "Insufficient funds")
+        if (result.error === "Insufficient funds") {
+          setErrorMessage(translations('Fullcards.funds'));
+        } else {
+          setErrorMessage(translations('Fullcards.error'));
+        }
         throw new Error(`Error: ${response.status}`);
       }
-
-      const fetchUserBalance = async (id) => {
-        try {
-          const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/cabinet?id=${id}`);
-          if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-          }
-          const data = await response.json();
-          return parseFloat(data.user.balance);
-        } catch (error) {
-          console.error('Error fetching user balance:', error);
-          return null;
-        }
-      };
-
-      const balance = await fetchUserBalance(userId);
-      if (balance !== null) {
-        const totalCost = Number(replenishAmount) * selectedCards.length;
-        const balanceChange = -totalCost;
-
-        const updateBalanceResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/min", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userId, balanceChange }),
-        });
-
-        if (!updateBalanceResponse.ok) {
-          throw new Error(`Error: ${updateBalanceResponse.status}`);
-        }
-
-        const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
-          method: 'POST',
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId,
-            type: 'bulk replenishment',
-            description: 'Bulk replenish of cards',
-            amount: -totalCost
-          }),
-        });
-
-        if (!transactionResponse.ok) {
-          const errorData = await transactionResponse.json();
-          console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
-          throw new Error(`Error logging transaction: ${transactionResponse.status}`);
-        }
-      }
-
+  
       setTimeout(() => {
         setIsLoading(false);
         alert(translations('Fullcards.success'));
@@ -274,14 +233,14 @@ const Fullcards = ({ cards }) => {
       }, 10000);
     } catch (error) {
       console.error('Error during replenish:', error);
-      setErrorMessage(translations('Fullcards.error'));
       setIsLoading(false);
-      setTimeout(() => {
-        window.location.href = "/cabinet/cards";
-        console.timeEnd('ReplenishConfirm');
-      }, 10000);
+      console.timeEnd('ReplenishConfirm');
     }
   };
+  
+  
+  
+  
 
   const handleDeleteConfirm = async () => {
     if (selectedDeleteCards.length === 0) {

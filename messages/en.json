@@ -182,7 +182,8 @@
         "delete": "Delete cards",
         "chooseToDelete": "Choose cards",
         "confirmDelete": "Confirm delete",
-        "sucdel": "The deletion was successful"
+        "sucdel": "The deletion was successful",
+        "funds": "Insufficient funds"
 
     },
 
