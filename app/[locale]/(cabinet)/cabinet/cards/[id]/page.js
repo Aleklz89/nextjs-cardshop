@@ -136,6 +136,78 @@ export default function CardPage() {
       }, 10000);
     }
   };
+
+  const handleReturnConfirmation = async () => {
+    if (!returnAmount) {
+      setReturnErrorMessage(translations('Cards.enterAmount'));
+      return;
+    }
+    if (isNaN(returnAmount)) {
+      setReturnErrorMessage(translations('Cards.invalidAmount'));
+      return;
+    }
+    if (parseFloat(returnAmount) > selectedCard.account.balance) {
+      setReturnErrorMessage(translations('Cards.exceeds'));
+      return;
+    }
+  
+    setIsReturnLoading(true);
+  
+    try {
+      const response = await fetch('/api/return', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fromAccountUuid: selectedCard.account.uuid,
+          userId,
+          amount: Number(returnAmount),
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+  
+      const result = await response.json();
+      const newBalance = result.newBalance;
+  
+      // Optionally update the balance in the UI
+      setBalance(parseFloat(newBalance));
+  
+      const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          type: 'transfer',
+          description: 'Transfer from card',
+          amount: parseFloat(returnAmount)
+        }),
+      });
+  
+      if (!transactionResponse.ok) {
+        const errorData = await transactionResponse.json();
+        console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
+        throw new Error(`Error logging transaction: ${transactionResponse.status}`);
+      }
+  
+      setTimeout(() => {
+        setIsReturnLoading(false);
+        setIsReturnPopupVisible(false);
+        setReturnErrorMessage("");
+        setReturnAmount("");
+        window.location.href = `/cabinet/cards/${uuid}`;
+      }, 10000);
+    } catch (error) {
+      console.error('Error during return:', error);
+      setReturnErrorMessage(translations('Cards.transfererr'));
+      setIsReturnLoading(false);
+    }
+  };
   
 
   const handleDeleteConfirmation = () => {
