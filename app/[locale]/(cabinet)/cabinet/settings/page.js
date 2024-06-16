@@ -1,18 +1,16 @@
 'use client';
 
 import styles from './security.module.css';
-import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { useTranslations } from "next-intl";
 import '../globals.css';
 import { useTheme } from 'next-themes';
 
-export default function Cards() {
+export default function SecuritySettings() {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const translations = useTranslations();
   const [email, setEmail] = useState("");
   const [userId, setUserId] = useState("");
-  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [editMode, setEditMode] = useState(false);
@@ -30,7 +28,6 @@ export default function Cards() {
 
   const handleCancelClick = () => {
     setEditMode(false);
-    setOldPassword("");
     setNewPassword("");
     setConfirmPassword("");
     setMessage("");
@@ -51,7 +48,6 @@ export default function Cards() {
         },
         body: JSON.stringify({
           userId,
-          oldPassword,
           newPassword
         })
       });
@@ -62,7 +58,6 @@ export default function Cards() {
         setMessage("Password successfully updated");
         setMessageType("success");
         setEditMode(false);
-        setOldPassword("");
         setNewPassword("");
         setConfirmPassword("");
       } else {
@@ -113,7 +108,7 @@ export default function Cards() {
     getEmail();
   }, [userId]);
 
-  if (!mounted) return null; // Ensure the theme has mounted
+  if (!mounted) return null;
 
   return (
     <div>
@@ -132,10 +127,6 @@ export default function Cards() {
             </div>
           ) : (
             <>
-              <div className={styles.authSettings}>
-                <label>{translations('Settings.old')}</label>
-                <input type="password" value={oldPassword} onChange={e => setOldPassword(e.target.value)} />
-              </div>
               <div className={styles.authSettings}>
                 <label>{translations('Settings.new')}</label>
                 <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
