@@ -37,56 +37,39 @@ export async function POST(request: NextRequest) {
     });
 
     try {
-      // Validate cards by fetching their details first
-      const invalidCards = [];
-      for (const cardUuid of cardUuids) {
-        try {
-          const response = await axios.get(`https://api.epn.net/card/${cardUuid}/showpan`, {
-            headers: {
-              accept: 'application/json',
-              Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
-              'X-CSRF-TOKEN': '',
-            },
-          });
-          if (response.status !== 200) {
+      // Start transaction
+      const updatedUser = await prisma.$transaction(async (transaction) => {
+        // Validate cards by fetching their details first
+        const invalidCards = [];
+        for (const cardUuid of cardUuids) {
+          try {
+            const response = await axios.get(`https://api.epn.net/card/${cardUuid}/showpan`, {
+              headers: {
+                accept: 'application/json',
+                Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+                'X-CSRF-TOKEN': '',
+              },
+            });
+            if (response.status !== 200) {
+              invalidCards.push(cardUuid);
+            }
+          } catch (error) {
             invalidCards.push(cardUuid);
           }
-        } catch (error) {
-          invalidCards.push(cardUuid);
         }
-      }
 
-      if (invalidCards.length > 0) {
-        // Unlock the valid cards
-        const validCardUuids = cardUuids.filter(cardUuid => !invalidCards.includes(cardUuid));
-        await prisma.cardLock.updateMany({
-          where: { cardUuid: { in: validCardUuids } },
-          data: { isLocked: false },
-        });
+        if (invalidCards.length > 0) {
+          // Unlock the valid cards
+          const validCardUuids = cardUuids.filter(cardUuid => !invalidCards.includes(cardUuid));
+          await prisma.cardLock.updateMany({
+            where: { cardUuid: { in: validCardUuids } },
+            data: { isLocked: false },
+          });
 
-        return NextResponse.json(
-          { error: "Some cards are invalid", invalidCards },
-          { status: 422 }
-        );
-      }
+          throw new Error(`Some cards are invalid: ${invalidCards.join(', ')}`);
+        }
 
-      // Delete cards from EPN
-      const response = await axios.delete('https://api.epn.net/card', {
-        headers: {
-          accept: 'application/json',
-          Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': '',
-        },
-        data: { card_uuids: cardUuids },
-      });
-
-      if (response.status !== 200) {
-        throw new Error(`Error: ${response.status}, ${response.data}`);
-      }
-
-      // Update user balance
-      const updatedUser = await prisma.$transaction(async (transaction) => {
+        // Update user balance
         const user = await transaction.user.findUnique({
           where: { id: userId },
           select: { balance: true },
@@ -97,21 +80,37 @@ export async function POST(request: NextRequest) {
         }
 
         const newBalance = new Decimal(user.balance).plus(totalBalance);
-
-        return await transaction.user.update({
+        const updatedUser = await transaction.user.update({
           where: { id: userId },
           data: { balance: newBalance },
         });
-      });
 
-      // Log the single transaction
-      await prisma.transaction.create({
-        data: {
-          userId,
-          type: 'card close',
-          description: `Card close and balance transfer`,
-          amount: totalBalance.toNumber(),
-        },
+        // Log the single transaction
+        await transaction.transaction.create({
+          data: {
+            userId,
+            type: 'card close',
+            description: `Card close and balance transfer`,
+            amount: totalBalance.toNumber(),
+          },
+        });
+
+        // Delete cards from EPN
+        const response = await axios.delete('https://api.epn.net/card', {
+          headers: {
+            accept: 'application/json',
+            Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '',
+          },
+          data: { card_uuids: cardUuids },
+        });
+
+        if (response.status !== 200) {
+          throw new Error(`Error: ${response.status}, ${response.data}`);
+        }
+
+        return updatedUser;
       });
 
       // Unlock the cards
@@ -129,7 +128,10 @@ export async function POST(request: NextRequest) {
       });
 
       console.error("Error during card deletion and balance update:", error);
-      throw error;
+      return NextResponse.json(
+        { error: "Error during card deletion and balance update", details: error.message },
+        { status: 500 }
+      );
     }
   } catch (error) {
     console.error("Error during card deletion and balance update:", error);
