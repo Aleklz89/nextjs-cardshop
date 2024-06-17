@@ -247,23 +247,11 @@ export default function CardPage() {
       setRepErrorMessage(translations('Cards.insufficientBalance'));
       return;
     }
-  
+
     setIsRepLoading(true);
     let replenishAmountFloat = parseFloat(replenishAmount);
-  
+
     try {
-      const minResponse = await fetch('/api/min', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId, balanceChange: -replenishAmountFloat }),
-      });
-  
-      if (!minResponse.ok) {
-        throw new Error(`Error: ${minResponse.status}`);
-      }
-  
       const response = await fetch('/api/replenish', {
         method: 'POST',
         headers: {
@@ -271,44 +259,23 @@ export default function CardPage() {
         },
         body: JSON.stringify({
           userId,
-          toAccountUuid: selectedCard.account.uuid,
-          amount: replenishAmountFloat,
+          toAccountUuids: [selectedCard.account.uuid],
+          amountPerCard: replenishAmountFloat,
         }),
       });
-  
+
       if (!response.ok) {
-        await fetch('/api/min', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userId, balanceChange: replenishAmountFloat }),
-        });
+        const errorData = await response.json();
+        if (errorData.error === "Insufficient funds") {
+          setRepErrorMessage(translations('Cards.insufficientBalance'));
+        } else {
+          setRepErrorMessage(`Error: ${response.status}`);
+        }
         throw new Error(`Error: ${response.status}`);
       }
-  
+
       await fetchUserBalance(userId);
-  
-      // Добавляем новую транзакцию после успешного пополнения
-      const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          type: 'replenishment',
-          description: `Replenishment to card`,
-          amount: -replenishAmountFloat
-        }),
-      });
-  
-      if (!transactionResponse.ok) {
-        const errorData = await transactionResponse.json();
-        console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
-        throw new Error(`Error logging transaction: ${transactionResponse.status}`);
-      }
-  
+
       setTimeout(() => {
         setIsRepLoading(false);
         setIsRepPopupVisible(false);
@@ -318,10 +285,16 @@ export default function CardPage() {
       }, 10000);
     } catch (error) {
       console.error('Error making transfer:', error);
-      setRepErrorMessage(translations('Cards.transfererr'));
+      if (error.message.includes("Insufficient funds")) {
+        setRepErrorMessage(translations('Cards.insufficientBalance'));
+      } else {
+        setRepErrorMessage(translations('Cards.transfererr'));
+      }
       setIsRepLoading(false);
     }
   };
+
+
   
   
   const fetchCardTransactions = async (cardId) => {

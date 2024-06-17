@@ -65,8 +65,8 @@ export async function POST(request: Request) {
     await prisma.transaction.create({
       data: {
         userId,
-        type: 'bulk replenishment',
-        description: 'Bulk replenish of cards',
+        type: 'replenishment',
+        description: 'Cards replenishment',
         amount: totalAmount.negated().toNumber(),
       },
     });
