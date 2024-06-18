@@ -18,17 +18,17 @@ export async function POST(request: Request) {
     const amountDecimal = new Decimal(amount);
 
     // Perform the transfer and update the balance atomically
-    const result = await prisma.$transaction(async (prisma) => {
-      const user = await prisma.$queryRawUnsafe<{ id: number, balance: string }[]>(`
-        SELECT * FROM "User" WHERE id = $1 FOR UPDATE
-      `, userId);
+    const result = await prisma.$transaction(async (transaction) => {
+      const user = await transaction.user.findUnique({
+        where: { id: userId },
+        select: { balance: true },
+      });
 
-      if (!user || user.length === 0) {
+      if (!user) {
         throw new Error("User not found");
       }
 
-      const currentUser = user[0];
-      const updatedBalance = new Decimal(currentUser.balance).plus(amountDecimal);
+      const updatedBalance = new Decimal(user.balance).plus(amountDecimal);
 
       // Perform the transfer first
       const transferResponse = await axios.post(
@@ -48,18 +48,18 @@ export async function POST(request: Request) {
         }
       );
 
-      if (!transferResponse.data) {
+      if (transferResponse.status !== 200 || !transferResponse.data) {
         throw new Error('Transfer failed');
       }
 
       // Update the user's balance
-      await prisma.user.update({
+      await transaction.user.update({
         where: { id: userId },
         data: { balance: updatedBalance.toFixed(2) },
       });
 
       // Create a transaction record
-      await prisma.transaction.create({
+      await transaction.transaction.create({
         data: {
           userId,
           type: 'transfer',
