@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     const cardUuids = cardUuidsWithBalances.map(item => item.cardUuid);
     const totalBalance = cardUuidsWithBalances.reduce((acc, item) => acc.plus(item.balance), new Decimal(0));
 
-    // Check if any card is already locked
+    // Проверка на наличие заблокированных карт
     const cardLocks = await prisma.cardLock.findMany({
       where: { cardUuid: { in: cardUuids } },
     });
@@ -30,18 +30,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Lock the cards
+    // Блокировка карт
     await prisma.cardLock.updateMany({
       where: { cardUuid: { in: cardUuids } },
       data: { isLocked: true },
     });
 
     try {
-      // Start transaction
+      // Начало транзакции
       const updatedUser = await prisma.$transaction(async (transaction) => {
-        // Validate cards by fetching their details first
-        const invalidCards = [];
-        for (const cardUuid of cardUuids) {
+        // Валидация карт путем получения их деталей
+        const invalidCards = await Promise.all(cardUuids.map(async (cardUuid) => {
           try {
             const response = await axios.get(`https://api.epn.net/card/${cardUuid}/showpan`, {
               headers: {
@@ -50,33 +49,31 @@ export async function POST(request: NextRequest) {
                 'X-CSRF-TOKEN': '',
               },
             });
-            if (response.status !== 200) {
-              invalidCards.push(cardUuid);
-            }
-          } catch (error) {
-            invalidCards.push(cardUuid);
+            return response.status !== 200 ? cardUuid : null;
+          } catch {
+            return cardUuid;
           }
-        }
+        })).then(results => results.filter(Boolean));
 
         if (invalidCards.length > 0) {
-          // Unlock the valid cards
+          // Разблокировка валидных карт
           const validCardUuids = cardUuids.filter(cardUuid => !invalidCards.includes(cardUuid));
           await prisma.cardLock.updateMany({
             where: { cardUuid: { in: validCardUuids } },
             data: { isLocked: false },
           });
 
-          throw new Error(`Some cards are invalid: ${invalidCards.join(', ')}`);
+          throw new Error(`Некоторые карты недействительны: ${invalidCards.join(', ')}`);
         }
 
-        // Update user balance
+        // Обновление баланса пользователя
         const user = await transaction.user.findUnique({
           where: { id: userId },
           select: { balance: true },
         });
 
         if (!user) {
-          throw new Error("User not found");
+          throw new Error("Пользователь не найден");
         }
 
         const newBalance = new Decimal(user.balance).plus(totalBalance);
@@ -85,35 +82,35 @@ export async function POST(request: NextRequest) {
           data: { balance: newBalance },
         });
 
-        // Log the single transaction
+        // Запись одной транзакции
         await transaction.transaction.create({
           data: {
             userId,
             type: 'card close',
-            description: `Card close and balance transfer`,
+            description: `Закрытие карты и перенос баланса`,
             amount: totalBalance.toNumber(),
           },
         });
 
-        // Delete cards from EPN
-        const response = await axios.delete('https://api.epn.net/card', {
-          headers: {
-            accept: 'application/json',
-            Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '',
-          },
-          data: { card_uuids: cardUuids },
-        });
-
-        if (response.status !== 200) {
-          throw new Error(`Error: ${response.status}, ${response.data}`);
-        }
-
         return updatedUser;
       });
 
-      // Unlock the cards
+      // Удаление карт из EPN вне транзакции
+      const response = await axios.delete('https://api.epn.net/card', {
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': '',
+        },
+        data: { card_uuids: cardUuids },
+      });
+
+      if (response.status !== 200) {
+        throw new Error(`Ошибка: ${response.status}, ${response.data}`);
+      }
+
+      // Разблокировка карт
       await prisma.cardLock.updateMany({
         where: { cardUuid: { in: cardUuids } },
         data: { isLocked: false },
@@ -121,22 +118,22 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({ success: true, user: updatedUser });
     } catch (error) {
-      // Unlock the cards in case of error
+      // Разблокировка карт в случае ошибки
       await prisma.cardLock.updateMany({
         where: { cardUuid: { in: cardUuids } },
         data: { isLocked: false },
       });
 
-      console.error("Error during card deletion and balance update:", error);
+      console.error("Ошибка во время удаления карт и обновления баланса:", error);
       return NextResponse.json(
-        { error: "Error during card deletion and balance update", details: error.message },
+        { error: "Ошибка во время удаления карт и обновления баланса", details: error.message },
         { status: 500 }
       );
     }
   } catch (error) {
-    console.error("Error during card deletion and balance update:", error);
+    console.error("Ошибка во время удаления карт и обновления баланса:", error);
     return NextResponse.json(
-      { error: "Error during card deletion and balance update", details: error.message },
+      { error: "Ошибка во время удаления карт и обновления баланса", details: error.message },
       { status: 500 }
     );
   }
