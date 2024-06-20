@@ -41,7 +41,7 @@ const Header = () => {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      setUserId(data.userId);
+      setUserId(3);
     } catch (error) {
       console.error('Error fetching user ID:', error);
     }

@@ -379,7 +379,7 @@ export default function CardPage() {
           throw new Error(`Error: ${response.status}`);
         }
         const data = await response.json();
-        setUserId(data.userId);
+        setUserId(3);
         console.log('Fetched user ID:', data.userId);
       } catch (error) {
         console.error('Error fetching user ID:', error);

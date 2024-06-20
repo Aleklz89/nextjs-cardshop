@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     const holdsToCreate = [];
     const transactionIds = transactions
-      .filter(transaction => transaction.type_enum === 'Authorization' && transaction.response_text !== 'Insufficient funds')
+      .filter(transaction => transaction.type_enum === 'Authorization' && transaction.response_text === 'Approved')
       .map(transaction => transaction.id);
 
     const existingHolds = await prisma.hold.findMany({
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     const existingHoldIds = new Set(existingHolds.map(hold => hold.transactionId));
 
     for (const transaction of transactions) {
-      if (transaction.type_enum === 'Authorization' && transaction.response_text !== 'Insufficient funds' && !existingHoldIds.has(transaction.id)) {
+      if (transaction.type_enum === 'Authorization' && transaction.response_text === 'Approved' && !existingHoldIds.has(transaction.id)) {
         const reverseTime = new Date();
         reverseTime.setHours(reverseTime.getHours() + 168);
 
