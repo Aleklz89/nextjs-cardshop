@@ -37,33 +37,49 @@ export default function CardPage() {
     let currentPage = 1;
     const perPage = 25;
 
+    console.time('fetchAllCards');
     try {
-      while (true) {
-        const response = await fetch(`https://api.epn.net/card?page=${currentPage}`, {
+      const fetchPage = async (page) => {
+        console.time(`fetchAllCards - page ${page}`);
+        const response = await fetch(`https://api.epn.net/card?page=${page}&per_page=${perPage}&blocked_at=null`, {
           headers: {
             accept: 'application/json',
             Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
           },
         });
+        console.timeEnd(`fetchAllCards - page ${page}`);
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
-        const data = await response.json();
-        allCards = allCards.concat(data.data);
+        return response.json();
+      };
 
-        if (data.meta.current_page * perPage >= data.meta.total) {
-          break;
+      const data = await fetchPage(currentPage);
+      allCards = allCards.concat(data.data);
+
+      const totalPages = Math.ceil(data.meta.total / perPage);
+
+      if (totalPages > 1) {
+        const fetchPromises = [];
+        for (let page = 2; page <= totalPages; page++) {
+          fetchPromises.push(fetchPage(page));
         }
-        currentPage++;
+        const pagesData = await Promise.all(fetchPromises);
+        pagesData.forEach((pageData) => {
+          allCards = allCards.concat(pageData.data);
+        });
       }
 
       setCardsData(allCards);
+      console.log('Fetched all cards:', allCards);
     } catch (error) {
       console.error('Error fetching all cards:', error);
     }
+    console.timeEnd('fetchAllCards');
   };
 
   const fetchCardDetails = async (uuid) => {
+    console.time('fetchCardDetails');
     try {
       const response = await fetch(`https://api.epn.net/card/${uuid}/showpan`, {
         headers: {
@@ -76,19 +92,21 @@ export default function CardPage() {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      console.log(data)
       setCardDetails({
         number: data.data.number,
         cvx2: data.data.cvx2,
         exp_month: data.data.exp_month,
         exp_year: data.data.exp_year,
       });
+      console.log('Fetched card details:', data.data);
     } catch (error) {
       console.error('Error fetching card details:', error);
     }
+    console.timeEnd('fetchCardDetails');
   };
 
   const fetchUserBalance = async (userId) => {
+    console.time('fetchUserBalance');
     try {
       const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/cabinet?id=${userId}`);
       if (!response.ok) {
@@ -96,16 +114,19 @@ export default function CardPage() {
       }
       const data = await response.json();
       setBalance(parseFloat(data.user.balance));
+      console.log('Fetched user balance:', data.user.balance);
     } catch (error) {
       console.error('Error fetching user balance:', error);
       setBalance(null);
     }
+    console.timeEnd('fetchUserBalance');
   };
 
   const deleteCard = async (uuid) => {
     console.log("Айди которое передаем:", uuid);
     setIsDeleting(true);
-  
+    console.time('deleteCard');
+
     try {
       const response = await fetch('/api/check-card-status', {
         method: 'POST',
@@ -114,16 +135,16 @@ export default function CardPage() {
         },
         body: JSON.stringify({ cardUuid: uuid, userId, cardBalance: selectedCard.account.balance }),
       });
-  
+
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-  
+
       const data = await response.json();
       if (data.error) {
         throw new Error(data.error);
       }
-  
+
       setTimeout(() => {
         setIsDeleting(false);
         window.location.href = "/cabinet/cards";
@@ -135,6 +156,7 @@ export default function CardPage() {
         window.location.href = "/cabinet/cards";
       }, 10000);
     }
+    console.timeEnd('deleteCard');
   };
 
   const handleReturnConfirmation = async () => {
@@ -150,9 +172,10 @@ export default function CardPage() {
       setReturnErrorMessage(translations('Cards.exceeds'));
       return;
     }
-  
+
     setIsReturnLoading(true);
-  
+    console.time('handleReturnConfirmation');
+
     try {
       const response = await fetch('/api/return', {
         method: 'POST',
@@ -165,36 +188,18 @@ export default function CardPage() {
           amount: Number(returnAmount),
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-  
+
       const result = await response.json();
       const newBalance = result.newBalance;
-  
+
       // Optionally update the balance in the UI
       setBalance(parseFloat(newBalance));
-  
-      const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          type: 'transfer',
-          description: 'Transfer from card',
-          amount: parseFloat(returnAmount)
-        }),
-      });
-  
-      if (!transactionResponse.ok) {
-        const errorData = await transactionResponse.json();
-        console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
-        throw new Error(`Error logging transaction: ${transactionResponse.status}`);
-      }
-  
+      console.log('Return confirmation successful, new balance:', newBalance);
+
       setTimeout(() => {
         setIsReturnLoading(false);
         setIsReturnPopupVisible(false);
@@ -207,12 +212,12 @@ export default function CardPage() {
       setReturnErrorMessage(translations('Cards.transfererr'));
       setIsReturnLoading(false);
     }
+    console.timeEnd('handleReturnConfirmation');
   };
-  
 
   const handleDeleteConfirmation = () => {
     setIsPopupVisible(false);
-    console.log("Выбранная карта:");
+    console.log("Выбранная карта:", selectedCard);
     deleteCard(selectedCard.uuid);
   };
 
@@ -250,6 +255,7 @@ export default function CardPage() {
 
     setIsRepLoading(true);
     let replenishAmountFloat = parseFloat(replenishAmount);
+    console.time('handleRepConfirmation');
 
     try {
       const response = await fetch('/api/replenish', {
@@ -292,17 +298,18 @@ export default function CardPage() {
       }
       setIsRepLoading(false);
     }
+    console.timeEnd('handleRepConfirmation');
   };
 
-
-  
-  
   const fetchCardTransactions = async (cardId) => {
     let allTransactions = [];
     let currentPage = 1;
+    const perPage = 25;
 
+    console.time('fetchCardTransactions');
     try {
-      while (true) {
+      const fetchPage = async (page) => {
+        console.time(`fetchCardTransactions - page ${page}`);
         const response = await fetch(`https://api.epn.net/transaction`, {
           method: 'POST',
           headers: {
@@ -313,36 +320,49 @@ export default function CardPage() {
           },
           body: JSON.stringify({
             account_uuid: cardId,
-            page: currentPage
+            page: page,
+            per_page: perPage
           })
         });
-
+        console.timeEnd(`fetchCardTransactions - page ${page}`);
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`Error: ${response.status}, ${errorText}`);
         }
+        return response.json();
+      };
 
-        const data = await response.json();
-        allTransactions = allTransactions.concat(data.data);
+      const data = await fetchPage(currentPage);
+      allTransactions = allTransactions.concat(data.data);
 
-        if (!data.links.next) {
-          break;
+      const totalPages = Math.ceil(data.meta.total / perPage);
+
+      if (totalPages > 1) {
+        const fetchPromises = [];
+        for (let page = 2; page <= totalPages; page++) {
+          fetchPromises.push(fetchPage(page));
         }
-        currentPage++;
+        const pagesData = await Promise.all(fetchPromises);
+        pagesData.forEach((pageData) => {
+          allTransactions = allTransactions.concat(pageData.data);
+        });
       }
 
       setTransactions(allTransactions);
       setIsEmpty(allTransactions.length === 0);
+      console.log('Fetched card transactions:', allTransactions);
     } catch (error) {
       console.error('Error fetching transactions:', error);
       setIsEmpty(true);
     }
+    console.timeEnd('fetchCardTransactions');
   };
 
   useEffect(() => {
     const match = pathname.match(/\/([a-f0-9-]+)$/i);
     if (match && match[1]) {
       setUuid(match[1]);
+      console.log('UUID set from pathname:', match[1]);
     }
   }, [pathname]);
 
@@ -352,6 +372,7 @@ export default function CardPage() {
 
   useEffect(() => {
     const fetchUserId = async () => {
+      console.time('fetchUserId');
       try {
         const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/token');
         if (!response.ok) {
@@ -359,9 +380,11 @@ export default function CardPage() {
         }
         const data = await response.json();
         setUserId(data.userId);
+        console.log('Fetched user ID:', data.userId);
       } catch (error) {
         console.error('Error fetching user ID:', error);
       }
+      console.timeEnd('fetchUserId');
     };
 
     fetchUserId();
@@ -377,10 +400,10 @@ export default function CardPage() {
     if (uuid !== null && cardsData.length > 0) {
       const card = cardsData.find((card) => card.uuid === uuid);
       setSelectedCard(card || null);
+      console.log('Selected card:', card);
 
       if (card && card.uuid) {
-        console.log(card.uuid)
-        console.log(card)
+        console.log('Fetching details and transactions for card:', card.uuid);
         fetchCardDetails(card.uuid);
         fetchCardTransactions(card.account.uuid);
       }
@@ -388,7 +411,7 @@ export default function CardPage() {
   }, [uuid, cardsData]);
 
   if (!selectedCard) {
-    return <p></p>;
+    return <p>Loading...</p>;
   }
 
   const rootUrl = process.env.NEXT_PUBLIC_ROOT_URL;
