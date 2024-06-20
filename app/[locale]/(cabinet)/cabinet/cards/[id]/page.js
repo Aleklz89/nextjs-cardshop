@@ -379,7 +379,7 @@ export default function CardPage() {
           throw new Error(`Error: ${response.status}`);
         }
         const data = await response.json();
-        setUserId(3);
+        setUserId(data.userId);
         console.log('Fetched user ID:', data.userId);
       } catch (error) {
         console.error('Error fetching user ID:', error);
@@ -411,7 +411,7 @@ export default function CardPage() {
   }, [uuid, cardsData]);
 
   if (!selectedCard) {
-    return <p></p>;
+    return <p>Loading...</p>;
   }
 
   const rootUrl = process.env.NEXT_PUBLIC_ROOT_URL;

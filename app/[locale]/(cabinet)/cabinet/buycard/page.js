@@ -21,7 +21,7 @@ const Dashboard = () => {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      setUserId(3);
+      setUserId(data.userId);
     } catch (error) {
       console.error('Error fetching user ID:', error);
     }
