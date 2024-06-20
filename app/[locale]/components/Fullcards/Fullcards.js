@@ -9,10 +9,7 @@ const Fullcards = ({ cards }) => {
   const translations = useTranslations();
   const [userId, setUserId] = useState(null);
   const [userCards, setUserCards] = useState([]);
-  const [hoveredCardId, setHoveredCardId] = useState(null);
-  const [cardDetails, setCardDetails] = useState(null);
   const [copiedCardId, setCopiedCardId] = useState(null);
-  const [showCardlist, setShowCardlist] = useState(true);
   const [selectedCards, setSelectedCards] = useState([]);
   const [selectedDeleteCards, setSelectedDeleteCards] = useState([]);
   const [showSelectMessage, setShowSelectMessage] = useState(false);
@@ -35,7 +32,7 @@ const Fullcards = ({ cards }) => {
     const timer = setTimeout(() => {
       document.body.style.overflow = 'scroll';
       window.removeEventListener('scroll', disableScroll);
-      setShowCardlist(false);
+      setShowSelectMessage(false);
       console.timeEnd('DisableScroll');
     }, 5000);
 
@@ -85,12 +82,6 @@ const Fullcards = ({ cards }) => {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      setCardDetails({
-        number: data.data.number,
-        cvx2: data.data.cvx2,
-        exp_month: data.data.exp_month,
-        exp_year: data.data.exp_year,
-      });
       console.timeEnd(`FetchCardDetails-${uuid}`);
       return data.data;
     } catch (error) {
@@ -135,20 +126,6 @@ const Fullcards = ({ cards }) => {
 
     document.body.removeChild(textArea);
     console.timeEnd(`HandleCopyData-${text}`);
-  };
-
-  const handleMouseEnter = (cardUuid) => {
-    setHoveredCardId(cardUuid);
-    setCopiedCardId(null);
-  };
-
-  const handleMouseLeave = () => {
-    setHoveredCardId(null);
-    setCopiedCardId(null);
-  };
-
-  const handleDetailedInfoClick = (uuid) => {
-    window.location.href = `/cabinet/cards/${uuid}`;
   };
 
   const handleCardClick = (card) => {
@@ -196,7 +173,7 @@ const Fullcards = ({ cards }) => {
       setErrorMessage('Проверьте корректность введенных данных');
       return;
     }
-  
+
     setIsLoading(true);
     console.time('ReplenishConfirm');
     try {
@@ -212,11 +189,10 @@ const Fullcards = ({ cards }) => {
           amountPerCard: Number(replenishAmount),
         }),
       });
-  
+
       const result = await response.json();
-  
+
       if (!response.ok) {
-        console.log(result.error === "Insufficient funds")
         if (result.error === "Insufficient funds") {
           setErrorMessage(translations('Fullcards.funds'));
         } else {
@@ -224,7 +200,7 @@ const Fullcards = ({ cards }) => {
         }
         throw new Error(`Error: ${response.status}`);
       }
-  
+
       setTimeout(() => {
         setIsLoading(false);
         alert(translations('Fullcards.success'));
@@ -237,10 +213,6 @@ const Fullcards = ({ cards }) => {
       console.timeEnd('ReplenishConfirm');
     }
   };
-  
-  
-  
-  
 
   const handleDeleteConfirm = async () => {
     if (selectedDeleteCards.length === 0) {
@@ -285,6 +257,10 @@ const Fullcards = ({ cards }) => {
       setErrorMessage('Error');
       setIsDeleting(false);
     }
+  };
+
+  const handleDetailedInfoClick = (uuid) => {
+    window.location.href = `/cabinet/cards/${uuid}`;
   };
 
   useEffect(() => {
@@ -351,8 +327,6 @@ const Fullcards = ({ cards }) => {
             <div
               key={card.uuid}
               className={`${styles.cardContainer} ${selectedCards.includes(card.account.uuid) ? styles.selected : ''} ${selectedDeleteCards.includes(card.uuid) ? styles.selected : ''}`}
-              onMouseEnter={() => handleMouseEnter(card.uuid)}
-              onMouseLeave={handleMouseLeave}
               onClick={() => {
                 if (showSelectMessage) {
                   handleCardClick(card);
@@ -374,18 +348,27 @@ const Fullcards = ({ cards }) => {
                   </div>
                 </div>
                 <h3 className={styles.cardTitle}>{card.description}</h3>
-                <p className={styles.cardDescription}>{card.tariff.name}</p>
-              </div>
-              {hoveredCardId === card.uuid && (
-                <div className={styles.menu}>
-                  <div className={styles.menuItem} onClick={() => handleCopyData(card.uuid)}>
-                    {translations('Fullcards.copyData')} {copiedCardId === card.uuid && <span className={styles.copiedMark}>✓</span>}
-                  </div>
-                  <div className={styles.menuItem} onClick={() => handleDetailedInfoClick(card.uuid)}>
+                <div className={styles.cardMenu}>
+                  <button
+                    className={styles.detailedInfoButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDetailedInfoClick(card.uuid);
+                    }}
+                  >
                     {translations('Fullcards.detailedInfo')}
-                  </div>
+                  </button>
+                  <button
+                    className={`${styles.copyDataButton} ${copiedCardId === card.uuid ? styles.copied : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCopyData(card.uuid);
+                    }}
+                  >
+                    {translations('Fullcards.copyData')}
+                  </button>
                 </div>
-              )}
+              </div>
             </div>
           ))}
         </div>

@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
           data: {
             userId,
             type: 'card close',
-            description: `Закрытие карты и перенос баланса`,
+            description: `Closing the card and transferring balance`,
             amount: totalBalance.toNumber(),
           },
         });
