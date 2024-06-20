@@ -17,21 +17,10 @@ export async function POST(request: Request) {
 
     const amountDecimal = new Decimal(amount);
 
-    // Perform the transfer and update the balance atomically
-    const result = await prisma.$transaction(async (transaction) => {
-      const user = await transaction.user.findUnique({
-        where: { id: userId },
-        select: { balance: true },
-      });
-
-      if (!user) {
-        throw new Error("User not found");
-      }
-
-      const updatedBalance = new Decimal(user.balance).plus(amountDecimal);
-
-      // Perform the transfer first
-      const transferResponse = await axios.post(
+    // Perform the transfer first
+    let transferResponse;
+    try {
+      transferResponse = await axios.post(
         'https://api.epn.net/transfer/transfer',
         {
           from_account_uuid: fromAccountUuid,
@@ -51,30 +40,85 @@ export async function POST(request: Request) {
       if (transferResponse.status !== 200 || !transferResponse.data) {
         throw new Error('Transfer failed');
       }
+    } catch (error) {
+      console.error('Error during transfer:', error);
+      return NextResponse.json(
+        { error: 'Transfer failed', details: error.message },
+        { status: 500 }
+      );
+    }
 
-      // Update the user's balance
-      await transaction.user.update({
-        where: { id: userId },
-        data: { balance: updatedBalance.toFixed(2) },
-      });
+    // Update the balance and create a transaction record atomically
+    try {
+      const result = await prisma.$transaction(async (transaction) => {
+        const user = await transaction.user.findUnique({
+          where: { id: userId },
+          select: { balance: true },
+        });
 
-      // Create a transaction record
-      await transaction.transaction.create({
-        data: {
-          userId,
-          type: 'transfer',
-          description: 'Transfer from card',
-          amount: amountDecimal.toNumber(),
+        if (!user) {
+          throw new Error("User not found");
         }
+
+        const updatedBalance = new Decimal(user.balance).plus(amountDecimal);
+
+        // Update the user's balance
+        const updatedUser = await transaction.user.update({
+          where: { id: userId },
+          data: { balance: updatedBalance.toFixed(2) },
+        });
+
+        // Create a transaction record
+        await transaction.transaction.create({
+          data: {
+            userId,
+            type: 'transfer',
+            description: 'Transfer from card',
+            amount: amountDecimal.toNumber(),
+          }
+        });
+
+        return updatedUser;
       });
 
-      return updatedBalance;
-    });
+      return NextResponse.json(
+        { message: 'Transfer successful', newBalance: result.balance },
+        { status: 200 }
+      );
+    } catch (error) {
+      console.error('Error updating balance:', error);
 
-    return NextResponse.json(
-      { message: 'Transfer successful', newBalance: result.toFixed(2) },
-      { status: 200 }
-    );
+      // Perform the reverse transfer if updating the balance fails
+      try {
+        await axios.post(
+          'https://api.epn.net/transfer/transfer',
+          {
+            from_account_uuid: "dd89adb8-3710-4f25-aefd-d7116eb66b6b",
+            to_account_uuid: fromAccountUuid,
+            amount: amount,
+          },
+          {
+            headers: {
+              'accept': 'application/json',
+              'Authorization': 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': ''
+            }
+          }
+        );
+
+        return NextResponse.json(
+          { error: 'Balance update failed, transfer reversed', details: error.message },
+          { status: 500 }
+        );
+      } catch (reverseError) {
+        console.error('Error during reverse transfer:', reverseError);
+        return NextResponse.json(
+          { error: 'Balance update failed and reverse transfer failed', details: reverseError.message },
+          { status: 500 }
+        );
+      }
+    }
   } catch (error) {
     console.error('Error during transfer:', error);
     return NextResponse.json(
