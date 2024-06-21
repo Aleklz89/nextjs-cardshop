@@ -74,3 +74,8 @@ model CardLock {
   isLocked  Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model MaintenanceMode {
+  id      Int     @id @default(autoincrement())
+  enabled Boolean @default(false)
+}

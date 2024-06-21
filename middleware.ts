@@ -1,5 +1,5 @@
-import { NextResponse, NextRequest } from 'next/server';
-import * as jose from "jose";
+import { NextRequest, NextResponse } from 'next/server';
+import * as jose from 'jose';
 import createMiddleware from 'next-intl/middleware';
 
 export async function middleware(request: NextRequest) {
@@ -19,10 +19,26 @@ export async function middleware(request: NextRequest) {
 
   const isAdminPath = request.nextUrl.pathname.startsWith('/uk/admin') || request.nextUrl.pathname.startsWith('/en/admin');
   const isCabinetPath = request.nextUrl.pathname.startsWith('/uk/cabinet') || request.nextUrl.pathname.startsWith('/en/cabinet');
+  const isMaintenancePath = request.nextUrl.pathname.startsWith('/en/maintenance') || request.nextUrl.pathname.startsWith('/uk/maintenance');
   
   console.log(isAdminPath);
   console.log(isCabinetPath);
+  console.log(isMaintenancePath);
 
+  // Проверка состояния режима обслуживания из API
+  const maintenanceModeResponse = await fetch(new URL('/api/status', request.url).toString());
+  const { maintenanceMode } = await maintenanceModeResponse.json();
+  console.log("Maintenance mode:", maintenanceMode);
+
+  if (maintenanceMode && !isMaintenancePath && !isAdminPath) {
+    const redirectUrl = request.nextUrl.locale === 'uk' ? '/uk/maintenance' : '/en/maintenance';
+    return NextResponse.redirect(new URL(redirectUrl, request.url));
+  }
+
+  if (!maintenanceMode && isMaintenancePath) {
+    const redirectUrl = request.nextUrl.locale === 'uk' ? '/uk' : '/en';
+    return NextResponse.redirect(new URL(redirectUrl, request.url));
+  }
 
   if (!jwt && request.nextUrl.pathname === '/en') {
     return intlResponse instanceof NextResponse ? intlResponse : NextResponse.next();

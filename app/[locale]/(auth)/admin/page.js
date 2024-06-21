@@ -39,6 +39,43 @@ function Page() {
   const [loadingRejectBalance, setLoadingRejectBalance] = useState(null);
   const [loadingAcceptBalance, setLoadingAcceptBalance] = useState(null);
   const [editableMarkups, setEditableMarkups] = useState({});
+  const [showMaintenancePopup, setShowMaintenancePopup] = useState(false);
+  const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
+
+
+  const toggleMaintenanceMode = async () => {
+    try {
+      const response = await fetch('/api/maintenance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enable: !isMaintenanceMode }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setIsMaintenanceMode(data.enable);
+      } else {
+        console.error('Ошибка при переключении режима техобслуживания');
+      }
+    } catch (error) {
+      console.error('Ошибка при переключении режима техобслуживания:', error);
+    }
+  };
+
+
+  const handleMaintenanceClick = () => {
+    setShowMaintenancePopup(true);
+  };
+
+  const handleConfirmMaintenance = async () => {
+    await toggleMaintenanceMode();
+    setShowMaintenancePopup(false);
+  };
+
+  const handleCloseMaintenancePopup = () => {
+    setShowMaintenancePopup(false);
+  };
+
+
 
   const fetchValue = async () => {
     try {
@@ -165,6 +202,22 @@ function Page() {
       console.error("Не удалось загрузить данные для второй таблицы");
     }
   };
+
+  useEffect(() => {
+    setMounted(true);
+    checkMaintenanceMode();
+  }, []);
+
+  const checkMaintenanceMode = async () => {
+    try {
+      const response = await fetch('/api/status');
+      const data = await response.json();
+      setIsMaintenanceMode(data.maintenanceMode);
+    } catch (error) {
+      console.error('Ошибка при проверке режима техобслуживания:', error);
+    }
+  };
+
 
   useEffect(() => {
     fetchAccountData();
@@ -307,8 +360,8 @@ function Page() {
       [id]: originalBalances[id],
     }));
     setTimeout(() => {
-      setLoadingRejectBalance(null); 
-    }, 5000); 
+      setLoadingRejectBalance(null);
+    }, 5000);
   };
 
   const handleAcceptBalanceChange = async (id) => {
@@ -328,7 +381,7 @@ function Page() {
 
     if ((totalUserBalance - 1) > requiredBalance) {
       setShowPopup(true);
-      setLoadingAcceptBalance(null); 
+      setLoadingAcceptBalance(null);
       return;
     }
     if (balanceChange) {
@@ -372,8 +425,8 @@ function Page() {
       }
     }
     setTimeout(() => {
-      setLoadingAcceptBalance(null); 
-    }, 5000); 
+      setLoadingAcceptBalance(null);
+    }, 5000);
   };
 
 
@@ -419,18 +472,12 @@ function Page() {
             <p className={styles.load}>{error || 'Загрузка данных...'}</p>
           )}
         </div>
-        <div className={styles.themeSwitcher}>
-          <span className={styles.lightLabel}>🌞</span>
-          <label className={styles.switch}>
-            <input
-              type="checkbox"
-              checked={theme === "dark"}
-              onChange={() => setTheme(theme === "dark" ? "light" : "dark")}
-            />
-            <span className={styles.slider}></span>
-          </label>
-          <span className={styles.darkLabel}>🌜</span>
-        </div>
+        <button
+          className={isMaintenanceMode ? styles.maintenanceButtonActive : styles.maintenanceButton}
+          onClick={handleMaintenanceClick}
+        >
+          {isMaintenanceMode ? 'Режим техобслуживания' : 'Обычный режим'}
+        </button>
       </header>
       <div className={styles.mainblock}>
         <h2>Запросы на регистрацию</h2>
@@ -670,6 +717,16 @@ function Page() {
           </div>
         </div>
       )}
+      {showMaintenancePopup && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popup}>
+            <h3>{isMaintenanceMode ? 'Выключить режим технических работ?' : 'Включить режим технических работ?'}</h3>
+            <button className={styles.popupButton} onClick={handleConfirmMaintenance}>Да</button>
+            <button className={styles.popupButton} onClick={handleCloseMaintenancePopup}>Нет</button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

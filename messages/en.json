@@ -211,6 +211,11 @@
     "TransHistory": {
         "transactions": "No transactions to display 🕵️",
         "activity": "Up your transactions activity first!‍"
+    },
+
+    "Maintenance": {
+        "site": "Site Under Maintenance",
+        "currently": "We are currently performing maintenance. Please check back later."
     }
 
 }

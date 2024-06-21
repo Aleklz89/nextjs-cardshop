@@ -1,0 +1,27 @@
+/* MaintenancePage.module.css */
+.maintenanceContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    background-color: black;
+  }
+  
+  .logo {
+    width: 150px;
+    height: auto;
+    margin-bottom: 20px;
+  }
+  
+  .title {
+    font-size: 36px;
+    color: #f4f3f3;
+  }
+  
+  .message {
+    font-size: 18px;
+    color: #dedede;
+  }
+  
