@@ -1,4 +1,4 @@
-@import url('https://fonts.cdnfonts.com/css/ocr-a-std');
+
 
 .cardDetailsOverlay {
   position: absolute;
@@ -495,7 +495,7 @@
 }
 
 .cardNumber {
-  font-size: 13px;
+  font-size: 17px;
   margin: 0;
 }
 
@@ -585,4 +585,18 @@
 }
 
 
+}
+
+@media (max-width: 1500px) {
+  .cardNumber {
+    font-size: 18px;
+    margin: 0;
+  }
+}
+
+@media (min-width: 1600px) {
+  .cardNumber {
+    font-size: 21px;
+    margin: 0;
+  }
 }
