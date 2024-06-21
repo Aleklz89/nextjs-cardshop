@@ -35,7 +35,7 @@
 }
 
 .cardContainer.selected {
-  border: 1px solid red;
+  border: 2px solid red;
 }
 
 .menu {
@@ -460,7 +460,7 @@
   flex: 1 1 calc(25% - 20px);
   max-width: calc(25% - 20px);
   min-width: 220px;
-  border: 1px solid #ddd;
+  border: 2px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
   position: relative;

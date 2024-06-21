@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from "../../lib/prisma";
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import Decimal from 'decimal.js';
+
+async function fetchWithTimeout(url: string, options = {}, timeout = 10000): Promise<AxiosResponse | null> {
+  return Promise.race([
+    axios(url, options),
+    new Promise<null>((_, reject) =>
+      setTimeout(() => reject(new Error('timeout')), timeout)
+    )
+  ]);
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,20 +49,26 @@ export async function POST(request: NextRequest) {
       // Начало транзакции
       const updatedUser = await prisma.$transaction(async (transaction) => {
         // Валидация карт путем получения их деталей
-        const invalidCards = await Promise.all(cardUuids.map(async (cardUuid) => {
+        const validationPromises = cardUuids.map(async (cardUuid) => {
           try {
-            const response = await axios.get(`https://api.epn.net/card/${cardUuid}/showpan`, {
+            const response = await fetchWithTimeout(`https://api.epn.net/card/${cardUuid}/showpan`, {
               headers: {
                 accept: 'application/json',
                 Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
                 'X-CSRF-TOKEN': '',
               },
-            });
-            return response.status !== 200 ? cardUuid : null;
+            }) as AxiosResponse;
+
+            return response && response.status === 200 ? null : cardUuid;
           } catch {
             return cardUuid;
           }
-        })).then(results => results.filter(Boolean));
+        });
+
+        const invalidCards = await Promise.allSettled(validationPromises)
+          .then(results => results
+            .filter((result): result is PromiseFulfilledResult<string | null> => result.status === 'fulfilled' && result.value !== null)
+            .map(result => result.value as string));
 
         if (invalidCards.length > 0) {
           // Разблокировка валидных карт
@@ -96,18 +111,23 @@ export async function POST(request: NextRequest) {
       });
 
       // Удаление карт из EPN вне транзакции
-      const response = await axios.delete('https://api.epn.net/card', {
-        headers: {
-          accept: 'application/json',
-          Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': '',
-        },
-        data: { card_uuids: cardUuids },
-      });
+      try {
+        const response = await fetchWithTimeout('https://api.epn.net/card', {
+          method: 'DELETE',
+          headers: {
+            accept: 'application/json',
+            Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '',
+          },
+          data: { card_uuids: cardUuids },
+        }) as AxiosResponse;
 
-      if (response.status !== 200) {
-        throw new Error(`Ошибка: ${response.status}, ${response.data}`);
+        if (response.status !== 200) {
+          throw new Error(`Ошибка: ${response.status}, ${response.data}`);
+        }
+      } catch (error) {
+        console.error('Ошибка удаления карт из EPN:', error);
       }
 
       // Разблокировка карт
