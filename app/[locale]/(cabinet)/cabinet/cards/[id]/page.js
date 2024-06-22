@@ -411,7 +411,7 @@ export default function CardPage() {
   }, [uuid, cardsData]);
 
   if (!selectedCard) {
-    return <p>Loading...</p>;
+    return <p></p>;
   }
 
   const rootUrl = process.env.NEXT_PUBLIC_ROOT_URL;
