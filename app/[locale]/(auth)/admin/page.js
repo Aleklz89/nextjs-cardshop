@@ -3,459 +3,503 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './Table.module.css';
 import './globals.css';
-import { useTheme } from 'next-themes';
 
 function Page() {
   const [mounted, setMounted] = useState(false);
 
-useEffect(() => {
-  setMounted(true);
-}, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-const [data, setData] = useState([]);
-const [filteredData, setFilteredData] = useState([]);
-const [sortOrder, setSortOrder] = useState("asc");
-const [searchTerm, setSearchTerm] = useState("");
-const [dataTwo, setDataTwo] = useState([]);
-const [filteredDataTwo, setFilteredDataTwo] = useState([]);
-const [sortOrderTwo, setSortOrderTwo] = useState("asc");
-const [sortOrderUpdated, setSortOrderUpdated] = useState("asc");
-const [searchTermTwo, setSearchTermTwo] = useState("");
-const [loadingReject, setLoadingReject] = useState(null);
-const [loadingAccept, setLoadingAccept] = useState(null);
-const [editableBalances, setEditableBalances] = useState({});
-const [originalBalances, setOriginalBalances] = useState({});
-const fetchInterval = useRef(null);
-const [balance, setBalance] = useState(null);
-const [error, setError] = useState('');
-const [value, setValue] = useState(null);
-const [inputValue, setInputValue] = useState('');
-const [originalValue, setOriginalValue] = useState('');
-const [errortwo, setErrortwo] = useState('');
-const [showPopup, setShowPopup] = useState(false);
-const [loadingRequests, setLoadingRequests] = useState(true);
-const [loadingUsers, setLoadingUsers] = useState(true);
-const [loadingRejectBalance, setLoadingRejectBalance] = useState(null);
-const [loadingAcceptBalance, setLoadingAcceptBalance] = useState(null);
-const [editableMarkups, setEditableMarkups] = useState({});
-const [showMaintenancePopup, setShowMaintenancePopup] = useState(false);
-const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dataTwo, setDataTwo] = useState([]);
+  const [filteredDataTwo, setFilteredDataTwo] = useState([]);
+  const [sortOrderTwo, setSortOrderTwo] = useState("asc");
+  const [sortOrderUpdated, setSortOrderUpdated] = useState("asc");
+  const [searchTermTwo, setSearchTermTwo] = useState("");
+  const [loadingReject, setLoadingReject] = useState(null);
+  const [loadingAccept, setLoadingAccept] = useState(null);
+  const [editableBalances, setEditableBalances] = useState({});
+  const [originalBalances, setOriginalBalances] = useState({});
+  const fetchInterval = useRef(null);
+  const [balance, setBalance] = useState(null);
+  const [error, setError] = useState('');
+  const [value, setValue] = useState(null);
+  const [inputValue, setInputValue] = useState('');
+  const [originalValue, setOriginalValue] = useState('');
+  const [errortwo, setErrortwo] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
+  const [loadingRequests, setLoadingRequests] = useState(true);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+  const [loadingRejectBalance, setLoadingRejectBalance] = useState(null);
+  const [loadingAcceptBalance, setLoadingAcceptBalance] = useState(null);
+  const [editableMarkups, setEditableMarkups] = useState({});
+  const [showMaintenancePopup, setShowMaintenancePopup] = useState(false);
+  const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [currentUserId, setCurrentUserId] = useState(null);
 
-const toggleMaintenanceMode = async () => {
-  console.log('Toggling maintenance mode. Current mode:', isMaintenanceMode);
-  try {
-    const response = await fetch('/api/maintenance', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ enable: !isMaintenanceMode }),
-    });
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Maintenance mode toggled successfully:', data);
-      setIsMaintenanceMode(data.enable);
-    } else {
-      console.error('Ошибка при переключении режима техобслуживания');
+  // Функция для открытия попапа смены пароля
+  const handlePasswordChangeClick = (userId) => {
+    setCurrentUserId(userId);
+    setShowPasswordPopup(true);
+  };
+
+  // Функция для закрытия попапа смены пароля
+  const handleClosePasswordPopup = () => {
+    setShowPasswordPopup(false);
+    setNewPassword('');
+    setPasswordError('');
+  };
+
+  // Функция для подтверждения смены пароля
+  const handleConfirmPasswordChange = async () => {
+    if (!newPassword) {
+      setPasswordError('Пароль не может быть пустым');
+      return;
     }
-  } catch (error) {
-    console.error('Ошибка при переключении режима техобслуживания:', error);
-  }
-};
 
-const handleMaintenanceClick = () => {
-  setShowMaintenancePopup(true);
-};
+    try {
+      const response = await fetch('/api/password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: currentUserId, password: newPassword }),
+      });
 
-const handleConfirmMaintenance = async () => {
-  console.log('Confirming maintenance mode toggle');
-  await toggleMaintenanceMode();
-  setShowMaintenancePopup(false);
-};
-
-const handleCloseMaintenancePopup = () => {
-  setShowMaintenancePopup(false);
-};
-
-const fetchValue = async () => {
-  try {
-    const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/constant");
-    const data = await response.json();
-    if (response.ok) {
-      setValue(data.value);
-      setOriginalValue(data.value);
-      setInputValue(data.value);
-    } else {
-      setErrortwo(data.error || 'Ошибка при получении значения');
-    }
-  } catch (error) {
-    console.error('Ошибка при получении значения:', error);
-    setErrortwo('Ошибка при получении значения');
-  }
-};
-
-const updateValue = async () => {
-  try {
-    const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/constant', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ value: parseFloat(inputValue) }),
-    });
-    const data = await response.json();
-    if (response.ok) {
-      setValue(data.value);
-      setOriginalValue(data.value);
-    } else {
-      setErrortwo(data.error || 'Ошибка при обновлении значения');
-    }
-  } catch (error) {
-    console.error('Ошибка при обновлении значения:', error);
-    setErrortwo('Ошибка при обновлении значения');
-  }
-};
-
-const rejectChange = () => {
-  setInputValue(originalValue);
-};
-
-useEffect(() => {
-  fetchValue();
-}, []);
-
-const fetchAccountData = async () => {
-  try {
-    const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/total');
-    const data = await response.json();
-    if (response.ok) {
-      if (data.data && data.data.length > 0) {
-        setBalance(data.data[0].balance);
+      if (response.ok) {
+        setShowPasswordPopup(false);
+        setNewPassword('');
+        setPasswordError('');
       } else {
-        setError('No account data found');
+        const data = await response.json();
+        setPasswordError(data.error || 'Ошибка при смене пароля');
       }
-    } else {
-      setError(data.error || 'Error fetching account data');
+    } catch (error) {
+      console.error('Ошибка при смене пароля:', error);
+      setPasswordError('Ошибка при смене пароля');
     }
-  } catch (error) {
-    console.error('Error fetching account data:', error);
-    setError('Error fetching account data');
-  }
-};
+  };
 
-const sortData = (incomingData, order) => {
-  return incomingData.applications.sort((a, b) => {
-    const dateA = new Date(a.submissionTime);
-    const dateB = new Date(b.submissionTime);
-    return order === "asc" ? dateA - dateB : dateB - dateA;
-  });
-};
-
-const sortDatatwo = (incomingData, order) => {
-  const users = incomingData.users;
-  return users;
-};
-
-const sortDatathree = (incomingData, order) => {
-  return incomingData.sort((a, b) => {
-    const dateA = new Date(a.updatedAt);
-    const dateB = new Date(b.updatedAt);
-    return order === "asc" ? dateA - dateB : dateB - dateA;
-  });
-};
-
-const fetchData = async () => {
-  const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/request");
-  if (response.ok) {
-    const applications = await response.json();
-    let sortedData = sortData(applications, sortOrder);
-
-    if (searchTerm) {
-      sortedData = sortedData.filter((item) =>
-        item.email.toLowerCase().includes(searchTerm) ||
-        item.password.toLowerCase().includes(searchTerm) ||
-        formatDate(item.submissionTime).includes(searchTerm)
-      );
+  const toggleMaintenanceMode = async () => {
+    console.log('Toggling maintenance mode. Current mode:', isMaintenanceMode);
+    try {
+      const response = await fetch('/api/maintenance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enable: !isMaintenanceMode }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Maintenance mode toggled successfully:', data);
+        setIsMaintenanceMode(data.enable);
+      } else {
+        console.error('Ошибка при переключении режима техобслуживания');
+      }
+    } catch (error) {
+      console.error('Ошибка при переключении режима техобслуживания:', error);
     }
+  };
 
-    setData(sortedData);
-    setFilteredData(sortedData);
-    setLoadingRequests(false);
-  } else {
-    console.error("Не удалось загрузить данные");
-  }
-};
+  const handleMaintenanceClick = () => {
+    setShowMaintenancePopup(true);
+  };
 
-const fetchDataTwo = async () => {
-  const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/user");
-  if (response.ok) {
-    const users = await response.json();
-    setDataTwo(users.users);
+  const handleConfirmMaintenance = async () => {
+    console.log('Confirming maintenance mode toggle');
+    await toggleMaintenanceMode();
+    setShowMaintenancePopup(false);
+  };
 
-    const balances = {};
-    users.users.forEach((item) => {
-      balances[item.id] = item.balance;
+  const handleCloseMaintenancePopup = () => {
+    setShowMaintenancePopup(false);
+  };
+
+  const fetchValue = async () => {
+    try {
+      const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/constant");
+      const data = await response.json();
+      if (response.ok) {
+        setValue(data.value);
+        setOriginalValue(data.value);
+        setInputValue(data.value);
+      } else {
+        setErrortwo(data.error || 'Ошибка при получении значения');
+      }
+    } catch (error) {
+      console.error('Ошибка при получении значения:', error);
+      setErrortwo('Ошибка при получении значения');
+    }
+  };
+
+  const updateValue = async () => {
+    try {
+      const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/constant', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ value: parseFloat(inputValue) }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setValue(data.value);
+        setOriginalValue(data.value);
+      } else {
+        setErrortwo(data.error || 'Ошибка при обновлении значения');
+      }
+    } catch (error) {
+      console.error('Ошибка при обновлении значения:', error);
+      setErrortwo('Ошибка при обновлении значения');
+    }
+  };
+
+  const rejectChange = () => {
+    setInputValue(originalValue);
+  };
+
+  useEffect(() => {
+    fetchValue();
+  }, []);
+
+  const fetchAccountData = async () => {
+    try {
+      const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/total');
+      const data = await response.json();
+      if (response.ok) {
+        if (data.data && data.data.length > 0) {
+          setBalance(data.data[0].balance);
+        } else {
+          setError('No account data found');
+        }
+      } else {
+        setError(data.error || 'Error fetching account data');
+      }
+    } catch (error) {
+      console.error('Error fetching account data:', error);
+      setError('Error fetching account data');
+    }
+  };
+
+  const sortData = (incomingData, order) => {
+    return incomingData.applications.sort((a, b) => {
+      const dateA = new Date(a.submissionTime);
+      const dateB = new Date(b.submissionTime);
+      return order === "asc" ? dateA - dateB : dateB - dateA;
     });
-    setOriginalBalances(balances);
+  };
 
-    applyFiltersAndSortTwo(users);
-    setLoadingUsers(false);
-  } else {
-    console.error("Не удалось загрузить данные для второй таблицы");
-  }
-};
+  const sortDatatwo = (incomingData, order) => {
+    const users = incomingData.users;
+    return users;
+  };
 
-useEffect(() => {
-  setMounted(true);
-  checkMaintenanceMode();
-}, []);
+  const sortDatathree = (incomingData, order) => {
+    return incomingData.sort((a, b) => {
+      const dateA = new Date(a.updatedAt);
+      const dateB = new Date(b.updatedAt);
+      return order === "asc" ? dateA - dateB : dateB - dateA;
+    });
+  };
 
-const checkMaintenanceMode = async () => {
-  try {
-    console.log('Checking maintenance mode');
-    const response = await fetch('/api/status');
-    const data = await response.json();
-    console.log('Maintenance mode status:', data.maintenanceMode);
-    setIsMaintenanceMode(data.maintenanceMode);
-  } catch (error) {
-    console.error('Ошибка при проверке режима техобслуживания:', error);
-  }
-};
+  const fetchData = async () => {
+    const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/request");
+    if (response.ok) {
+      const applications = await response.json();
+      let sortedData = sortData(applications, sortOrder);
 
-useEffect(() => {
-  fetchAccountData();
-  fetchData();
-  fetchDataTwo();
-  fetchInterval.current = setInterval(() => {
+      if (searchTerm) {
+        sortedData = sortedData.filter((item) =>
+          item.email.toLowerCase().includes(searchTerm) ||
+          item.password.toLowerCase().includes(searchTerm) ||
+          formatDate(item.submissionTime).includes(searchTerm)
+        );
+      }
+
+      setData(sortedData);
+      setFilteredData(sortedData);
+      setLoadingRequests(false);
+    } else {
+      console.error("Не удалось загрузить данные");
+    }
+  };
+
+  const fetchDataTwo = async () => {
+    const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/user");
+    if (response.ok) {
+      const users = await response.json();
+      setDataTwo(users.users);
+
+      const balances = {};
+      users.users.forEach((item) => {
+        balances[item.id] = item.balance;
+      });
+      setOriginalBalances(balances);
+
+      applyFiltersAndSortTwo(users);
+      setLoadingUsers(false);
+    } else {
+      console.error("Не удалось загрузить данные для второй таблицы");
+    }
+  };
+
+  useEffect(() => {
+    setMounted(true);
+    checkMaintenanceMode();
+  }, []);
+
+  const checkMaintenanceMode = async () => {
+    try {
+      console.log('Checking maintenance mode');
+      const response = await fetch('/api/status');
+      const data = await response.json();
+      console.log('Maintenance mode status:', data.maintenanceMode);
+      setIsMaintenanceMode(data.maintenanceMode);
+    } catch (error) {
+      console.error('Ошибка при проверке режима техобслуживания:', error);
+    }
+  };
+
+  useEffect(() => {
     fetchAccountData();
     fetchData();
     fetchDataTwo();
-  }, 2500);
-  return () => clearInterval(fetchInterval.current);
-}, []);
+    fetchInterval.current = setInterval(() => {
+      fetchAccountData();
+      fetchData();
+      fetchDataTwo();
+    }, 2500);
+    return () => clearInterval(fetchInterval.current);
+  }, []);
 
-useEffect(() => {
-  applyFiltersAndSortTwo(dataTwo);
-}, [sortOrderTwo, sortOrderUpdated, searchTermTwo]);
+  useEffect(() => {
+    applyFiltersAndSortTwo(dataTwo);
+  }, [sortOrderTwo, sortOrderUpdated, searchTermTwo]);
 
-useEffect(() => {
-  fetchData();
-}, [sortOrder, searchTerm]);
+  useEffect(() => {
+    fetchData();
+  }, [sortOrder, searchTerm]);
 
-const applyFiltersAndSortTwo = (incomingData) => {
-  let filteredData = incomingData;
+  const applyFiltersAndSortTwo = (incomingData) => {
+    let filteredData = incomingData;
 
-  if (searchTermTwo) {
-    filteredData = filteredData.filter((item) =>
-      item.email.toLowerCase().includes(searchTermTwo) ||
-      formatDate(item.createdAt).includes(searchTermTwo) ||
-      formatDate(item.updatedAt).includes(searchTermTwo)
-    );
-  }
+    if (searchTermTwo) {
+      filteredData = filteredData.filter((item) =>
+        item.email.toLowerCase().includes(searchTermTwo) ||
+        formatDate(item.createdAt).includes(searchTermTwo) ||
+        formatDate(item.updatedAt).includes(searchTermTwo)
+      );
+    }
 
-  if (sortOrderUpdated !== "asc") {
-    filteredData = sortDatathree(filteredData, sortOrderUpdated);
-  } else {
-    filteredData = sortDatatwo(filteredData, sortOrder);
-  }
+    if (sortOrderUpdated !== "asc") {
+      filteredData = sortDatathree(filteredData, sortOrderUpdated);
+    } else {
+      filteredData = sortDatatwo(filteredData, sortOrder);
+    }
 
-  setFilteredDataTwo(filteredData);
-};
+    setFilteredDataTwo(filteredData);
+  };
 
-const handleSort = () => {
-  const newOrder = sortOrder === "asc" ? "desc" : "asc";
-  setSortOrder(newOrder);
-  const sortedData = sortData(data, newOrder);
-  setData(sortedData);
-  setFilteredData(sortedData);
-};
+  const handleSort = () => {
+    const newOrder = sortOrder === "asc" ? "desc" : "asc";
+    setSortOrder(newOrder);
+    const sortedData = sortData(data, newOrder);
+    setData(sortedData);
+    setFilteredData(sortedData);
+  };
 
-const handleSortTwo = () => {
-  const newOrder = sortOrderTwo === "asc" ? "desc" : "asc";
-  setSortOrderTwo(newOrder);
-};
+  const handleSortTwo = () => {
+    const newOrder = sortOrderTwo === "asc" ? "desc" : "asc";
+    setSortOrderTwo(newOrder);
+  };
 
-const handleSortThree = () => {
-  const newOrder = sortOrderUpdated === "asc" ? "desc" : "asc";
-  setSortOrderUpdated(newOrder);
-};
+  const handleSortThree = () => {
+    const newOrder = sortOrderUpdated === "asc" ? "desc" : "asc";
+    setSortOrderUpdated(newOrder);
+  };
 
-const handleSearch = (event) => {
-  const value = event.target.value.toLowerCase();
-  setSearchTerm(value);
-};
+  const handleSearch = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearchTerm(value);
+  };
 
-const handleSearchTwo = (event) => {
-  const value = event.target.value.toLowerCase();
-  setSearchTermTwo(value);
-};
+  const handleSearchTwo = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearchTermTwo(value);
+  };
 
-const handleReject = async (id) => {
-  setLoadingReject(id);
-  clearInterval(fetchInterval.current);
-  const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/decline?id=${id}`, {
-    method: "DELETE",
-  });
-  if (response.ok) {
-    const newData = data.filter((item) => item.id !== id);
-    setData(newData);
-    setFilteredData(newData);
-  } else {
-    console.error("Ошибка при отклонении заявки");
-  }
-
-  setTimeout(() => {
-    setLoadingReject(null);
-  }, 10000);
-};
-
-const handleAccept = async (id, email, password, telegram) => {
-  setLoadingAccept(id);
-  const deleteResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/decline?id=${id}`, {
-    method: "DELETE",
-  });
-  if (deleteResponse.ok) {
-    const addUserResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/accept", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password, telegram }),
+  const handleReject = async (id) => {
+    setLoadingReject(id);
+    clearInterval(fetchInterval.current);
+    const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/decline?id=${id}`, {
+      method: "DELETE",
     });
-
-    if (addUserResponse.ok) {
+    if (response.ok) {
       const newData = data.filter((item) => item.id !== id);
       setData(newData);
       setFilteredData(newData);
     } else {
-      console.error("Ошибка при добавлении пользователя");
+      console.error("Ошибка при отклонении заявки");
     }
-  } else {
-    console.error("Ошибка при удалении заявки");
-  }
 
-  setTimeout(() => {
-    setLoadingAccept(null);
-  }, 10000);
-};
+    setTimeout(() => {
+      setLoadingReject(null);
+    }, 10000);
+  };
 
-const handleBalanceChange = (e, id) => {
-  const newBalance = parseFloat(e.target.value);
-  setEditableBalances((prevBalances) => ({
-    ...prevBalances,
-    [id]: newBalance,
-  }));
-};
-
-const handleMarkupChange = (e, id) => {
-  const newMarkup = parseFloat(e.target.value);
-  setEditableMarkups((prevMarkups) => ({
-    ...prevMarkups,
-    [id]: newMarkup,
-  }));
-};
-
-const handleRejectBalanceChange = (id) => {
-  setLoadingRejectBalance(id);
-  setEditableBalances((prevBalances) => ({
-    ...prevBalances,
-    [id]: originalBalances[id],
-  }));
-  setTimeout(() => {
-    setLoadingRejectBalance(null);
-  }, 5000);
-};
-
-const handleAcceptBalanceChange = async (id) => {
-  setLoadingAcceptBalance(id);
-  const newBalance = Number(editableBalances[id]);
-  const newMarkup = Number(editableMarkups[id]);
-  const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/user`);
-  const usersData = await response.json();
-  const user = usersData.users.find((item) => item.id === id);
-  const currentBalance = Number(user.balance);
-  const currentMarkup = Number(user.markup);
-  const balanceChange = newBalance - currentBalance;
-  const markupChange = newMarkup !== currentMarkup;
-  const totalUserBalance = Object.values({ ...originalBalances, [id]: newBalance })
-    .reduce((acc, curr) => acc + Number(curr), 0);
-  const requiredBalance = parseFloat(balance) + (parseFloat(balance) * (parseFloat(value) / 100));
-
-  if ((totalUserBalance - 1) > requiredBalance) {
-    setShowPopup(true);
-    setLoadingAcceptBalance(null);
-    return;
-  }
-  if (balanceChange) {
-    const updateResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/update`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id, balance: newBalance }),
+  const handleAccept = async (id, email, password, telegram) => {
+    setLoadingAccept(id);
+    const deleteResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/decline?id=${id}`, {
+      method: "DELETE",
     });
+    if (deleteResponse.ok) {
+      const addUserResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/accept", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password, telegram }),
+      });
 
-    if (updateResponse.ok) {
-      const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
+      if (addUserResponse.ok) {
+        const newData = data.filter((item) => item.id !== id);
+        setData(newData);
+        setFilteredData(newData);
+      } else {
+        console.error("Ошибка при добавлении пользователя");
+      }
+    } else {
+      console.error("Ошибка при удалении заявки");
+    }
+
+    setTimeout(() => {
+      setLoadingAccept(null);
+    }, 10000);
+  };
+
+  const handleBalanceChange = (e, id) => {
+    const newBalance = parseFloat(e.target.value);
+    setEditableBalances((prevBalances) => ({
+      ...prevBalances,
+      [id]: newBalance,
+    }));
+  };
+
+  const handleMarkupChange = (e, id) => {
+    const newMarkup = parseFloat(e.target.value);
+    setEditableMarkups((prevMarkups) => ({
+      ...prevMarkups,
+      [id]: newMarkup,
+    }));
+  };
+
+  const handleRejectBalanceChange = (id) => {
+    setLoadingRejectBalance(id);
+    setEditableBalances((prevBalances) => ({
+      ...prevBalances,
+      [id]: originalBalances[id],
+    }));
+    setTimeout(() => {
+      setLoadingRejectBalance(null);
+    }, 5000);
+  };
+
+  const handleAcceptBalanceChange = async (id) => {
+    setLoadingAcceptBalance(id);
+    const newBalance = Number(editableBalances[id]);
+    const newMarkup = Number(editableMarkups[id]);
+    const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/user`);
+    const usersData = await response.json();
+    const user = usersData.users.find((item) => item.id === id);
+    const currentBalance = Number(user.balance);
+    const currentMarkup = Number(user.markup);
+    const balanceChange = newBalance - currentBalance;
+    const markupChange = newMarkup !== currentMarkup;
+    const totalUserBalance = Object.values({ ...originalBalances, [id]: newBalance })
+      .reduce((acc, curr) => acc + Number(curr), 0);
+    const requiredBalance = parseFloat(balance) + (parseFloat(balance) * (parseFloat(value) / 100));
+
+    if ((totalUserBalance - 1) > requiredBalance) {
+      setShowPopup(true);
+      setLoadingAcceptBalance(null);
+      return;
+    }
+    if (balanceChange) {
+      const updateResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          userId: id,
-          type: 'deposit',
-          description: 'Debited from Main account',
-          amount: balanceChange,
-        }),
+        body: JSON.stringify({ id, balance: newBalance }),
       });
-    } else {
-      console.error('Ошибка при обновлении баланса');
+
+      if (updateResponse.ok) {
+        const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/newtrans', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: id,
+            type: 'deposit',
+            description: 'Debited from Main account',
+            amount: balanceChange,
+          }),
+        });
+      } else {
+        console.error('Ошибка при обновлении баланса');
+      }
     }
+
+    if (markupChange) {
+      const updateMarkupResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/markup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, markup: newMarkup }),
+      });
+
+      if (!updateMarkupResponse.ok) {
+        console.error('Ошибка при обновлении markup');
+      }
+    }
+    setTimeout(() => {
+      setLoadingAcceptBalance(null);
+    }, 5000);
+  };
+
+  function formatDate(isoString) {
+    const date = new Date(isoString);
+    date.setHours(date.getHours() + 0);
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const day = date.getDate();
+    const months = [
+      "января",
+      "февраля",
+      "марта",
+      "апреля",
+      "мая",
+      "июня",
+      "июля",
+      "августа",
+      "сентября",
+      "октября",
+      "ноября",
+      "декабря",
+    ];
+    const month = months[date.getMonth()];
+    return `${hours}:${minutes}, ${day} ${month}`;
   }
 
-  if (markupChange) {
-    const updateMarkupResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/markup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id, markup: newMarkup }),
-    });
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
 
-    if (!updateMarkupResponse.ok) {
-      console.error('Ошибка при обновлении markup');
-    }
-  }
-  setTimeout(() => {
-    setLoadingAcceptBalance(null);
-  }, 5000);
-};
-
-function formatDate(isoString) {
-  const date = new Date(isoString);
-  date.setHours(date.getHours() + 0);
-  const hours = date.getHours().toString().padStart(2, "0");
-  const minutes = date.getMinutes().toString().padStart(2, "0");
-  const day = date.getDate();
-  const months = [
-    "января",
-    "февраля",
-    "марта",
-    "апреля",
-    "мая",
-    "июня",
-    "июля",
-    "августа",
-    "сентября",
-    "октября",
-    "ноября",
-    "декабря",
-  ];
-  const month = months[date.getMonth()];
-  return `${hours}:${minutes}, ${day} ${month}`;
-}
-
-const handleClosePopup = () => {
-  setShowPopup(false);
-};
-
-if (!mounted) return null;
+  if (!mounted) return null;
 
   return (
     <div className={styles.patron}>
@@ -598,6 +642,7 @@ if (!mounted) return null;
                   <th>Комиссия</th>
                   <th>Отклонить</th>
                   <th>Подтвердить</th>
+                  <th>Сменить пароль</th>
                 </tr>
               </thead>
               <tbody>
@@ -636,6 +681,11 @@ if (!mounted) return null;
                     <td>
                       <button onClick={() => handleAcceptBalanceChange(item.id)} className={styles.btnconfirm}>
                         {loadingAcceptBalance === item.id ? (<div className={styles.loader}></div>) : ('Подтвердить')}
+                      </button>
+                    </td>
+                    <td>
+                      <button onClick={() => handlePasswordChangeClick(item.id)} className={styles.btnchange}>
+                        Сменить пароль
                       </button>
                     </td>
                   </tr>
@@ -720,6 +770,22 @@ if (!mounted) return null;
             <h3>{isMaintenanceMode ? 'Выключить режим технических работ?' : 'Включить режим технических работ?'}</h3>
             <button className={styles.popupButton} onClick={handleConfirmMaintenance}>Да</button>
             <button className={styles.popupButton} onClick={handleCloseMaintenancePopup}>Нет</button>
+          </div>
+        </div>
+      )}
+      {showPasswordPopup && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popup}>
+            <h3>Введите новый пароль</h3>
+            <input
+              type="text"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className={styles.passwordInput}
+            />
+            {passwordError && <p className={styles.error}>{passwordError}</p>}
+            <button className={styles.popupButton} onClick={handleClosePasswordPopup}>Отклонить</button>
+            <button className={styles.popupButton} onClick={handleConfirmPasswordChange}>Подтвердить</button>
           </div>
         </div>
       )}
