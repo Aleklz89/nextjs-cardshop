@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '../../lib/prisma';
 
+export const revalidate = 1
+
 export async function GET(request: NextRequest) {
   try {
     const maintenanceModeRecord = await prisma.maintenanceMode.findUnique({ where: { id: 1 } });
