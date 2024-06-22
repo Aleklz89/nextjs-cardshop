@@ -19,7 +19,8 @@ export async function middleware(request: NextRequest) {
 
   const isAdminPath = request.nextUrl.pathname.startsWith('/uk/admin') || request.nextUrl.pathname.startsWith('/en/admin');
   const isCabinetPath = request.nextUrl.pathname.startsWith('/uk/cabinet') || request.nextUrl.pathname.startsWith('/en/cabinet');
-  const isMaintenancePath = request.nextUrl.pathname.startsWith('/en/maintenance') || request.nextUrl.pathname.startsWith('/uk/maintenance');
+  const isMaintenancePath = request.nextUrl.pathname.startsWith('/en/tech/maintenance') || request.nextUrl.pathname.startsWith('/uk/tech/maintenance');
+  const isMainPath = request.nextUrl.pathname.startsWith('/en') || request.nextUrl.pathname.startsWith('/uk');
   
   console.log(isAdminPath);
   console.log(isCabinetPath);
@@ -31,21 +32,25 @@ export async function middleware(request: NextRequest) {
   console.log("Maintenance mode:", maintenanceMode);
 
   if (maintenanceMode && !isMaintenancePath && !isAdminPath) {
-    const redirectUrl = request.nextUrl.locale === 'uk' ? '/uk/maintenance' : '/en/maintenance';
+    console.log("Redirecting to maintenance page");
+    const redirectUrl = request.nextUrl.locale === 'uk' ? '/uk/tech/maintenance' : '/en/tech/maintenance';
     return NextResponse.redirect(new URL(redirectUrl, request.url));
   }
 
   if (!maintenanceMode && isMaintenancePath) {
+    console.log("Redirecting to main page from maintenance");
     const redirectUrl = request.nextUrl.locale === 'uk' ? '/uk' : '/en';
     return NextResponse.redirect(new URL(redirectUrl, request.url));
   }
 
-  if (!jwt && request.nextUrl.pathname === '/en') {
+  if (!jwt && isMainPath) {
+    console.log("No JWT for main path");
     return intlResponse instanceof NextResponse ? intlResponse : NextResponse.next();
   }
 
   if (!jwt) {
     if (isAdminPath || isCabinetPath) {
+      console.log("No JWT for admin or cabinet path, redirecting");
       return NextResponse.redirect(new URL('/en', request.url));
     }
   }
@@ -55,10 +60,12 @@ export async function middleware(request: NextRequest) {
     console.log("Verified JWT with payload:", payload);
 
     if (isAdminPath && !payload.is_staff) {
+      console.log("User is not staff, redirecting from admin path");
       return NextResponse.redirect(new URL('/en', request.url));
     }
 
     if (isCabinetPath && payload.is_staff) {
+      console.log("Staff user trying to access cabinet path, redirecting");
       return NextResponse.redirect(new URL('/en', request.url));
     }
 
@@ -70,6 +77,7 @@ export async function middleware(request: NextRequest) {
   if (intlResponse instanceof NextResponse) return intlResponse;
 
   if (!jwt) {
+    console.log("No JWT, redirecting to main page");
     return NextResponse.redirect(new URL('/en', request.url));
   }
 
@@ -78,11 +86,14 @@ export async function middleware(request: NextRequest) {
     console.log("Verified JWT with payload:", payload);
 
     if (payload.is_staff && isAdminPath) {
+      console.log("Staff user accessing admin path");
       return NextResponse.next();
     } else if (!payload.is_staff && isCabinetPath) {
+      console.log("Non-staff user accessing cabinet path");
       return NextResponse.next();
     }
 
+    console.log("Redirecting to main page");
     return NextResponse.redirect(new URL('/en', request.url));
   } catch (err) {
     console.error("Error verifying JWT:", err);
