@@ -51,35 +51,49 @@ export default function Cards() {
 
   const fetchCardById = async (cardId) => {
     console.log(`Fetching card with ID: ${cardId}`);
-    try {
-      const response = await fetch(`https://api.epn.net/card?external_id=${cardId}`, {
-        headers: {
-          accept: 'application/json',
-          Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
-          'X-CSRF-TOKEN': '',
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+    let allData = [];
+    let page = 1;
+    let moreDataAvailable = true;
+  
+    while (moreDataAvailable) {
+      try {
+        const response = await fetch(`https://api.epn.net/card?external_id=${cardId}&page=${page}`, {
+          headers: {
+            accept: 'application/json',
+            Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+            'X-CSRF-TOKEN': '',
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(`Card fetched on page ${page}:`, data.data);
+        
+        if (data.data && data.data.length > 0) {
+          allData = allData.concat(data.data);
+          page++;
+        } else {
+          moreDataAvailable = false;
+        }
+      } catch (error) {
+        console.error(`Error fetching card with ID ${cardId}:`, error);
+        return null;
       }
-      const data = await response.json();
-      console.log(`Card fetched:`, data.data);
-      return data.data;
-    } catch (error) {
-      console.error(`Error fetching card with ID ${cardId}:`, error);
-      return null;
     }
+  
+    return allData;
   };
-
+  
   const fetchAllCardsByIds = async (cardIds) => {
     console.time('FetchAllCardsByIds');
     let allCards = [];
-
+  
     try {
       const cardFetchPromises = cardIds.map(cardId => fetchCardById(cardId));
       const cardsData = await Promise.all(cardFetchPromises);
       allCards = cardsData.flat().filter(card => card !== null);
-
+  
       console.log('All cards fetched by IDs:', allCards);
       console.timeEnd('FetchAllCardsByIds');
       return allCards;
@@ -89,6 +103,16 @@ export default function Cards() {
       return [];
     }
   };
+  
+  // Example usage:
+  const cardIds = ['your-card-id-1', 'your-card-id-2'];
+  const page = 1;
+  fetchAllCardsByIds(cardIds, page).then((allCards) => {
+    if (allCards.length > 0) {
+      console.log('Fetched all cards:', allCards);
+    }
+  });
+  
 
   useEffect(() => {
     const fetchData = async () => {
