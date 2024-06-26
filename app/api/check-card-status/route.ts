@@ -1,9 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "../../lib/prisma";
+import { PrismaClient } from '@prisma/client';
+import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
-import Decimal from "decimal.js";
+import Decimal from 'decimal.js';
 
-export async function POST(request: NextRequest) {
+const prisma = new PrismaClient();
+
+export async function POST(request) {
   try {
     const { cardUuid, userId, cardBalance } = await request.json();
 
@@ -15,6 +17,16 @@ export async function POST(request: NextRequest) {
         { error: "Missing cardUuid, userId, or cardBalance" },
         { status: 400 }
       );
+    }
+
+    const now = new Date();
+    const rateLimit = await prisma.rateLimit.findUnique({
+      where: { userId: userId },
+    });
+
+    if (rateLimit && now < rateLimit.nextDeleteRequest) {
+      const retryAfter = Math.ceil((rateLimit.nextDeleteRequest.getTime() - now.getTime()) / 1000);
+      return NextResponse.json({ message: `Повторіть спробу через ${retryAfter} секунд` }, { status: 429 });
     }
 
     // Check card status
@@ -120,6 +132,23 @@ export async function POST(request: NextRequest) {
     });
 
     console.log("Card deletion process completed successfully");
+
+    const nextDeleteRequest = new Date(now.getTime() + 60 * 1000);
+
+    if (rateLimit) {
+      await prisma.rateLimit.update({
+        where: { userId: userId },
+        data: { nextDeleteRequest: nextDeleteRequest },
+      });
+    } else {
+      await prisma.rateLimit.create({
+        data: {
+          userId: userId,
+          nextBuyRequest: now, // Initialize with current time or some other logic
+          nextDeleteRequest: nextDeleteRequest,
+        },
+      });
+    }
 
     return NextResponse.json({ success: true, user: updatedUser });
   } catch (error) {

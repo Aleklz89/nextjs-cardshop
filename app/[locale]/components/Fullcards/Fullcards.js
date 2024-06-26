@@ -86,24 +86,25 @@ const Fullcards = ({ cards }) => {
       return data.data;
     } catch (error) {
       console.error('Error fetching card details:', error);
+      throw error;
     }
   };
 
   const handleCopyData = async (uuid) => {
     console.time(`HandleCopyData-${uuid}`);
-    const details = await fetchCardDetails(uuid);
-    const dataToCopy = `${details.number};${details.exp_month};${details.exp_year};${details.cvx2}`;
+    try {
+      const details = await fetchCardDetails(uuid);
+      const dataToCopy = `${details.number};${details.exp_month};${details.exp_year};${details.cvx2}`;
 
-    if (navigator.clipboard) {
-      try {
+      if (navigator.clipboard) {
         await navigator.clipboard.writeText(dataToCopy);
         setCopiedCardId(uuid);
         console.timeEnd(`HandleCopyData-${uuid}`);
-      } catch (err) {
-        console.warn('Clipboard API failed, falling back to textarea method:', err);
+      } else {
         fallbackCopyTextToClipboard(dataToCopy);
       }
-    } else {
+    } catch (err) {
+      console.warn('Clipboard API failed, falling back to textarea method:', err);
       fallbackCopyTextToClipboard(dataToCopy);
     }
   };
@@ -210,6 +211,7 @@ const Fullcards = ({ cards }) => {
     } catch (error) {
       console.error('Error during replenish:', error);
       setIsLoading(false);
+      setErrorMessage(error.message);
       console.timeEnd('ReplenishConfirm');
     }
   };
@@ -243,7 +245,10 @@ const Fullcards = ({ cards }) => {
       });
 
       if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+        const errorData = await response.json();
+        setErrorMessage(errorData.message);
+        setIsDeleting(false);
+        return;
       }
 
       setTimeout(() => {
@@ -254,7 +259,7 @@ const Fullcards = ({ cards }) => {
       }, 10000);
     } catch (error) {
       console.error('Error during delete:', error);
-      setErrorMessage('Error');
+      setErrorMessage(error.message);
       setIsDeleting(false);
     }
   };

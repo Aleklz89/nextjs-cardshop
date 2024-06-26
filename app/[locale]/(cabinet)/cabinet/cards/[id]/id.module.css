@@ -326,6 +326,13 @@
     justify-content: space-between;
 }
 
+.popupButtonstwo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
 .popupButton {
     background-color: #2A27A4;
     color: white;

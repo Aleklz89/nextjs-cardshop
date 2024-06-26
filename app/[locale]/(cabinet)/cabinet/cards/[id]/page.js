@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -31,6 +31,8 @@ export default function CardPage() {
   const [returnErrorMessage, setReturnErrorMessage] = useState("");
   const [isRepLoading, setIsRepLoading] = useState(false);
   const [isReturnLoading, setIsReturnLoading] = useState(false);
+  const [error, setError] = useState(""); // New state for error
+  const [isErrorPopupVisible, setIsErrorPopupVisible] = useState(false); // New state for error popup visibility
 
   const fetchAllCards = async () => {
     let allCards = [];
@@ -74,6 +76,8 @@ export default function CardPage() {
       console.log('Fetched all cards:', allCards);
     } catch (error) {
       console.error('Error fetching all cards:', error);
+      setError(error.message);
+      setIsErrorPopupVisible(true);
     }
     console.timeEnd('fetchAllCards');
   };
@@ -101,6 +105,8 @@ export default function CardPage() {
       console.log('Fetched card details:', data.data);
     } catch (error) {
       console.error('Error fetching card details:', error);
+      setError(error.message);
+      setIsErrorPopupVisible(true);
     }
     console.timeEnd('fetchCardDetails');
   };
@@ -118,6 +124,8 @@ export default function CardPage() {
     } catch (error) {
       console.error('Error fetching user balance:', error);
       setBalance(null);
+      setError(error.message);
+      setIsErrorPopupVisible(true);
     }
     console.timeEnd('fetchUserBalance');
   };
@@ -137,7 +145,11 @@ export default function CardPage() {
       });
 
       if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+        const errorData = await response.json();
+        setError(errorData.message);
+        setIsErrorPopupVisible(true);
+        setIsDeleting(false);
+        return;
       }
 
       const data = await response.json();
@@ -151,6 +163,8 @@ export default function CardPage() {
       }, 10000);
     } catch (error) {
       console.error('Error deleting card:', error);
+      setError(error.message);
+      setIsErrorPopupVisible(true);
       setTimeout(() => {
         setIsDeleting(false);
         window.location.href = "/cabinet/cards";
@@ -211,6 +225,8 @@ export default function CardPage() {
       console.error('Error during return:', error);
       setReturnErrorMessage(translations('Cards.transfererr'));
       setIsReturnLoading(false);
+      setError(error.message);
+      setIsErrorPopupVisible(true);
     }
     console.timeEnd('handleReturnConfirmation');
   };
@@ -297,6 +313,8 @@ export default function CardPage() {
         setRepErrorMessage(translations('Cards.transfererr'));
       }
       setIsRepLoading(false);
+      setError(error.message);
+      setIsErrorPopupVisible(true);
     }
     console.timeEnd('handleRepConfirmation');
   };
@@ -354,6 +372,8 @@ export default function CardPage() {
     } catch (error) {
       console.error('Error fetching transactions:', error);
       setIsEmpty(true);
+      setError(error.message);
+      setIsErrorPopupVisible(true);
     }
     console.timeEnd('fetchCardTransactions');
   };
@@ -383,6 +403,8 @@ export default function CardPage() {
         console.log('Fetched user ID:', data.userId);
       } catch (error) {
         console.error('Error fetching user ID:', error);
+        setError(error.message);
+        setIsErrorPopupVisible(true);
       }
       console.timeEnd('fetchUserId');
     };
@@ -528,6 +550,19 @@ export default function CardPage() {
                 {isReturnLoading ? <div className={styles.loader}></div> : translations('Cards.confirm')}
               </button>
               <button className={styles.popupButton} onClick={handleCancel}>{translations('Cards.cancel')}</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {isErrorPopupVisible && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popup}>
+            <h3>{translations('Cards.error')}</h3>
+            <p>{error}</p>
+            <div className={styles.popupButtonstwo}>
+              <button className={styles.popupButton} onClick={() => setIsErrorPopupVisible(false)}>
+                OK
+              </button>
             </div>
           </div>
         </div>

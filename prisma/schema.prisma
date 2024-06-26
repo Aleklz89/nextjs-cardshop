@@ -79,3 +79,14 @@ model MaintenanceMode {
   id      Int     @id @default(autoincrement())
   enabled Boolean @default(false)
 }
+
+model RateLimit {
+  id               Int      @id @default(autoincrement())
+  userId           Int      @unique
+  nextBuyRequest   DateTime
+  nextDeleteRequest DateTime
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([userId], name: "userId")
+}

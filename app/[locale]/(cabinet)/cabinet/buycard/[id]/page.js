@@ -114,9 +114,9 @@ function Page() {
   };
 
   const handleMaxButtonClick = () => {
-    let maxAmount = balance;
-    if (balance < 100) {
-      maxAmount = Math.max(0, balance);
+    let maxAmount = parseFloat(balance);
+    if (isNaN(maxAmount) || maxAmount < 100) {
+      maxAmount = Math.max(0, maxAmount);
     }
     setDepositAmount(maxAmount.toFixed(2));
     const total = calculateTotalCost(maxAmount, cardsCount);
@@ -159,51 +159,40 @@ function Page() {
       return;
     }
 
-    const bin = await fetchBinById(binId);
-    if (!bin) {
-      setErrortwo("Unable to fetch BIN");
-      setIsIssuing(false);
-      return;
-    }
-
-    const postData = {
-      account_uuid: "dd89adb8-3710-4f25-aefd-d7116eb66b6b",
-      start_balance: parseFloat(depositAmount),
-      description: description,
-      bin: bin,
-      cards_count: parseInt(cardsCount, 10),
-      external_id: generatedAddress,
-    };
-
     try {
-      // Update user's balance first
-      const minResponse = await fetch('/api/min', {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId, balanceChange: -parseFloat(totalCost) }),
-      });
-
-      if (!minResponse.ok) {
-        throw new Error(`Error: ${minResponse.status}`);
+      const bin = await fetchBinById(binId);
+      if (!bin) {
+        setErrortwo("Unable to fetch BIN");
+        setIsIssuing(false);
+        return;
       }
 
-      // Proceed with card issuance
-      const buyResponse = await fetch("https://api.epn.net/card/buy", {
+      const postData = {
+        account_uuid: "dd89adb8-3710-4f25-aefd-d7116eb66b6b",
+        start_balance: parseFloat(depositAmount),
+        description: description,
+        bin: bin,
+        cards_count: parseInt(cardsCount, 10),
+        external_id: generatedAddress,
+        userId: userId,
+      };
+
+      const issueCardResponse = await fetch('/api/issue-card', {
         method: "POST",
         headers: {
-          accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: "Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ",
-          "X-CSRF-TOKEN": "",
         },
         body: JSON.stringify(postData),
       });
 
-      if (!buyResponse.ok) {
-        throw new Error(`Error: ${buyResponse.status}`);
+      if (!issueCardResponse.ok) {
+        const errorData = await issueCardResponse.json();
+        setErrortwo(errorData.message);
+        setIsIssuing(false);
+        return;
       }
+
+      const data = await issueCardResponse.json();
 
       const updateUserResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/add", {
         method: "POST",

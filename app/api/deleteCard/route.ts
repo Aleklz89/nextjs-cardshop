@@ -23,6 +23,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Проверка времени последнего запроса
+    const now = new Date();
+    const rateLimit = await prisma.rateLimit.findUnique({
+      where: { userId },
+    });
+
+    if (rateLimit && rateLimit.nextDeleteRequest > now) {
+      const retryAfter = Math.ceil((rateLimit.nextDeleteRequest.getTime() - now.getTime()) / 1000);
+      return NextResponse.json(
+        { error: `Повторіть спробу через ${retryAfter} секунд` },
+        { status: 429, headers: { 'Retry-After': retryAfter.toString() } }
+      );
+    }
+
     const cardUuids = cardUuidsWithBalances.map(item => item.cardUuid);
     const totalBalance = cardUuidsWithBalances.reduce((acc, item) => acc.plus(item.balance), new Decimal(0));
 
@@ -129,6 +143,15 @@ export async function POST(request: NextRequest) {
       } catch (error) {
         console.error('Ошибка удаления карт из EPN:', error);
       }
+
+      // Обновление времени следующего запроса
+      const nextRequestTime = new Date(now.getTime() + 60 * 1000); // 20 секунд
+
+      await prisma.rateLimit.upsert({
+        where: { userId },
+        update: { nextDeleteRequest: nextRequestTime },
+        create: { userId, nextDeleteRequest: nextRequestTime, nextBuyRequest: nextRequestTime },
+      });
 
       // Разблокировка карт
       await prisma.cardLock.updateMany({

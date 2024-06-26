@@ -55,6 +55,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     async function fetchCardBins() {
+      console.log("Тестируем")
       try {
         const response = await fetch('https://api.epn.net/card-bins', {
           method: 'GET',
@@ -89,7 +90,10 @@ const Dashboard = () => {
       }
     }
 
+    console.log("test1")
+
     fetchCardBins();
+    console.log("test2")
   }, []);
 
   const rootUrl = process.env.NEXT_PUBLIC_ROOT_URL;
