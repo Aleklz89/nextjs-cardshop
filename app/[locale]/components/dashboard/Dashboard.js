@@ -130,30 +130,7 @@ const Dashboard = () => {
     fetchUserId();
   }, []);
 
-  useEffect(() => {
-    if (userId !== null) {
-      try {
-        fetchUserBalance(userId);
-        fetchUserCards(userId).then(async (userCards) => {
-          const allCards = await fetchAllCards();
-          const filteredCards = allCards.filter(card => userCards.includes(card.external_id));
-          let holdBalance = 0;
-          for (const card of filteredCards) {
-            const transactions = await fetchCardTransactions(card.account.uuid);
-            if (!transactions) {
-              continue;
-            }
-            const holdTransactions = transactions.filter(transaction => transaction.type_enum !== null);
-            holdBalance += holdTransactions.reduce((acc, transaction) => acc + transaction.amount, 0);
-          }
-          setHoldBalance(holdBalance);
-          setIsLoadingBalance(false);
-        });
-      } finally {
-        setIsLoadingBalance(false);
-      }
-    }
-  }, [userId]);
+
   const rootUrl = process.env.NEXT_PUBLIC_ROOT_URL;
   const shareUrl = `https://telegram.me/share/url?url=${encodeURIComponent(rootUrl)}/&text=CVV888`;
 

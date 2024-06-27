@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from "react";
 import styles from "./neworder.module.css";
@@ -18,7 +18,7 @@ function Page() {
   const [isLoadingBalance, setIsLoadingBalance] = useState(true);
   const [depositAmount, setDepositAmount] = useState("");
   const [totalCost, setTotalCost] = useState("");
-  const [cardsCount, setCardsCount] = useState(1); 
+  const [cardsCount, setCardsCount] = useState(1);
   const [constant, setConstant] = useState(null);
   const [description, setDescription] = useState("");
 
@@ -142,23 +142,23 @@ function Page() {
 
   const handleIssueCard = async () => {
     setIsIssuing(true);
-
+  
     const urlSegments = window.location.pathname.split("/");
     const binId = urlSegments[urlSegments.length - 1];
     const generatedAddress = generateEthereumAddress();
-
+  
     if (!depositAmount || !description || !cardsCount) {
       setErrortwo(translations("BuyCardId.fill"));
       setIsIssuing(false);
       return;
     }
-
+  
     if (parseFloat(totalCost) > parseFloat(balance)) {
       setErrortwo(translations("BuyCardId.funds"));
       setIsIssuing(false);
       return;
     }
-
+  
     try {
       const bin = await fetchBinById(binId);
       if (!bin) {
@@ -166,7 +166,7 @@ function Page() {
         setIsIssuing(false);
         return;
       }
-
+  
       const postData = {
         account_uuid: "dd89adb8-3710-4f25-aefd-d7116eb66b6b",
         start_balance: parseFloat(depositAmount),
@@ -175,8 +175,9 @@ function Page() {
         cards_count: parseInt(cardsCount, 10),
         external_id: generatedAddress,
         userId: userId,
+        totalCost: totalCost, // Добавляем totalCost
       };
-
+  
       const issueCardResponse = await fetch('/api/issue-card', {
         method: "POST",
         headers: {
@@ -184,80 +185,19 @@ function Page() {
         },
         body: JSON.stringify(postData),
       });
-
+  
       if (!issueCardResponse.ok) {
         const errorData = await issueCardResponse.json();
         setErrortwo(errorData.message);
         setIsIssuing(false);
         return;
       }
-
-      const data = await issueCardResponse.json();
-
-      const updateUserResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId, cardUuid: generatedAddress }),
-      });
-
-      if (!updateUserResponse.ok) {
-        const errorData = await updateUserResponse.json();
-        console.error(`Error updating user: ${updateUserResponse.status} - ${updateUserResponse.statusText}`, errorData);
-        throw new Error(`Error updating user: ${updateUserResponse.status}`);
-      }
-
-      const transactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/newtrans", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          type: "replenishment",
-          description: "Card replenishment",
-          amount: -parseFloat(totalCost),
-        }),
-      });
-
-      if (!transactionResponse.ok) {
-        const errorData = await transactionResponse.json();
-        console.error(`Error logging transaction: ${transactionResponse.status}`, errorData);
-        throw new Error(`Error logging transaction: ${transactionResponse.status}`);
-      }
-
-      const cardTransactionResponse = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + "/api/cardtrans", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          cardId: generatedAddress,
-          amount: parseFloat(depositAmount),
-        }),
-      });
-
-      if (!cardTransactionResponse.ok) {
-        const errorData = await cardTransactionResponse.json();
-        console.error(`Error logging card transaction: ${cardTransactionResponse.status}`, errorData);
-        throw new Error(`Error logging card transaction: ${cardTransactionResponse.status}`);
-      }
-
+  
       setTimeout(() => {
         setIsIssuing(false);
         window.location.href = "/cabinet/cards";
       }, 10000);
     } catch (error) {
-      // Revert balance update if error occurs during card issuance
-      await fetch('/api/min', {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId, balanceChange: parseFloat(totalCost) }),
-      });
-
       setIsIssuing(false);
       console.error("Error issuing card:", error);
       setErrortwo(translations("BuyCardId.error"));

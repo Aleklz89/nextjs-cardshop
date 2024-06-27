@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -14,7 +14,6 @@ export default function CardPage() {
   const pathname = usePathname();
   const router = useRouter();
   const [uuid, setUuid] = useState(null);
-  const [cardsData, setCardsData] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [cardDetails, setCardDetails] = useState({ number: '', cvx2: '', exp_month: '', exp_year: '' });
   const [userId, setUserId] = useState(null);
@@ -33,59 +32,12 @@ export default function CardPage() {
   const [isReturnLoading, setIsReturnLoading] = useState(false);
   const [error, setError] = useState(""); // New state for error
   const [isErrorPopupVisible, setIsErrorPopupVisible] = useState(false); // New state for error popup visibility
-
-  const fetchAllCards = async () => {
-    let allCards = [];
-    let currentPage = 1;
-    const perPage = 25;
-
-    console.time('fetchAllCards');
-    try {
-      const fetchPage = async (page) => {
-        console.time(`fetchAllCards - page ${page}`);
-        const response = await fetch(`https://api.epn.net/card?page=${page}&per_page=${perPage}&blocked_at=null`, {
-          headers: {
-            accept: 'application/json',
-            Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
-          },
-        });
-        console.timeEnd(`fetchAllCards - page ${page}`);
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-        return response.json();
-      };
-
-      const data = await fetchPage(currentPage);
-      allCards = allCards.concat(data.data);
-
-      const totalPages = Math.ceil(data.meta.total / perPage);
-
-      if (totalPages > 1) {
-        const fetchPromises = [];
-        for (let page = 2; page <= totalPages; page++) {
-          fetchPromises.push(fetchPage(page));
-        }
-        const pagesData = await Promise.all(fetchPromises);
-        pagesData.forEach((pageData) => {
-          allCards = allCards.concat(pageData.data);
-        });
-      }
-
-      setCardsData(allCards);
-      console.log('Fetched all cards:', allCards);
-    } catch (error) {
-      console.error('Error fetching all cards:', error);
-      setError(error.message);
-      setIsErrorPopupVisible(true);
-    }
-    console.timeEnd('fetchAllCards');
-  };
+  const [cardData, setCardData] = useState(null); // New state for card data
 
   const fetchCardDetails = async (uuid) => {
     console.time('fetchCardDetails');
     try {
-      const response = await fetch(`https://api.epn.net/card/${uuid}/showpan`, {
+      const response = await fetch(`https://api.epn.net/card?card_uuids[]=${uuid}&per_page=1`, {
         headers: {
           accept: 'application/json',
           Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
@@ -96,13 +48,16 @@ export default function CardPage() {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
+      const cardData = data.data[0];
+      setSelectedCard(cardData);
       setCardDetails({
-        number: data.data.number,
-        cvx2: data.data.cvx2,
-        exp_month: data.data.exp_month,
-        exp_year: data.data.exp_year,
+        number: cardData.number,
+        cvx2: cardData.cvx2,
+        exp_month: cardData.exp_month,
+        exp_year: cardData.exp_year,
       });
-      console.log('Fetched card details:', data.data);
+      console.log('Fetched card details:', cardData);
+      setCardData(cardData); // Set card data
     } catch (error) {
       console.error('Error fetching card details:', error);
       setError(error.message);
@@ -233,8 +188,7 @@ export default function CardPage() {
 
   const handleDeleteConfirmation = () => {
     setIsPopupVisible(false);
-    console.log("Выбранная карта:", selectedCard);
-    deleteCard(selectedCard.uuid);
+    deleteCard(uuid);
   };
 
   const handleReturnClick = () => {
@@ -387,10 +341,6 @@ export default function CardPage() {
   }, [pathname]);
 
   useEffect(() => {
-    fetchAllCards();
-  }, []);
-
-  useEffect(() => {
     const fetchUserId = async () => {
       console.time('fetchUserId');
       try {
@@ -419,18 +369,16 @@ export default function CardPage() {
   }, [userId]);
 
   useEffect(() => {
-    if (uuid !== null && cardsData.length > 0) {
-      const card = cardsData.find((card) => card.uuid === uuid);
-      setSelectedCard(card || null);
-      console.log('Selected card:', card);
-
-      if (card && card.uuid) {
-        console.log('Fetching details and transactions for card:', card.uuid);
-        fetchCardDetails(card.uuid);
-        fetchCardTransactions(card.account.uuid);
-      }
+    if (uuid !== null) {
+      fetchCardDetails(uuid);
     }
-  }, [uuid, cardsData]);
+  }, [uuid]);
+
+  useEffect(() => {
+    if (cardData) {
+      fetchCardTransactions(cardData.account.uuid);
+    }
+  }, [cardData]);
 
   if (!selectedCard) {
     return <p></p>;
