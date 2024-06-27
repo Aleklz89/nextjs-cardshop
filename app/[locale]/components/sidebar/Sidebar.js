@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './Sidebar.module.css';
@@ -20,7 +20,7 @@ function Sidebar() {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const [isMenuVisible, setIsMenuVisible] = useState(true);
   const [balance, setBalance] = useState(null);
-  const [holdBalance, setHoldBalance] = useState(null);
+  // const [holdBalance, setHoldBalance] = useState(null); // Commented out
   const [userId, setUserId] = useState(null);
   const [isLoadingBalance, setIsLoadingBalance] = useState(true);
   const [cards, setCards] = useState([]);
@@ -147,27 +147,27 @@ function Sidebar() {
     }
   };
 
-  const fetchHoldBalance = async (userId, cardUuids) => {
-    try {
-      const response = await fetch('/api/transactions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId, cardUuids }),
-      });
+  // const fetchHoldBalance = async (userId, cardUuids) => {
+  //   try {
+  //     const response = await fetch('/api/transactions', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ userId, cardUuids }),
+  //     });
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`Error: ${response.status}`);
+  //     }
 
-      const data = await response.json();
-      return data.holdBalance;
-    } catch (error) {
-      console.error('Error fetching hold balance:', error);
-      return 0;
-    }
-  };
+  //     const data = await response.json();
+  //     return data.holdBalance;
+  //   } catch (error) {
+  //     console.error('Error fetching hold balance:', error);
+  //     return 0;
+  //   }
+  // };
 
   useEffect(() => {
     fetchUserId();
@@ -184,9 +184,9 @@ function Sidebar() {
         setCards(activeCards);
         setCardsCount(activeCards.length);
 
-        const cardUuids = allCards.map((card) => card.account.uuid);
-        const holdBalance = await fetchHoldBalance(userId, cardUuids);
-        setHoldBalance(parseFloat(holdBalance.toFixed(2)));
+        // const cardUuids = allCards.map((card) => card.account.uuid);
+        // const holdBalance = await fetchHoldBalance(userId, cardUuids);
+        // setHoldBalance(parseFloat(holdBalance.toFixed(2)));
 
         await fetchUserBalance(userId);
         setIsLoadingBalance(false);
@@ -219,7 +219,7 @@ function Sidebar() {
               <h6>
                 <span>{isLoadingBalance ? `${translations('Cardlist.loading')}` : `$${(balance).toFixed(2)}`}</span>
                 &nbsp;
-                <span className={styles.holdBalance}>{isLoadingBalance || holdBalance === null ? `${translations('Cardlist.loading')}` : `$${holdBalance.toFixed(2)}`}</span>
+                {/* <span className={styles.holdBalance}>{isLoadingBalance || holdBalance === null ? `${translations('Cardlist.loading')}` : `$${holdBalance.toFixed(2)}`}</span> */}
               </h6>
             </div>
             <Link href="/cabinet/topup" style={{ textDecoration: 'none' }} passHref>
