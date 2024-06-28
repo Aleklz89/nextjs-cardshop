@@ -53,6 +53,15 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
+      // Revert balance update if error occurs during card issuance
+      await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/min', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, balanceChange: parseFloat(totalCost) }),
+      });
+
       throw new Error(`Error: ${response.status}`);
     }
 
@@ -125,15 +134,6 @@ export async function POST(request: NextRequest) {
 
     return new Response(JSON.stringify(data), { status: 200 });
   } catch (error) {
-    // Revert balance update if error occurs during card issuance
-    await fetch(process.env.NEXT_PUBLIC_ROOT_URL + '/api/min', {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId, balanceChange: parseFloat(totalCost) }),
-    });
-
     console.error("Error issuing card:", error);
     return new Response(JSON.stringify({ message: "Internal Server Error", error: error.message }), { status: 500 });
   }
