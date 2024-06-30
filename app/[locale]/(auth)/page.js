@@ -243,8 +243,8 @@ export default function SignInUpForm() {
                     <Image src="/avatar.svg" alt="Settings icon" height="32" width="32" className={styles.avatar} />
                     <Image src="/avatartwo.svg" alt="Settings icon" height="32" width="32" className={styles.avatartwo} />
                     <Image src="/avatarthree.svg" alt="Settings icon" height="32" width="32" className={styles.avatartwo} />
-                    <Image src="/avatarfour.svg" alt="Settings icon" height="32" width="32" className={styles.avatarтwo} />
-                    <Image src="/avatarfive.svg" alt="Settings icon" height="32" width="32" className={styles.avatarтwo} />
+                    <Image src="/avatarfour.svg" alt="Settings icon" height="32" width="32" className={styles.avatartwo} />
+                    <Image src="/avatarfive.svg" alt="Settings icon" height="32" width="32" className={styles.avatartwo} />
                   </div>
                   <p className={styles.txt}>{translations("IndexPage.users")}</p>
                 </div>
@@ -255,10 +255,10 @@ export default function SignInUpForm() {
                 <div className={styles.avatarbox}>
                   <div className={styles.inneravatar}>
                     <Image src="/avatar.svg" alt="Settings icon" height="32" width="32" className={styles.avatar} />
-                    <Image src="/avatartwo.svg" alt="Settings icon" height="32" width="32" className={styles.avatартwo} />
-                    <Image src="/avatартthree.svg" alt="Settings icon" height="32" width="32" className={styles.avatартwo} />
-                    <Image src="/avatarfour.svg" alt="Settings icon" height="32" width="32" className={styles.avatартwo} />
-                    <Image src="/avatarfive.svg" alt="Settings icon" height="32" width="32" className={styles.avatартwo} />
+                    <Image src="/avatartwo.svg" alt="Settings icon" height="32" width="32" className={styles.avatarтwo} />
+                    <Image src="/avatarthree.svg" alt="Settings icon" height="32" width="32" className={styles.avatarтwo} />
+                    <Image src="/avatarfour.svg" alt="Settings icon" height="32" width="32" className={styles.avatarтwo} />
+                    <Image src="/avatarfive.svg" alt="Settings icon" height="32" width="32" className={styles.avatarтwo} />
                   </div>
                   <p className={styles.txt}>{translations("IndexPage.users")}</p>
                 </div>
