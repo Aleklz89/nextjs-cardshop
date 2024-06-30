@@ -1,0 +1,297 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap');
+
+
+.main {
+    margin-left: 50px;
+    font-family: 'IBM Plex Mono', monospace;
+    display: flex;
+    align-items: center;
+    
+}
+
+.animatedText {
+  animation: textAnimation 3s ease infinite;
+}
+
+@keyframes textAnimation {
+  0% { color: #ff0000; }
+  25% { color: #00ff00; }
+  50% { color: #0000ff; }
+  75% { color: #ff00ff; }
+  100% { color: #ff0000; }
+}
+
+.owner {
+  font-family: 'Great Vibes', cursive;
+  font-size: 2.8em;
+  font-weight: 700;
+  color: #ff6347;
+  animation: textAnimation 5s linear infinite;
+}
+
+.title {
+    margin-right: 20px;
+}
+
+.head {
+  font-family: 'Dancing Script', cursive;
+  font-size: 2.8em;
+  font-weight: 700;
+  color: #ff6347;
+}
+
+.teamLead {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2em;
+  font-weight: 600;
+  color: #ff6347;
+}
+
+.buyer {
+  font-family: 'Roboto', sans-serif;
+  font-size: 2em;
+  font-weight: 500;
+  color: rgb(182, 181, 181);
+}
+
+.main {
+    font-family: 'IBM Plex Mono', monospace;
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  .title {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+  
+  .subtitle {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 28px;
+    margin-top: 50px;
+    text-align: left;
+    margin-left: 4%;
+  }
+  
+  .table {
+    font-family: 'IBM Plex Mono', monospace;
+    width: 90%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .table th,
+  .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .table th {
+    background-color: transparent;
+  }
+  
+  .table tr:nth-child(even) {
+    background-color: transparent;
+  }
+
+  .info {
+    margin-left: 50px;
+    margin-bottom: 100px;
+  }
+
+  .titletwo {
+    margin-left: 0%;
+  }
+
+  .team {
+    font-size: 30px;
+    margin-left: 20px;
+    color: #ff6347;
+    margin-right: 20%;
+  }
+
+  .confirmButton {
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px 10px;
+  }
+  
+  .rejectButton {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px 10px;
+  }
+
+  .loader {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+
+  .inputField {
+    padding: 5px 10px;
+    font-size: 1em;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    margin-right: 0px;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    margin-left: 15px;
+  }
+  
+  .inputField:focus {
+    outline: none;
+    border-color: #666;
+  }
+
+  .block {
+    margin-right: 4%;
+    margin-top: 5px;
+    min-width: 400px;
+  }
+  
+  .updateButton {
+    padding: 5px 15px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    height: 31px;
+  }
+  
+  .updateButton:disabled {
+    background-color: #ccc;
+  }
+  
+  .updateButton:hover:not(:disabled) {
+    background-color: #45a049;
+  }
+  
+
+  .errorPopup {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+  
+  .errorPopup p {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .errorPopup button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    border: none;
+    background: white;
+    color: black;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .errorPopup button:hover {
+    background: lightgray;
+  }
+  
+  .logoSection {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .logoDropArea {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    cursor: pointer;
+    width: 20%;
+    height: 100px;
+    margin-left: 4%;
+    width: 100px;
+  }
+  
+  .logoDisplay {
+    display: flex;
+    justify-content: left;
+    margin-left: 4%;
+  }
+  
+  .logo {
+    max-width: 100px;
+    max-height: 100px;
+  }
+  
+  .logoPlaceholder {
+    color: #ccc;
+    font-size: 14px;
+  }
+  
+  .errorPopup {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px 20px;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    z-index: 1000;
+  }
+  
+  .errorPopup button {
+    margin-left: 10px;
+    background-color: #721c24;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+
+  @media (max-width: 767px) { 
+    .main {
+        display: flex;
+        flex-direction: column;
+        justify-content: left;
+        margin-left: 0;
+    }
+    .title {
+        margin-top: 50px;
+        font-size: 20px;
+        margin-left: -130px;
+    }
+    .titletwo {
+        font-size: 20px;
+        margin-left: -130px;
+    }
+  }

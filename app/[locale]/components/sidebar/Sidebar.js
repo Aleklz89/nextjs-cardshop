@@ -22,6 +22,7 @@ function Sidebar() {
   const [balance, setBalance] = useState(null);
   // const [holdBalance, setHoldBalance] = useState(null); // Commented out
   const [userId, setUserId] = useState(null);
+  const [userStatus, setUserStatus] = useState(null); // New state for user status
   const [isLoadingBalance, setIsLoadingBalance] = useState(true);
   const [cards, setCards] = useState([]);
   const [cardsCount, setCardsCount] = useState(0);
@@ -84,7 +85,7 @@ function Sidebar() {
     }
   };
 
-  const fetchUserBalance = async (id) => {
+  const fetchUserDetails = async (id) => {
     try {
       const response = await fetch(process.env.NEXT_PUBLIC_ROOT_URL + `/api/cabinet?id=${id}`);
       if (!response.ok) {
@@ -92,9 +93,11 @@ function Sidebar() {
       }
       const data = await response.json();
       setBalance(parseFloat(data.user.balance));
+      setUserStatus(data.user.status); // Set user status
     } catch (error) {
-      console.error('Error fetching user balance:', error);
+      console.error('Error fetching user details:', error);
       setBalance(null);
+      setUserStatus(null);
     }
   };
 
@@ -188,7 +191,7 @@ function Sidebar() {
         // const holdBalance = await fetchHoldBalance(userId, cardUuids);
         // setHoldBalance(parseFloat(holdBalance.toFixed(2)));
 
-        await fetchUserBalance(userId);
+        await fetchUserDetails(userId); // Fetch user details including status
         setIsLoadingBalance(false);
       }
     };
@@ -288,6 +291,23 @@ function Sidebar() {
               {translations('Sidebar.settings')}
             </Link>
           </li>
+          {['owner', 'head', 'team lead'].includes(userStatus) && (
+            <li className={isActive('/cabinet/team') ? styles.active : styles.navItem}>
+              <Link href="/cabinet/team" passHref>
+                <span className={styles.icon}></span>
+                <span className={styles.icon}>
+                  <Image
+                    src="/team.svg"
+                    alt="Description"
+                    className="icon"
+                    width={28}
+                    height={28}
+                  />
+                </span>
+                {translations('Sidebar.team')}
+              </Link>
+            </li>
+          )}
         </ul>
         <div className={styles.numbox}>
           <Switcher />

@@ -205,7 +205,23 @@
         "cards": "Cards",
         "transactions": "Transactions",
         "support": "Support",
-        "settings": "Settings"
+        "settings": "Settings",
+        "team": "Team"
+    },
+
+    "Team": {
+        "logo": "Team Logo",
+        "drop": "Drop logo here",
+        "available": "No logo available",
+        "your": "Your Team:",
+        "status": "Your Status:",
+        "invite": "Invite Links",
+        "users": "Users",
+        "other": "Status",
+        "reject": "Reject",
+        "generate": "Generate Invite Link",
+        "create": "Created at",
+        "update": "Updated at"
     },
 
     "TransHistory": {

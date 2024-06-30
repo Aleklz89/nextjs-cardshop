@@ -44,23 +44,20 @@ function Page() {
   const [passwordError, setPasswordError] = useState('');
   const [currentUserId, setCurrentUserId] = useState(null);
 
-  // Функция для открытия попапа смены пароля
   const handlePasswordChangeClick = (userId) => {
     setCurrentUserId(userId);
     setShowPasswordPopup(true);
   };
 
-  // Функция для закрытия попапа смены пароля
   const handleClosePasswordPopup = () => {
     setShowPasswordPopup(false);
     setNewPassword('');
     setPasswordError('');
   };
 
-  // Функция для подтверждения смены пароля
   const handleConfirmPasswordChange = async () => {
     if (!newPassword) {
-      setPasswordError('Пароль не может быть пустым');
+      setPasswordError('Пароль не може бути порожнім');
       return;
     }
 
@@ -77,11 +74,11 @@ function Page() {
         setPasswordError('');
       } else {
         const data = await response.json();
-        setPasswordError(data.error || 'Ошибка при смене пароля');
+        setPasswordError(data.error || 'Помилка при зміні пароля');
       }
     } catch (error) {
-      console.error('Ошибка при смене пароля:', error);
-      setPasswordError('Ошибка при смене пароля');
+      console.error('Помилка при зміні пароля:', error);
+      setPasswordError('Помилка при зміні пароля');
     }
   };
 
@@ -98,10 +95,10 @@ function Page() {
         console.log('Maintenance mode toggled successfully:', data);
         setIsMaintenanceMode(data.enable);
       } else {
-        console.error('Ошибка при переключении режима техобслуживания');
+        console.error('Помилка при переключенні режиму техобслуговування');
       }
     } catch (error) {
-      console.error('Ошибка при переключении режима техобслуживания:', error);
+      console.error('Помилка при переключенні режиму техобслуговування:', error);
     }
   };
 
@@ -128,11 +125,11 @@ function Page() {
         setOriginalValue(data.value);
         setInputValue(data.value);
       } else {
-        setErrortwo(data.error || 'Ошибка при получении значения');
+        setErrortwo(data.error || 'Помилка при отриманні значення');
       }
     } catch (error) {
-      console.error('Ошибка при получении значения:', error);
-      setErrortwo('Ошибка при получении значения');
+      console.error('Помилка при отриманні значення:', error);
+      setErrortwo('Помилка при отриманні значення');
     }
   };
 
@@ -148,11 +145,11 @@ function Page() {
         setValue(data.value);
         setOriginalValue(data.value);
       } else {
-        setErrortwo(data.error || 'Ошибка при обновлении значения');
+        setErrortwo(data.error || 'Помилка при оновленні значення');
       }
     } catch (error) {
-      console.error('Ошибка при обновлении значения:', error);
-      setErrortwo('Ошибка при обновлении значения');
+      console.error('Помилка при оновленні значення:', error);
+      setErrortwo('Помилка при оновленні значення');
     }
   };
 
@@ -222,7 +219,7 @@ function Page() {
       setFilteredData(sortedData);
       setLoadingRequests(false);
     } else {
-      console.error("Не удалось загрузить данные");
+      console.error("Не вдалося завантажити дані");
     }
   };
 
@@ -241,7 +238,7 @@ function Page() {
       applyFiltersAndSortTwo(users);
       setLoadingUsers(false);
     } else {
-      console.error("Не удалось загрузить данные для второй таблицы");
+      console.error("Не вдалося завантажити дані для другої таблиці");
     }
   };
 
@@ -258,7 +255,7 @@ function Page() {
       console.log('Maintenance mode status:', data.maintenanceMode);
       setIsMaintenanceMode(data.maintenanceMode);
     } catch (error) {
-      console.error('Ошибка при проверке режима техобслуживания:', error);
+      console.error('Помилка при перевірці режиму техобслуговування:', error);
     }
   };
 
@@ -341,7 +338,7 @@ function Page() {
       setData(newData);
       setFilteredData(newData);
     } else {
-      console.error("Ошибка при отклонении заявки");
+      console.error("Помилка при відхиленні заявки");
     }
 
     setTimeout(() => {
@@ -368,10 +365,10 @@ function Page() {
         setData(newData);
         setFilteredData(newData);
       } else {
-        console.error("Ошибка при добавлении пользователя");
+        console.error("Помилка при додаванні користувача");
       }
     } else {
-      console.error("Ошибка при удалении заявки");
+      console.error("Помилка при видаленні заявки");
     }
 
     setTimeout(() => {
@@ -393,6 +390,21 @@ function Page() {
       ...prevMarkups,
       [id]: newMarkup,
     }));
+  };
+
+  const handleStatusChange = (e, id) => {
+    const newStatus = e.target.value;
+    setDataTwo((prevDataTwo) =>
+      prevDataTwo.map((user) =>
+        user.id === id ? { ...user, status: newStatus } : user
+      )
+    );
+    setFilteredDataTwo((prevFilteredDataTwo) =>
+      prevFilteredDataTwo.map((user) =>
+        user.id === id ? { ...user, status: newStatus } : user
+      )
+    );
+    handleStatusChangeSubmit(id, newStatus);
   };
 
   const handleRejectBalanceChange = (id) => {
@@ -449,7 +461,7 @@ function Page() {
           }),
         });
       } else {
-        console.error('Ошибка при обновлении баланса');
+        console.error('Помилка при оновленні балансу');
       }
     }
 
@@ -463,12 +475,28 @@ function Page() {
       });
 
       if (!updateMarkupResponse.ok) {
-        console.error('Ошибка при обновлении markup');
+        console.error('Помилка при оновленні markup');
       }
     }
     setTimeout(() => {
       setLoadingAcceptBalance(null);
     }, 5000);
+  };
+
+  const handleStatusChangeSubmit = async (id, newStatus) => {
+    try {
+      const response = await fetch('/api/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+
+      if (!response.ok) {
+        console.error('Помилка при оновленні статусу');
+      }
+    } catch (error) {
+      console.error('Помилка при оновленні статусу:', error);
+    }
   };
 
   function formatDate(isoString) {
@@ -478,18 +506,18 @@ function Page() {
     const minutes = date.getMinutes().toString().padStart(2, "0");
     const day = date.getDate();
     const months = [
-      "января",
-      "февраля",
-      "марта",
-      "апреля",
-      "мая",
-      "июня",
-      "июля",
-      "августа",
-      "сентября",
-      "октября",
-      "ноября",
-      "декабря",
+      "січня",
+      "лютого",
+      "березня",
+      "квітня",
+      "травня",
+      "червня",
+      "липня",
+      "серпня",
+      "вересня",
+      "жовтня",
+      "листопада",
+      "грудня",
     ];
     const month = months[date.getMonth()];
     return `${hours}:${minutes}, ${day} ${month}`;
@@ -506,89 +534,40 @@ function Page() {
       <header className={styles.header}>
         <div className={styles.logo}>CVV888</div>
         <div className={styles.parent}>
-          <h3>Текущий баланс:</h3>
+          <h3>Поточний баланс:</h3>
           {balance !== null ? (
             <h3 className={styles.sum}>{balance} $</h3>
           ) : (
-            <p className={styles.load}>{error || 'Загрузка данных...'}</p>
+            <p className={styles.load}>{error || 'Завантаження даних...'}</p>
           )}
         </div>
         <button
           className={isMaintenanceMode ? styles.maintenanceButtonActive : styles.maintenanceButton}
           onClick={handleMaintenanceClick}
         >
-          {isMaintenanceMode ? 'Режим техобслуживания' : 'Обычный режим'}
+          {isMaintenanceMode ? 'Режим техобслуговування' : 'Звичайний режим'}
         </button>
       </header>
-      <div className={styles.mainblock}>
-        <h2>Запросы на регистрацию</h2>
-        <div className={styles.scrollabletable}>
-          {loadingRequests ? (
-            <div className={styles.loaderContainer}>
-              <div className={styles.loader}></div>
-              <p>Загрузка данных...</p>
-            </div>
-          ) : filteredData.length > 0 ? (
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Время</th>
-                  <th>Почта</th>
-                  <th>Телеграм</th>
-                  <th>Отклонить</th>
-                  <th>Подтвердить</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredData.slice().reverse().map((item) => (
-                  <tr key={item.id}>
-                    <td>{formatDate(item.submissionTime)}</td>
-                    <td>{item.email}</td>
-                    <td>
-                      <a href={`https://t.me/${item.telegram}`} target="_blank" rel="noopener noreferrer" className={styles.telegramlink}>
-                        @{item.telegram}
-                      </a>
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => handleReject(item.id)}
-                        className={styles.btnreject}
-                        disabled={loadingReject === item.id}
-                      >
-                        {loadingReject === item.id ? (
-                          <div className={styles.btnLoading}></div>
-                        ) : (
-                          'Отклонить'
-                        )}
-                      </button>
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => handleAccept(item.id, item.email, item.password, item.telegram)}
-                        className={styles.btnconfirm}
-                        disabled={loadingAccept === item.id}
-                      >
-                        {loadingAccept === item.id ? (
-                          <div className={styles.btnLoading}></div>
-                        ) : (
-                          'Подтвердить'
-                        )}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div>
+      <div className={styles.scale}>
+        <div className={styles.mainblock}>
+          <h2>Запити на реєстрацію</h2>
+          <div className={styles.scrollabletable}>
+            {loadingRequests ? (
+              <div className={styles.loaderContainer}>
+                <div className={styles.loader}></div>
+                <p>Завантаження даних...</p>
+              </div>
+            ) : filteredData.length > 0 ? (
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th>Время</th>
-                    <th>Почта</th>
+                    <th>Час</th>
+                    <th>Пошта</th>
                     <th>Телеграм</th>
-                    <th>Отклонить</th>
-                    <th>Подтвердить</th>
+                    <th>Команда</th>
+                    <th>Статус</th>
+                    <th>Відхилити</th>
+                    <th>Підтвердити</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -601,117 +580,115 @@ function Page() {
                           @{item.telegram}
                         </a>
                       </td>
+                      <td>{item.team}</td>
+                      <td>{item.status}</td>
                       <td>
-                        <button onClick={() => handleReject(item.id)} className={styles.btnreject}>
-                          Отклонить
+                        <button
+                          onClick={() => handleReject(item.id)}
+                          className={styles.btnreject}
+                          disabled={loadingReject === item.id}
+                        >
+                          {loadingReject === item.id ? (
+                            <div className={styles.btnLoading}></div>
+                          ) : (
+                            'Відхилити'
+                          )}
                         </button>
                       </td>
                       <td>
-                        <button onClick={() => handleAccept(item.id, item.email, item.password, item.telegram)} className={styles.btnconfirm}>
-                          Подтвердить
+                        <button
+                          onClick={() => handleAccept(item.id, item.email, item.password, item.telegram)}
+                          className={styles.btnconfirm}
+                          disabled={loadingAccept === item.id}
+                        >
+                          {loadingAccept === item.id ? (
+                            <div className={styles.btnLoading}></div>
+                          ) : (
+                            'Підтвердити'
+                          )}
                         </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              <div className={styles.noData}>
-                Запросов на регистрацию нет
+            ) : (
+              <div>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Час</th>
+                      <th>Пошта</th>
+                      <th>Телеграм</th>
+                      <th>Команда</th>
+                      <th>Статус</th>
+                      <th>Відхилити</th>
+                      <th>Підтвердити</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredData.slice().reverse().map((item) => (
+                      <tr key={item.id}>
+                        <td>{formatDate(item.submissionTime)}</td>
+                        <td>{item.email}</td>
+                        <td>
+                          <a href={`https://t.me/${item.telegram}`} target="_blank" rel="noopener noreferrer" className={styles.telegramlink}>
+                            @{item.telegram}
+                          </a>
+                        </td>
+                        <td>{item.team}</td>
+                        <td>{item.status}</td>
+                        <td>
+                          <button onClick={() => handleReject(item.id)} className={styles.btnreject}>
+                            Відхилити
+                          </button>
+                        </td>
+                        <td>
+                          <button onClick={() => handleAccept(item.id, item.email, item.password, item.telegram)} className={styles.btnconfirm}>
+                            Підтвердити
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className={styles.noData}>
+                  Запитів на реєстрацію немає
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
-      <div className={styles.mainblocktwo}>
-        <h2>Пользователи</h2>
-        <div className={styles.scrollabletable}>
-          {loadingUsers ? (
-            <div className={styles.loaderContainer}>
-              <div className={styles.loader}></div>
-              <p>Загрузка данных...</p>
-            </div>
-          ) : dataTwo.length > 0 ? (
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Зарегистрировался</th>
-                  <th>Последнее изменение баланса/наценки</th>
-                  <th>Почта</th>
-                  <th>Баланс</th>
-                  <th>Телеграм</th>
-                  <th>Комиссия</th>
-                  <th>Отклонить</th>
-                  <th>Подтвердить</th>
-                  <th>Сменить пароль</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dataTwo.slice().reverse().map((item) => (
-                  <tr key={item.id}>
-                    <td>{formatDate(item.createdAt)}</td>
-                    <td>{item.createdAt === item.updatedAt ? 'Никогда не пополнял' : formatDate(item.updatedAt)}</td>
-                    <td>{item.email}</td>
-                    <td>
-                      <input
-                        type="number"
-                        value={editableBalances[item.id] !== undefined ? editableBalances[item.id] : item.balance}
-                        onChange={(e) => handleBalanceChange(e, item.id)}
-                        className={styles.balanceInput}
-                      /> $
-                    </td>
-                    <td>
-                      <a href={`https://t.me/${item.telegram}`} target="_blank" rel="noopener noreferrer" className={styles.telegramlink}>
-                        @{item.telegram}
-                      </a>
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        value={editableMarkups[item.id] !== undefined ? editableMarkups[item.id] : item.markup}
-                        onChange={(e) => handleMarkupChange(e, item.id)}
-                        className={styles.balanceInput}
-                      />
-                      <span className={styles.percentSign}>$</span>
-                    </td>
-                    <td>
-                      <button onClick={() => handleRejectBalanceChange(item.id)} className={styles.btnreject}>
-                        {loadingRejectBalance === item.id ? (<div className={styles.loader}></div>) : ('Отклонить')}
-                      </button>
-                    </td>
-                    <td>
-                      <button onClick={() => handleAcceptBalanceChange(item.id)} className={styles.btnconfirm}>
-                        {loadingAcceptBalance === item.id ? (<div className={styles.loader}></div>) : ('Подтвердить')}
-                      </button>
-                    </td>
-                    <td>
-                      <button onClick={() => handlePasswordChangeClick(item.id)} className={styles.btnchange}>
-                        Сменить пароль
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div>
+        <div className={styles.mainblocktwo}>
+          <h2>Користувачі</h2>
+          <div className={styles.scrollabletable}>
+            {loadingUsers ? (
+              <div className={styles.loaderContainer}>
+                <div className={styles.loader}></div>
+                <p>Завантаження даних...</p>
+              </div>
+            ) : dataTwo.length > 0 ? (
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th>Зарегистрировался</th>
-                    <th>Последнее изменение баланса/наценки</th>
-                    <th>Почта</th>
+                    <th>Зареєструвався</th>
+                    <th>Остання зміна балансу/націнки</th>
+                    <th>Пошта</th>
                     <th>Баланс</th>
                     <th>Телеграм</th>
-                    <th>Снизить стоимость на</th>
-                    <th>Отклонить</th>
-                    <th>Подтвердить</th>
+                    <th>Команда</th>
+                    <th>Статус</th>
+                    <th>Націнка</th>
+                    <th>Відхилити</th>
+                    <th>Підтвердити</th>
+                    <th>Змінити пароль</th>
                   </tr>
                 </thead>
                 <tbody>
                   {dataTwo.slice().reverse().map((item) => (
                     <tr key={item.id}>
                       <td>{formatDate(item.createdAt)}</td>
-                      <td>{item.createdAt === item.updatedAt ? 'Никогда не пополнял' : formatDate(item.updatedAt)}</td>
+                      <td>{item.createdAt === item.updatedAt ? 'Ніколи не поповнював' : formatDate(item.updatedAt)}</td>
                       <td>{item.email}</td>
                       <td>
                         <input
@@ -726,6 +703,16 @@ function Page() {
                           @{item.telegram}
                         </a>
                       </td>
+                      <td>{item.team}</td>
+                      <td>
+                        <select
+                          value={item.status}
+                          onChange={(e) => handleStatusChange(e, item.id)}
+                        >
+                          <option value="buyer">buyer</option>
+                          <option value="owner">owner</option>
+                        </select>
+                      </td>
                       <td>
                         <input
                           type="number"
@@ -737,29 +724,104 @@ function Page() {
                       </td>
                       <td>
                         <button onClick={() => handleRejectBalanceChange(item.id)} className={styles.btnreject}>
-                          {loadingRejectBalance === item.id ? (<div className={styles.loader}></div>) : ('Отклонить')}
+                          {loadingRejectBalance === item.id ? (<div className={styles.loader}></div>) : ('Відхилити')}
                         </button>
                       </td>
                       <td>
                         <button onClick={() => handleAcceptBalanceChange(item.id)} className={styles.btnconfirm}>
-                          {loadingAcceptBalance === item.id ? (<div className={styles.loader}></div>) : ('Подтвердить')}
+                          {loadingAcceptBalance === item.id ? (<div className={styles.loader}></div>) : ('Підтвердити')}
+                        </button>
+                      </td>
+                      <td>
+                        <button onClick={() => handlePasswordChangeClick(item.id)} className={styles.btnchange}>
+                          Змінити пароль
                         </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              <div className={styles.noData}>
-                Пользователей нет
+            ) : (
+              <div>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Зареєструвався</th>
+                      <th>Остання зміна балансу/націнки</th>
+                      <th>Пошта</th>
+                      <th>Баланс</th>
+                      <th>Телеграм</th>
+                      <th>Команда</th>
+                      <th>Статус</th>
+                      <th>Націнка</th>
+                      <th>Відхилити</th>
+                      <th>Підтвердити</th>
+                      <th>Змінити пароль</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dataTwo.slice().reverse().map((item) => (
+                      <tr key={item.id}>
+                        <td>{formatDate(item.createdAt)}</td>
+                        <td>{item.createdAt === item.updatedAt ? 'Ніколи не поповнював' : formatDate(item.updatedAt)}</td>
+                        <td>{item.email}</td>
+                        <td>
+                          <input
+                            type="number"
+                            value={editableBalances[item.id] !== undefined ? editableBalances[item.id] : item.balance}
+                            onChange={(e) => handleBalanceChange(e, item.id)}
+                            className={styles.balanceInput}
+                          /> $
+                        </td>
+                        <td>
+                          <a href={`https://t.me/${item.telegram}`} target="_blank" rel="noopener noreferrer" className={styles.telegramlink}>
+                            @{item.telegram}
+                          </a>
+                        </td>
+                        <td>
+                          <select
+                            value={item.status}
+                            onChange={(e) => handleStatusChange(e, item.id)}
+                          >
+                            <option value="buyer">buyer</option>
+                            <option value="owner">owner</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            value={editableMarkups[item.id] !== undefined ? editableMarkups[item.id] : item.markup}
+                            onChange={(e) => handleMarkupChange(e, item.id)}
+                            className={styles.balanceInput}
+                          />
+                          <span className={styles.percentSign}>$</span>
+                        </td>
+                        <td>
+                          <button onClick={() => handleRejectBalanceChange(item.id)} className={styles.btnreject}>
+                            {loadingRejectBalance === item.id ? (<div className={styles.loader}></div>) : ('Відхилити')}
+                          </button>
+                        </td>
+                        <td>
+                          <button onClick={() => handleAcceptBalanceChange(item.id)} className={styles.btnconfirm}>
+                            {loadingAcceptBalance === item.id ? (<div className={styles.loader}></div>) : ('Підтвердити')}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className={styles.noData}>
+                  Користувачів немає
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
       {showPopup && (
         <div className={styles.popupOverlay}>
           <div className={styles.popup}>
-            <h3>Недостаточно средств на основном аккаунте</h3>
+            <h3>Недостатньо коштів на основному акаунті</h3>
             <button className={styles.popupButton} onClick={handleClosePopup}>OK</button>
           </div>
         </div>
@@ -767,16 +829,16 @@ function Page() {
       {showMaintenancePopup && (
         <div className={styles.popupOverlay}>
           <div className={styles.popup}>
-            <h3>{isMaintenanceMode ? 'Выключить режим технических работ?' : 'Включить режим технических работ?'}</h3>
-            <button className={styles.popupButton} onClick={handleConfirmMaintenance}>Да</button>
-            <button className={styles.popupButton} onClick={handleCloseMaintenancePopup}>Нет</button>
+            <h3>{isMaintenanceMode ? 'Вимкнути режим технічних робіт?' : 'Увімкнути режим технічних робіт?'}</h3>
+            <button className={styles.popupButton} onClick={handleConfirmMaintenance}>Так</button>
+            <button className={styles.popupButton} onClick={handleCloseMaintenancePopup}>Ні</button>
           </div>
         </div>
       )}
       {showPasswordPopup && (
         <div className={styles.popupOverlay}>
           <div className={styles.popup}>
-            <h3>Введите новый пароль</h3>
+            <h3>Введіть новий пароль</h3>
             <input
               type="text"
               value={newPassword}
@@ -784,8 +846,8 @@ function Page() {
               className={styles.passwordInput}
             />
             {passwordError && <p className={styles.error}>{passwordError}</p>}
-            <button className={styles.popupButton} onClick={handleClosePasswordPopup}>Отклонить</button>
-            <button className={styles.popupButton} onClick={handleConfirmPasswordChange}>Подтвердить</button>
+            <button className={styles.popupButton} onClick={handleClosePasswordPopup}>Відхилити</button>
+            <button className={styles.popupButton} onClick={handleConfirmPasswordChange}>Підтвердити</button>
           </div>
         </div>
       )}

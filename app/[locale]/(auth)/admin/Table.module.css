@@ -7,13 +7,19 @@
 
 }
 
+.scale {
+  transform: scale(0.7); /* Масштабирование на 80% */
+  transform-origin: top left; /* Установка точки начала масштабирования */
+}
+
 .load {
     font-size: 18.5px;
     margin-left: 20px;
 }
 
 .patron {
-    margin-left: 0;
+    margin-left: 100px;
+
 }
 
 
@@ -189,7 +195,6 @@ input:checked+.slider:before {
 
 .scrollabletable {
     min-width: 850px;
-    max-width: 1400px;
     max-height: 400px;
     overflow-y: auto;
     width: 100%;
@@ -645,4 +650,40 @@ input:checked+.slider:before {
   
   .btnchange:hover {
     background-color: #0056b3;
+}
+
+.mainblock, .mainblocktwo {
+  max-height: 400px;
+  width: 100%;
+  border-collapse: collapse;
+  margin-left: 50px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 8px;
+  min-width: 120px;
+}
+
+.table th {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+}
+
+/* Адаптивные стили для маленьких экранов */
+@media (max-width: 767px) {
+  .mainblock, .mainblocktwo {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .table {
+    min-width: 600px;
+  }
 }

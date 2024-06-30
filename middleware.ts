@@ -31,21 +31,21 @@ export async function middleware(request: NextRequest) {
   const { maintenanceMode } = await maintenanceModeResponse.json();
   console.log("Maintenance mode:", maintenanceMode);
 
-  if (maintenanceMode) {
-    if (isAdminPath) {
-      console.log("Admin path accessed during maintenance mode");
-    } else if (!isMaintenancePath) {
-      console.log("Redirecting to maintenance page");
-      const redirectUrl = request.nextUrl.locale === 'uk' ? '/uk/tech/maintenance' : '/en/tech/maintenance';
-      return NextResponse.redirect(new URL(redirectUrl, request.url));
-    }
-  }
+  // if (maintenanceMode) {
+  //   if (isAdminPath) {
+  //     console.log("Admin path accessed during maintenance mode");
+  //   } else if (!isMaintenancePath) {
+  //     console.log("Redirecting to maintenance page");
+  //     const redirectUrl = request.nextUrl.locale === 'uk' ? '/uk/tech/maintenance' : '/en/tech/maintenance';
+  //     return NextResponse.redirect(new URL(redirectUrl, request.url));
+  //   }
+  // }
 
-  if (!maintenanceMode && isMaintenancePath) {
-    console.log("Redirecting to main page from maintenance");
-    const redirectUrl = request.nextUrl.locale === 'uk' ? '/uk' : '/en';
-    return NextResponse.redirect(new URL(redirectUrl, request.url));
-  }
+  // if (!maintenanceMode && isMaintenancePath) {
+  //   console.log("Redirecting to main page from maintenance");
+  //   const redirectUrl = request.nextUrl.locale === 'uk' ? '/uk' : '/en';
+  //   return NextResponse.redirect(new URL(redirectUrl, request.url));
+  // }
 
   if (!jwt && isMainPath) {
     console.log("No JWT for main path");

@@ -7,17 +7,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Team {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  logoUrl String?
+  users   User[]
+  invites Invite[]
+}
+
 model User {
-  id           Int            @id @default(autoincrement())
-  email        String         @unique
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
   password     String
-  balance      Decimal        @default(0) @db.Decimal(10, 2)
-  markup       Decimal        @default(5) @db.Decimal(10, 2)
-  telegram     String         @unique
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  balance      Decimal   @default(0) @db.Decimal(10, 2)
+  markup       Decimal   @default(5) @db.Decimal(10, 2)
+  telegram     String    @unique
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
   cardsIds     String[]
-  transactions Transaction[] 
+  transactions Transaction[]
+  status       String    @default("buyer")
+  teamId       Int?
+  team         Team?     @relation(fields: [teamId], references: [id])
 }
 
 model Request {
@@ -26,6 +37,8 @@ model Request {
   telegram       String   @unique
   password       String
   submissionTime DateTime @default(now())
+  status         String   @default("buyer")
+  team           String   @default("")
 }
 
 model SingleValue {
@@ -81,12 +94,23 @@ model MaintenanceMode {
 }
 
 model RateLimit {
-  id               Int      @id @default(autoincrement())
-  userId           Int      @unique
-  nextBuyRequest   DateTime
+  id                Int      @id @default(autoincrement())
+  userId            Int      @unique
+  nextBuyRequest    DateTime
   nextDeleteRequest DateTime
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   @@index([userId], name: "userId")
+}
+
+model Invite {
+  id        String   @id @default(uuid())
+  status    String
+  teamId    Int
+  inviteUrl String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  team      Team     @relation(fields: [teamId], references: [id])
 }
