@@ -60,9 +60,11 @@ function Page() {
           }
           const data = await response.json();
           setStatus(data.status);
-          setTeam(data.team);
-          setNewTeamName(data.team.name || ""); // Initialize the new team name with the current team name
-          fetchLogo(data.team.name);
+          setTeam(data.team || { name: "", logoUrl: "" }); // Убедитесь, что team всегда установлен
+          setNewTeamName(data.team?.name || ""); // Initialize the new team name with the current team name
+          if (data.team?.name) {
+            fetchLogo(data.team.name);
+          }
         } catch (error) {
           console.error("Error fetching user status:", error);
         }
@@ -357,7 +359,7 @@ function Page() {
               {isUpdatingTeam ? (
                 <div className={styles.loader}></div>
               ) : (
-                "Update"
+                translations('Team.update')
               )}
             </button>
           </div>
@@ -426,7 +428,7 @@ function Page() {
                     {loadingUserId === user.id ? (
                       <div className={styles.loader}></div>
                     ) : (
-                      <div>{translations('Cards.confirm')}</div>
+                      translations('Cards.confirm')
                     )}
                   </button>
                 </td>
@@ -435,15 +437,9 @@ function Page() {
                     className={styles.rejectButton}
                     onClick={() => handleReject(user.id)}
                   >
-                    {translations('Team.reject') || 'Reject' // Добавьте строку 'Reject' для проверки
-                    }
+                    {translations('Team.reject') || 'Reject'}
                   </button>
                 </td>
-
-
-
-
-
               </tr>
             ))}
           </tbody>
