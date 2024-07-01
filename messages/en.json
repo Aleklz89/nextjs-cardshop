@@ -183,7 +183,8 @@
         "chooseToDelete": "Choose cards",
         "confirmDelete": "Confirm delete",
         "sucdel": "The deletion was successful",
-        "funds": "Insufficient funds"
+        "funds": "Insufficient funds",
+        "copyAllData": ""
 
     },
 

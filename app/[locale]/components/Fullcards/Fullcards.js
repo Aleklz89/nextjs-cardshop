@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Fullcards.module.css';
 import { useTranslations } from "next-intl";
+import { saveAs } from 'file-saver';
 import '../globals.css';
 
 const Fullcards = ({ cards }) => {
@@ -268,6 +269,16 @@ const Fullcards = ({ cards }) => {
     window.location.href = `/cabinet/cards/${uuid}`;
   };
 
+  const handleCopyAllData = async () => {
+    console.time('HandleCopyAllData');
+    const allCardDetails = await Promise.all(userCards.map(card => fetchCardDetails(card.uuid)));
+    const allData = allCardDetails.map(details => `${details.number};${details.exp_month};${details.exp_year};${details.cvx2}`).join('\n');
+    
+    const blob = new Blob([allData], { type: 'text/plain;charset=utf-8' });
+    saveAs(blob, 'data.txt');
+    console.timeEnd('HandleCopyAllData');
+  };
+
   useEffect(() => {
     console.time('RenderCards');
   }, []);
@@ -289,6 +300,9 @@ const Fullcards = ({ cards }) => {
             </button>
             <button className={styles.replenishButton} onClick={handleDeleteClick}>
               {translations('Fullcards.delete')}
+            </button>
+            <button className={styles.replenishButton} onClick={handleCopyAllData}>
+              {translations('Fullcards.copyAllData')}
             </button>
           </div>
         </div>
