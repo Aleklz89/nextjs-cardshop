@@ -50,20 +50,43 @@ export default function CardPage() {
       const data = await response.json();
       const cardData = data.data[0];
       setSelectedCard(cardData);
-      setCardDetails({
-        number: cardData.number,
-        cvx2: cardData.cvx2,
-        exp_month: cardData.exp_month,
-        exp_year: cardData.exp_year,
-      });
+      setCardData(cardData); // Set card data for later use
       console.log('Fetched card details:', cardData);
-      setCardData(cardData); // Set card data
     } catch (error) {
       console.error('Error fetching card details:', error);
       setError(error.message);
       setIsErrorPopupVisible(true);
     }
     console.timeEnd('fetchCardDetails');
+  };
+
+  const fetchCardRequisites = async (uuid) => {
+    console.time('fetchCardRequisites');
+    try {
+      const response = await fetch(`https://api.epn.net/card/${uuid}/showpan`, {
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer 456134|96XNShj53SQXMMBY3xYsNGjvEHbU8TKCDbDqGGLJ',
+          'X-CSRF-TOKEN': '',
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      setCardDetails({
+        number: data.data.number,
+        cvx2: data.data.cvx2,
+        exp_month: data.data.exp_month,
+        exp_year: data.data.exp_year,
+      });
+      console.log('Fetched card requisites:', data.data);
+    } catch (error) {
+      console.error('Error fetching card requisites:', error);
+      setError(error.message);
+      setIsErrorPopupVisible(true);
+    }
+    console.timeEnd('fetchCardRequisites');
   };
 
   const fetchUserBalance = async (userId) => {
@@ -376,6 +399,7 @@ export default function CardPage() {
 
   useEffect(() => {
     if (cardData) {
+      fetchCardRequisites(cardData.uuid); // Fetch requisites separately using cardData.uuid
       fetchCardTransactions(cardData.account.uuid);
     }
   }, [cardData]);
